@@ -2,29 +2,25 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Feira da Lua Delivery</title>
-
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:Arial;background:#f4f4f4;color:#222}
-header{background:#176b3a;color:white;text-align:center;padding:28px 15px}
-header h1{margin:0 0 8px}
-main{max-width:650px;margin:auto;padding:18px}
-input{width:100%;padding:14px;border:1px solid #ddd;border-radius:9px;font-size:16px;margin-bottom:20px}
-h2{font-size:20px}
-.barraca{background:white;border-radius:12px;padding:16px;margin-bottom:15px}
-.barraca h3{margin:0 0 5px;color:#176b3a}
-.produto{display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:1px solid #eee;padding:14px 0}
-.produto p{color:#666;font-size:13px;margin:5px 0}
+header{background:#176b3a;color:white;text-align:center;padding:25px 15px}
+main{max-width:700px;margin:auto;padding:18px}
+input,select{width:100%;padding:13px;margin:7px 0 14px;border:1px solid #ccc;border-radius:8px;font-size:16px}
+button{background:#f0a51b;border:0;padding:12px;border-radius:8px;font-weight:bold;cursor:pointer}
+.barraca,.carrinho,.painel{background:white;padding:16px;border-radius:12px;margin:15px 0}
+.barraca h3{color:#176b3a}
+.produto{display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:1px solid #eee;padding:12px 0}
 .preco{color:#176b3a;font-weight:bold}
-button{background:#f0a51b;border:0;padding:12px;border-radius:8px;font-weight:bold}
-.carrinho{background:white;padding:16px;border-radius:12px;margin-top:20px}
-.finalizar{width:100%;background:#176b3a;color:white;margin-top:12px;font-size:16px}
-footer{text-align:center;padding:25px;color:#777;font-size:13px}
+.finalizar,.verde{width:100%;background:#176b3a;color:white;margin-top:10px}
+.painel{border:2px solid #176b3a}
+.oculto{display:none}
+footer{text-align:center;padding:20px;color:#777}
 </style>
 </head>
-
 <body>
 
 <header>
@@ -33,233 +29,214 @@ footer{text-align:center;padding:25px;color:#777;font-size:13px}
 </header>
 
 <main>
-
 <input id="busca" placeholder="Buscar produtos...">
 
 <h2>Conheça nossas barracas</h2>
-
-<div id="vitrine">
-<p>Carregando produtos da Feira da Lua...</p>
-</div>
+<div id="vitrine">Carregando produtos...</div>
 
 <section class="carrinho">
 <h2>Meu carrinho (<span id="quantidade">0</span>)</h2>
-<ul id="itens">
-<li>Nenhum produto adicionado.</li>
-</ul>
+<ul id="itens"><li>Nenhum produto adicionado.</li></ul>
 <p><strong>Total: R$ <span id="total">0,00</span></strong></p>
 <button class="finalizar" onclick="finalizar()">Finalizar pedido</button>
 </section>
 
+<section class="painel">
+<h2>Área do administrador</h2>
+
+<div id="login">
+<p>Entre com seu e-mail e senha de administrador.</p>
+<input id="email" type="email" placeholder="Seu e-mail">
+<input id="senha" type="password" placeholder="Sua senha">
+<button class="verde" onclick="entrar()">Entrar</button>
+</div>
+
+<div id="administracao" class="oculto">
+<p id="usuarioLogado"></p>
+<button onclick="sair()">Sair da administração</button>
+
+<h3>Cadastrar feirante</h3>
+<input id="nomeFeirante" placeholder="Nome da barraca">
+<input id="responsavel" placeholder="Nome do responsável">
+<button class="verde" onclick="cadastrarFeirante()">Cadastrar feirante</button>
+
+<h3>Cadastrar produto</h3>
+<select id="feiranteProduto">
+<option value="">Selecione a barraca</option>
+</select>
+<input id="nomeProduto" placeholder="Nome do produto">
+<input id="descricaoProduto" placeholder="Descrição (opcional)">
+<input id="precoProduto" type="number" step="0.01" placeholder="Preço">
+<button class="verde" onclick="cadastrarProduto()">Cadastrar produto</button>
+
+<p id="mensagemAdmin"></p>
+</div>
+</section>
 </main>
 
 <footer>Feira da Lua de Ribeirão Grande</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script>
-const SUPABASE_URL = 'https://bnnfplpccsxaaztgbxkr.supabase.co';
+const SUPABASE_URL='https://bnnfplpccsxaaztgbxkr.supabase.co';
+const SUPABASE_KEY='sb_publishable_dws08TQirwdC5MI3UITfog_AWVc8eL5';
 
-const SUPABASE_KEY = 'sb_publishable_dws08TQirwdC5MI3UITfog_AWVc8eL5';
+const banco=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
-const banco = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
-
-let carrinho = [];
-let produtos = [];
+let carrinho=[];
+let produtos=[];
 
 async function carregarProdutos(){
-
-  const vitrine = document.getElementById('vitrine');
-
-  try {
-
-    const {data: barracas, error: erroBarracas} =
-      await banco
-      .from('feirantes')
-      .select('id,nome,responsavel')
-      .eq('ativo',true);
-
-    if(erroBarracas) throw erroBarracas;
-
-    const {data: listaProdutos, error: erroProdutos} =
-      await banco
-      .from('produtos')
-      .select('id,feirante_id,nome,preco,descricao,foto_url')
-      .eq('ativo',true);
-
-    if(erroProdutos) throw erroProdutos;
-
-    produtos = listaProdutos || [];
-
-    vitrine.innerHTML = '';
-
-    if(!barracas || barracas.length === 0){
-      vitrine.textContent = 'Nenhuma barraca disponível.';
-      return;
-    }
-
-    barracas.forEach(barraca => {
-
-      const produtosDaBarraca = produtos.filter(
-        p => p.feirante_id === barraca.id
-      );
-
-      if(produtosDaBarraca.length === 0) return;
-
-      const secao = document.createElement('section');
-      secao.className = 'barraca';
-
-      const titulo = document.createElement('h3');
-      titulo.textContent = barraca.nome;
-
-      const responsavel = document.createElement('p');
-      responsavel.textContent =
-        'Responsável: ' + (barraca.responsavel || '');
-
-      secao.appendChild(titulo);
-      secao.appendChild(responsavel);
-
-      produtosDaBarraca.forEach(produto => {
-
-        const item = document.createElement('div');
-        item.className = 'produto';
-        item.dataset.nome = produto.nome.toLowerCase();
-
-        const info = document.createElement('div');
-
-        const nome = document.createElement('strong');
-        nome.textContent = produto.nome;
-
-        const descricao = document.createElement('p');
-        descricao.textContent = produto.descricao || barraca.nome;
-
-        const preco = document.createElement('span');
-        preco.className = 'preco';
-        preco.textContent = Number(produto.preco)
-          .toLocaleString('pt-BR',{
-            style:'currency',
-            currency:'BRL'
-          });
-
-        info.appendChild(nome);
-        info.appendChild(descricao);
-        info.appendChild(preco);
-
-        const botao = document.createElement('button');
-        botao.textContent = 'Adicionar';
-        botao.onclick = () => adicionar(
-          produto.id,
-          produto.nome,
-          Number(produto.preco)
-        );
-
-        item.appendChild(info);
-        item.appendChild(botao);
-        secao.appendChild(item);
-
-      });
-
-      vitrine.appendChild(secao);
-
-    });
-
-    if(!vitrine.children.length){
-      vitrine.textContent = 'Nenhum produto disponível no momento.';
-    }
-
-  } catch(erro){
-
-    console.error(erro);
-
-    vitrine.textContent =
-      'Não foi possível carregar os produtos. Tente atualizar a página.';
-
-  }
+ const vitrine=document.getElementById('vitrine');
+ try{
+  const {data:barracas,error:e1}=await banco.from('feirantes').select('id,nome,responsavel').eq('ativo',true);
+  if(e1) throw e1;
+  const {data:lista,error:e2}=await banco.from('produtos').select('id,feirante_id,nome,preco,descricao').eq('ativo',true);
+  if(e2) throw e2;
+  produtos=lista||[];
+  vitrine.innerHTML='';
+  barracas.forEach(b=>{
+   const listaBarraca=produtos.filter(p=>p.feirante_id===b.id);
+   if(!listaBarraca.length)return;
+   const sec=document.createElement('section');
+   sec.className='barraca';
+   const titulo=document.createElement('h3');
+   titulo.textContent=b.nome;
+   sec.appendChild(titulo);
+   listaBarraca.forEach(p=>{
+    const item=document.createElement('div');
+    item.className='produto';
+    item.dataset.nome=p.nome.toLowerCase();
+    const info=document.createElement('div');
+    const nome=document.createElement('strong');
+    nome.textContent=p.nome;
+    const desc=document.createElement('p');
+    desc.textContent=p.descricao||'';
+    const preco=document.createElement('div');
+    preco.className='preco';
+    preco.textContent=Number(p.preco).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+    info.append(nome,desc,preco);
+    const botao=document.createElement('button');
+    botao.textContent='Adicionar';
+    botao.onclick=()=>adicionar(p.id,p.nome,Number(p.preco));
+    item.append(info,botao);
+    sec.appendChild(item);
+   });
+   vitrine.appendChild(sec);
+  });
+  if(!vitrine.children.length)vitrine.textContent='Nenhum produto disponível.';
+ }catch(e){
+  console.error(e);
+  vitrine.textContent='Erro ao carregar produtos. Atualize a página.';
+ }
 }
 
 function adicionar(id,nome,preco){
-
-  carrinho.push({id,nome,preco});
-  atualizar();
-
+ carrinho.push({id,nome,preco});
+ atualizar();
 }
 
 function atualizar(){
-
-  document.getElementById('quantidade').textContent =
-    carrinho.length;
-
-  const lista = document.getElementById('itens');
-  lista.innerHTML = '';
-
-  if(carrinho.length === 0){
-    lista.innerHTML = '<li>Nenhum produto adicionado.</li>';
-  }
-
-  carrinho.forEach(item => {
-
-    const li = document.createElement('li');
-
-    li.textContent = item.nome + ' - ' +
-      item.preco.toLocaleString('pt-BR',{
-        style:'currency',
-        currency:'BRL'
-      });
-
-    lista.appendChild(li);
-
-  });
-
-  const total = carrinho.reduce(
-    (soma,item) => soma + item.preco,0
-  );
-
-  document.getElementById('total').textContent =
-    total.toFixed(2).replace('.',',');
-
+ document.getElementById('quantidade').textContent=carrinho.length;
+ const lista=document.getElementById('itens');
+ lista.innerHTML='';
+ carrinho.forEach(p=>{
+  const li=document.createElement('li');
+  li.textContent=p.nome+' - '+p.preco.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+  lista.appendChild(li);
+ });
+ if(!carrinho.length)lista.innerHTML='<li>Nenhum produto adicionado.</li>';
+ const total=carrinho.reduce((s,p)=>s+p.preco,0);
+ document.getElementById('total').textContent=total.toFixed(2).replace('.',',');
 }
 
-document.getElementById('busca').addEventListener(
-  'input',function(){
-
-    const termo = this.value.toLowerCase();
-
-    document.querySelectorAll('.produto').forEach(item => {
-
-      item.style.display =
-        item.dataset.nome.includes(termo) ? 'flex' : 'none';
-
-    });
-
-  }
-);
+document.getElementById('busca').addEventListener('input',function(){
+ const termo=this.value.toLowerCase();
+ document.querySelectorAll('.produto').forEach(p=>{
+  p.style.display=p.dataset.nome.includes(termo)?'flex':'none';
+ });
+});
 
 function finalizar(){
+ if(!carrinho.length){alert('Adicione produtos ao carrinho.');return;}
+ alert('Carrinho preparado! O envio de pedidos será configurado na próxima etapa.');
+}
 
-  if(!carrinho.length){
-    alert('Adicione pelo menos um produto ao carrinho.');
-    return;
-  }
+async function entrar(){
+ const email=document.getElementById('email').value.trim();
+ const senha=document.getElementById('senha').value;
+ if(!email||!senha){alert('Informe e-mail e senha.');return;}
 
-  const total = carrinho.reduce(
-    (soma,item) => soma + item.preco,0
-  );
+ const {data,error}=await banco.auth.signInWithPassword({email,password:senha});
+ if(error){alert('Não foi possível entrar: '+error.message);return;}
 
-  alert(
-    'Carrinho preparado! Total: ' +
-    total.toLocaleString('pt-BR',{
-      style:'currency',
-      currency:'BRL'
-    })
-  );
+ const {data:admin,error:erroAdmin}=await banco
+  .from('admins').select('user_id').eq('user_id',data.user.id).maybeSingle();
 
+ if(erroAdmin||!admin){
+  await banco.auth.signOut();
+  alert('Este usuário não tem permissão de administrador.');
+  return;
+ }
+
+ document.getElementById('login').classList.add('oculto');
+ document.getElementById('administracao').classList.remove('oculto');
+ document.getElementById('usuarioLogado').textContent='Acesso liberado: '+email;
+ await carregarFeirantes();
+}
+
+async function sair(){
+ await banco.auth.signOut();
+ document.getElementById('login').classList.remove('oculto');
+ document.getElementById('administracao').classList.add('oculto');
+}
+
+async function carregarFeirantes(){
+ const {data,error}=await banco.from('feirantes').select('id,nome').order('nome');
+ if(error){mensagem(error.message);return;}
+ const select=document.getElementById('feiranteProduto');
+ select.innerHTML='<option value="">Selecione a barraca</option>';
+ (data||[]).forEach(f=>{
+  const op=document.createElement('option');
+  op.value=f.id;
+  op.textContent=f.nome;
+  select.appendChild(op);
+ });
+}
+
+async function cadastrarFeirante(){
+ const nome=document.getElementById('nomeFeirante').value.trim();
+ const responsavel=document.getElementById('responsavel').value.trim();
+ if(!nome){alert('Informe o nome da barraca.');return;}
+ const {error}=await banco.from('feirantes').insert({nome,responsavel,ativo:true});
+ if(error){mensagem('Erro: '+error.message);return;}
+ document.getElementById('nomeFeirante').value='';
+ document.getElementById('responsavel').value='';
+ mensagem('Feirante cadastrado com sucesso!');
+ await carregarFeirantes();
+ await carregarProdutos();
+}
+
+async function cadastrarProduto(){
+ const feirante_id=document.getElementById('feiranteProduto').value;
+ const nome=document.getElementById('nomeProduto').value.trim();
+ const descricao=document.getElementById('descricaoProduto').value.trim();
+ const preco=Number(document.getElementById('precoProduto').value);
+ if(!feirante_id||!nome||!preco||preco<=0){alert('Preencha a barraca, o nome e o preço.');return;}
+ const {error}=await banco.from('produtos').insert({feirante_id:Number(feirante_id),nome,descricao,preco,ativo:true});
+ if(error){mensagem('Erro: '+error.message);return;}
+ document.getElementById('nomeProduto').value='';
+ document.getElementById('descricaoProduto').value='';
+ document.getElementById('precoProduto').value='';
+ mensagem('Produto cadastrado com sucesso!');
+ await carregarProdutos();
+}
+
+function mensagem(texto){
+ document.getElementById('mensagemAdmin').textContent=texto;
 }
 
 carregarProdutos();
-
 </script>
 </body>
 </html>
