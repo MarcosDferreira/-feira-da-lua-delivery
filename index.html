@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -11,14 +12,20 @@ header{background:#176b3a;color:white;text-align:center;padding:25px 15px}
 main{max-width:700px;margin:auto;padding:18px}
 input,select{width:100%;padding:13px;margin:7px 0 14px;border:1px solid #ccc;border-radius:8px;font-size:16px}
 button{background:#f0a51b;border:0;padding:12px;border-radius:8px;font-weight:bold;cursor:pointer}
-.barraca,.carrinho,.painel{background:white;padding:16px;border-radius:12px;margin:15px 0}
+.barraca,.carrinho,.painel,.produto-admin{background:white;padding:16px;border-radius:12px;margin:15px 0}
 .barraca h3{color:#176b3a}
 .produto{display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:1px solid #eee;padding:12px 0}
 .preco{color:#176b3a;font-weight:bold}
 .finalizar,.verde{width:100%;background:#176b3a;color:white;margin-top:10px}
-.painel{border:2px solid #176b3a}
 .oculto{display:none}
 footer{text-align:center;padding:20px;color:#777}
+.produto-admin{border:1px solid #ddd;padding:12px;margin:10px 0}
+.acoes{display:flex;gap:8px;margin-top:10px}
+.acoes button{flex:1}
+.editar{background:#176b3a;color:white}
+.excluir{background:#c62828;color:white}
+.cancelar{background:#777;color:white;width:100%;margin-top:8px}
+#mensagemAdmin{font-weight:bold;color:#176b3a}
 </style>
 </head>
 <body>
@@ -60,16 +67,25 @@ footer{text-align:center;padding:20px;color:#777}
 <input id="responsavel" placeholder="Nome do responsável">
 <button class="verde" onclick="cadastrarFeirante()">Cadastrar feirante</button>
 
-<h3>Cadastrar produto</h3>
+<hr>
+
+<h3 id="tituloFormulario">Cadastrar produto</h3>
 <select id="feiranteProduto">
 <option value="">Selecione a barraca</option>
 </select>
 <input id="nomeProduto" placeholder="Nome do produto">
 <input id="descricaoProduto" placeholder="Descrição (opcional)">
 <input id="precoProduto" type="number" step="0.01" placeholder="Preço">
-<button class="verde" onclick="cadastrarProduto()">Cadastrar produto</button>
+
+<button class="verde" id="botaoSalvar" onclick="salvarProduto()">Cadastrar produto</button>
+<button class="cancelar oculto" id="botaoCancelar" onclick="cancelarEdicao()">Cancelar edição</button>
 
 <p id="mensagemAdmin"></p>
+
+<hr>
+
+<h3>Gerenciar produtos cadastrados</h3>
+<div id="listaAdmin">Carregando produtos...</div>
 </div>
 </section>
 </main>
@@ -85,50 +101,216 @@ const banco=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
 let carrinho=[];
 let produtos=[];
+let barracas=[];
+let produtoEditando=null;
 
 async function carregarProdutos(){
  const vitrine=document.getElementById('vitrine');
  try{
-  const {data:barracas,error:e1}=await banco.from('feirantes').select('id,nome,responsavel').eq('ativo',true);
-  if(e1) throw e1;
+  const {data:listaBarracas,error:e1}=await banco.from('feirantes').select('id,nome,responsavel').eq('ativo',true);
+  if(e1)throw e1;
+
   const {data:lista,error:e2}=await banco.from('produtos').select('id,feirante_id,nome,preco,descricao').eq('ativo',true);
-  if(e2) throw e2;
+  if(e2)throw e2;
+
   produtos=lista||[];
+  barracas=listaBarracas||[];
+
   vitrine.innerHTML='';
+
   barracas.forEach(b=>{
-   const listaBarraca=produtos.filter(p=>p.feirante_id===b.id);
+   const listaBarraca=produtos.filter(p=>Number(p.feirante_id)===Number(b.id));
    if(!listaBarraca.length)return;
+
    const sec=document.createElement('section');
    sec.className='barraca';
+
    const titulo=document.createElement('h3');
    titulo.textContent=b.nome;
    sec.appendChild(titulo);
+
    listaBarraca.forEach(p=>{
     const item=document.createElement('div');
     item.className='produto';
     item.dataset.nome=p.nome.toLowerCase();
+
     const info=document.createElement('div');
     const nome=document.createElement('strong');
     nome.textContent=p.nome;
+
     const desc=document.createElement('p');
     desc.textContent=p.descricao||'';
+
     const preco=document.createElement('div');
     preco.className='preco';
     preco.textContent=Number(p.preco).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+
     info.append(nome,desc,preco);
+
     const botao=document.createElement('button');
     botao.textContent='Adicionar';
     botao.onclick=()=>adicionar(p.id,p.nome,Number(p.preco));
+
     item.append(info,botao);
     sec.appendChild(item);
    });
+
    vitrine.appendChild(sec);
   });
+
   if(!vitrine.children.length)vitrine.textContent='Nenhum produto disponível.';
+
+  if(!document.getElementById('administracao').classList.contains('oculto')){
+   renderizarProdutosAdmin();
+  }
+
  }catch(e){
   console.error(e);
   vitrine.textContent='Erro ao carregar produtos. Atualize a página.';
  }
+}
+
+function renderizarProdutosAdmin(){
+ const lista=document.getElementById('listaAdmin');
+ lista.innerHTML='';
+
+ if(!produtos.length){
+  lista.textContent='Nenhum produto cadastrado.';
+  return;
+ }
+
+ produtos.forEach(p=>{
+  const barraca=barracas.find(b=>Number(b.id)===Number(p.feirante_id));
+
+  const card=document.createElement('div');
+  card.className='produto-admin';
+
+  const nome=document.createElement('strong');
+  nome.textContent=p.nome;
+
+  const detalhe=document.createElement('p');
+  detalhe.textContent=(barraca?barraca.nome:'Barraca não encontrada')+
+   ' | '+Number(p.preco).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+
+  const descricao=document.createElement('p');
+  descricao.textContent=p.descricao||'Sem descrição';
+
+  const acoes=document.createElement('div');
+  acoes.className='acoes';
+
+  const editar=document.createElement('button');
+  editar.className='editar';
+  editar.textContent='Editar';
+  editar.onclick=()=>editarProduto(p.id);
+
+  const excluir=document.createElement('button');
+  excluir.className='excluir';
+  excluir.textContent='Excluir';
+  excluir.onclick=()=>excluirProduto(p.id,p.nome);
+
+  acoes.append(editar,excluir);
+  card.append(nome,detalhe,descricao,acoes);
+  lista.appendChild(card);
+ });
+}
+
+function editarProduto(id){
+ const p=produtos.find(item=>Number(item.id)===Number(id));
+ if(!p)return;
+
+ produtoEditando=p.id;
+
+ document.getElementById('feiranteProduto').value=p.feirante_id;
+ document.getElementById('nomeProduto').value=p.nome;
+ document.getElementById('descricaoProduto').value=p.descricao||'';
+ document.getElementById('precoProduto').value=p.preco;
+
+ document.getElementById('tituloFormulario').textContent='Editar produto';
+ document.getElementById('botaoSalvar').textContent='Salvar alterações';
+ document.getElementById('botaoCancelar').classList.remove('oculto');
+
+ document.getElementById('tituloFormulario').scrollIntoView({behavior:'smooth'});
+}
+
+function cancelarEdicao(){
+ produtoEditando=null;
+
+ document.getElementById('feiranteProduto').value='';
+ document.getElementById('nomeProduto').value='';
+ document.getElementById('descricaoProduto').value='';
+ document.getElementById('precoProduto').value='';
+
+ document.getElementById('tituloFormulario').textContent='Cadastrar produto';
+ document.getElementById('botaoSalvar').textContent='Cadastrar produto';
+ document.getElementById('botaoCancelar').classList.add('oculto');
+}
+
+async function salvarProduto(){
+ const feirante_id=document.getElementById('feiranteProduto').value;
+ const nome=document.getElementById('nomeProduto').value.trim();
+ const descricao=document.getElementById('descricaoProduto').value.trim();
+ const preco=Number(document.getElementById('precoProduto').value);
+
+ if(!feirante_id||!nome||!preco||preco<=0){
+  alert('Preencha a barraca, o nome e o preço.');
+  return;
+ }
+
+ let resultado;
+
+ if(produtoEditando!==null){
+  resultado=await banco.from('produtos')
+   .update({
+    feirante_id:Number(feirante_id),
+    nome,
+    descricao,
+    preco
+   })
+   .eq('id',produtoEditando)
+   .eq('ativo',true);
+ }else{
+  resultado=await banco.from('produtos').insert({
+   feirante_id:Number(feirante_id),
+   nome,
+   descricao,
+   preco,
+   ativo:true
+  });
+ }
+
+ if(resultado.error){
+  mensagem('Erro: '+resultado.error.message);
+  return;
+ }
+
+ const editou=produtoEditando!==null;
+
+ cancelarEdicao();
+ mensagem(editou?'Produto atualizado com sucesso!':'Produto cadastrado com sucesso!');
+
+ await carregarProdutos();
+}
+
+async function excluirProduto(id,nome){
+ const confirmar=confirm('Deseja realmente retirar "'+nome+'" da vitrine?');
+ if(!confirmar)return;
+
+ const {error}=await banco.from('produtos')
+  .update({ativo:false})
+  .eq('id',id)
+  .eq('ativo',true);
+
+ if(error){
+  mensagem('Erro ao excluir: '+error.message);
+  return;
+ }
+
+ if(Number(produtoEditando)===Number(id)){
+  cancelarEdicao();
+ }
+
+ mensagem('Produto retirado da vitrine com sucesso!');
+ await carregarProdutos();
 }
 
 function adicionar(id,nome,preco){
@@ -140,12 +322,15 @@ function atualizar(){
  document.getElementById('quantidade').textContent=carrinho.length;
  const lista=document.getElementById('itens');
  lista.innerHTML='';
+
  carrinho.forEach(p=>{
   const li=document.createElement('li');
   li.textContent=p.nome+' - '+p.preco.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
   lista.appendChild(li);
  });
+
  if(!carrinho.length)lista.innerHTML='<li>Nenhum produto adicionado.</li>';
+
  const total=carrinho.reduce((s,p)=>s+p.preco,0);
  document.getElementById('total').textContent=total.toFixed(2).replace('.',',');
 }
@@ -158,17 +343,28 @@ document.getElementById('busca').addEventListener('input',function(){
 });
 
 function finalizar(){
- if(!carrinho.length){alert('Adicione produtos ao carrinho.');return;}
+ if(!carrinho.length){
+  alert('Adicione produtos ao carrinho.');
+  return;
+ }
  alert('Carrinho preparado! O envio de pedidos será configurado na próxima etapa.');
 }
 
 async function entrar(){
  const email=document.getElementById('email').value.trim();
  const senha=document.getElementById('senha').value;
- if(!email||!senha){alert('Informe e-mail e senha.');return;}
+
+ if(!email||!senha){
+  alert('Informe e-mail e senha.');
+  return;
+ }
 
  const {data,error}=await banco.auth.signInWithPassword({email,password:senha});
- if(error){alert('Não foi possível entrar: '+error.message);return;}
+
+ if(error){
+  alert('Não foi possível entrar: '+error.message);
+  return;
+ }
 
  const {data:admin,error:erroAdmin}=await banco
   .from('admins').select('user_id').eq('user_id',data.user.id).maybeSingle();
@@ -182,20 +378,29 @@ async function entrar(){
  document.getElementById('login').classList.add('oculto');
  document.getElementById('administracao').classList.remove('oculto');
  document.getElementById('usuarioLogado').textContent='Acesso liberado: '+email;
+
  await carregarFeirantes();
+ await carregarProdutos();
 }
 
 async function sair(){
  await banco.auth.signOut();
+ cancelarEdicao();
  document.getElementById('login').classList.remove('oculto');
  document.getElementById('administracao').classList.add('oculto');
 }
 
 async function carregarFeirantes(){
  const {data,error}=await banco.from('feirantes').select('id,nome').order('nome');
- if(error){mensagem(error.message);return;}
+
+ if(error){
+  mensagem(error.message);
+  return;
+ }
+
  const select=document.getElementById('feiranteProduto');
  select.innerHTML='<option value="">Selecione a barraca</option>';
+
  (data||[]).forEach(f=>{
   const op=document.createElement('option');
   op.value=f.id;
@@ -207,28 +412,24 @@ async function carregarFeirantes(){
 async function cadastrarFeirante(){
  const nome=document.getElementById('nomeFeirante').value.trim();
  const responsavel=document.getElementById('responsavel').value.trim();
- if(!nome){alert('Informe o nome da barraca.');return;}
+
+ if(!nome){
+  alert('Informe o nome da barraca.');
+  return;
+ }
+
  const {error}=await banco.from('feirantes').insert({nome,responsavel,ativo:true});
- if(error){mensagem('Erro: '+error.message);return;}
+
+ if(error){
+  mensagem('Erro: '+error.message);
+  return;
+ }
+
  document.getElementById('nomeFeirante').value='';
  document.getElementById('responsavel').value='';
+
  mensagem('Feirante cadastrado com sucesso!');
  await carregarFeirantes();
- await carregarProdutos();
-}
-
-async function cadastrarProduto(){
- const feirante_id=document.getElementById('feiranteProduto').value;
- const nome=document.getElementById('nomeProduto').value.trim();
- const descricao=document.getElementById('descricaoProduto').value.trim();
- const preco=Number(document.getElementById('precoProduto').value);
- if(!feirante_id||!nome||!preco||preco<=0){alert('Preencha a barraca, o nome e o preço.');return;}
- const {error}=await banco.from('produtos').insert({feirante_id:Number(feirante_id),nome,descricao,preco,ativo:true});
- if(error){mensagem('Erro: '+error.message);return;}
- document.getElementById('nomeProduto').value='';
- document.getElementById('descricaoProduto').value='';
- document.getElementById('precoProduto').value='';
- mensagem('Produto cadastrado com sucesso!');
  await carregarProdutos();
 }
 
