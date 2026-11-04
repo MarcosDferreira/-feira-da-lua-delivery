@@ -5,26 +5,171 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Feira da Lua Delivery</title>
 <style>
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial;background:#f4f4f4;color:#222}
-header{background:#176b3a;color:white;text-align:center;padding:25px 15px}
-main{max-width:700px;margin:auto;padding:18px}
-input,select{width:100%;padding:13px;margin:7px 0 14px;border:1px solid #ccc;border-radius:8px;font-size:16px}
-button{background:#f0a51b;border:0;padding:12px;border-radius:8px;font-weight:bold;cursor:pointer}
-.barraca,.carrinho,.painel,.produto-admin{background:white;padding:16px;border-radius:12px;margin:15px 0}
-.barraca h3{color:#176b3a}
-.produto{display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:1px solid #eee;padding:12px 0}
-.preco{color:#176b3a;font-weight:bold}
-.finalizar,.verde{width:100%;background:#176b3a;color:white;margin-top:10px}
-.oculto{display:none}
-footer{text-align:center;padding:20px;color:#777}
-.produto-admin{border:1px solid #ddd;padding:12px;margin:10px 0}
-.acoes{display:flex;gap:8px;margin-top:10px}
-.acoes button{flex:1}
-.editar{background:#176b3a;color:white}
-.excluir{background:#c62828;color:white}
-.cancelar{background:#777;color:white;width:100%;margin-top:8px}
-#mensagemAdmin{font-weight:bold;color:#176b3a}
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #071638;
+  color: #ffffff;
+  background-image:
+    radial-gradient(#ffffff55 1px, transparent 1px),
+    radial-gradient(#ffffff33 1px, transparent 1px);
+  background-size: 37px 37px, 61px 61px;
+  background-position: 0 0, 18px 22px;
+}
+
+header {
+  background: linear-gradient(180deg, #071638, #10265a);
+  color: white;
+  text-align: center;
+  padding: 25px 15px;
+  border-bottom: 3px solid #df4c91;
+}
+
+header h1 {
+  font-size: 27px;
+  margin: 8px 0;
+}
+
+header p {
+  color: #f5f5ff;
+}
+
+main {
+  max-width: 700px;
+  margin: auto;
+  padding: 18px;
+}
+
+h2, h3 {
+  color: #ffffff;
+}
+
+input, select {
+  width: 100%;
+  padding: 13px;
+  margin: 7px 0 14px;
+  border: 1px solid #cbd4e7;
+  border-radius: 8px;
+  font-size: 16px;
+  background: #ffffff;
+  color: #102044;
+}
+
+button {
+  background: #f2ad35;
+  color: #102044;
+  border: 0;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.barraca,
+.carrinho,
+.painel,
+.produto-admin {
+  background: #ffffff;
+  color: #102044;
+  padding: 16px;
+  border-radius: 12px;
+  margin: 15px 0;
+  box-shadow: 0 5px 18px #0003;
+}
+
+.barraca h3 {
+  color: #10265a;
+}
+
+.produto {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  border-top: 1px solid #e6eaf2;
+  padding: 12px 0;
+}
+
+.produto p {
+  color: #53617b;
+}
+
+.preco {
+  color: #10265a;
+  font-weight: bold;
+}
+
+.finalizar,
+.verde {
+  width: 100%;
+  background: #10265a;
+  color: white;
+  margin-top: 10px;
+}
+
+.oculto {
+  display: none;
+}
+
+footer {
+  text-align: center;
+  padding: 22px 15px;
+  color: #ffffff;
+}
+
+.patrocinio {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #dce4ff;
+}
+
+.produto-admin {
+  border: 1px solid #ddd;
+  padding: 12px;
+  margin: 10px 0;
+}
+
+.acoes {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.acoes button {
+  flex: 1;
+}
+
+.editar {
+  background: #10265a;
+  color: white;
+}
+
+.excluir {
+  background: #c62828;
+  color: white;
+}
+
+.cancelar {
+  background: #777;
+  color: white;
+  width: 100%;
+  margin-top: 8px;
+}
+
+#mensagemAdmin {
+  font-weight: bold;
+  color: #176b3a;
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid #e5e9f1;
+  margin: 20px 0;
+ }
 </style>
 </head>
 <body>
