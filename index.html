@@ -1,10 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Feira da Lua Delivery</title>
+
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:Arial;background:#f4f4f4;color:#222}
@@ -13,7 +13,7 @@ header h1{margin:0 0 8px}
 main{max-width:650px;margin:auto;padding:18px}
 input{width:100%;padding:14px;border:1px solid #ddd;border-radius:9px;font-size:16px;margin-bottom:20px}
 h2{font-size:20px}
-.barraca{background:#fff;border-radius:12px;padding:16px;margin-bottom:15px}
+.barraca{background:white;border-radius:12px;padding:16px;margin-bottom:15px}
 .barraca h3{margin:0 0 5px;color:#176b3a}
 .produto{display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:1px solid #eee;padding:14px 0}
 .produto p{color:#666;font-size:13px;margin:5px 0}
@@ -24,78 +24,242 @@ button{background:#f0a51b;border:0;padding:12px;border-radius:8px;font-weight:bo
 footer{text-align:center;padding:25px;color:#777;font-size:13px}
 </style>
 </head>
+
 <body>
+
 <header>
 <h1>Feira da Lua Delivery</h1>
 <p>Os sabores da nossa feira na sua casa!</p>
 </header>
+
 <main>
-<input id="busca" placeholder="Buscar produtos..." oninput="buscar()">
+
+<input id="busca" placeholder="Buscar produtos...">
+
 <h2>Conheça nossas barracas</h2>
 
-<section class="barraca">
-<h3>DoceEdna</h3>
-<p>Responsável: Edna</p>
-
-<div class="produto" data-nome="bolo de fatia">
-<div>
-<strong>Bolo de fatia</strong>
-<p>DoceEdna</p>
-<span class="preco">R$ 20,00</span>
+<div id="vitrine">
+<p>Carregando produtos da Feira da Lua...</p>
 </div>
-<button onclick="adicionar('Bolo de fatia',20)">Adicionar</button>
-</div>
-
-<div class="produto" data-nome="pão de mel">
-<div>
-<strong>Pão de mel</strong>
-<p>DoceEdna</p>
-<span class="preco">R$ 10,00</span>
-</div>
-<button onclick="adicionar('Pão de mel',10)">Adicionar</button>
-</div>
-</section>
 
 <section class="carrinho">
 <h2>Meu carrinho (<span id="quantidade">0</span>)</h2>
-<ul id="itens"><li>Nenhum produto adicionado.</li></ul>
+<ul id="itens">
+<li>Nenhum produto adicionado.</li>
+</ul>
 <p><strong>Total: R$ <span id="total">0,00</span></strong></p>
 <button class="finalizar" onclick="finalizar()">Finalizar pedido</button>
 </section>
+
 </main>
+
 <footer>Feira da Lua de Ribeirão Grande</footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
-let carrinho=[];
-function adicionar(nome,preco){
-carrinho.push({nome,preco});
-atualizar();
+const SUPABASE_URL = 'https://bnnfplpccsxaaztgbxkr.supabase.co';
+
+const SUPABASE_KEY = 'sb_publishable_dws08TQirwdC5MI3UITfog_AWVc8eL5';
+
+const banco = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+let carrinho = [];
+let produtos = [];
+
+async function carregarProdutos(){
+
+  const vitrine = document.getElementById('vitrine');
+
+  try {
+
+    const {data: barracas, error: erroBarracas} =
+      await banco
+      .from('feirantes')
+      .select('id,nome,responsavel')
+      .eq('ativo',true);
+
+    if(erroBarracas) throw erroBarracas;
+
+    const {data: listaProdutos, error: erroProdutos} =
+      await banco
+      .from('produtos')
+      .select('id,feirante_id,nome,preco,descricao,foto_url')
+      .eq('ativo',true);
+
+    if(erroProdutos) throw erroProdutos;
+
+    produtos = listaProdutos || [];
+
+    vitrine.innerHTML = '';
+
+    if(!barracas || barracas.length === 0){
+      vitrine.textContent = 'Nenhuma barraca disponível.';
+      return;
+    }
+
+    barracas.forEach(barraca => {
+
+      const produtosDaBarraca = produtos.filter(
+        p => p.feirante_id === barraca.id
+      );
+
+      if(produtosDaBarraca.length === 0) return;
+
+      const secao = document.createElement('section');
+      secao.className = 'barraca';
+
+      const titulo = document.createElement('h3');
+      titulo.textContent = barraca.nome;
+
+      const responsavel = document.createElement('p');
+      responsavel.textContent =
+        'Responsável: ' + (barraca.responsavel || '');
+
+      secao.appendChild(titulo);
+      secao.appendChild(responsavel);
+
+      produtosDaBarraca.forEach(produto => {
+
+        const item = document.createElement('div');
+        item.className = 'produto';
+        item.dataset.nome = produto.nome.toLowerCase();
+
+        const info = document.createElement('div');
+
+        const nome = document.createElement('strong');
+        nome.textContent = produto.nome;
+
+        const descricao = document.createElement('p');
+        descricao.textContent = produto.descricao || barraca.nome;
+
+        const preco = document.createElement('span');
+        preco.className = 'preco';
+        preco.textContent = Number(produto.preco)
+          .toLocaleString('pt-BR',{
+            style:'currency',
+            currency:'BRL'
+          });
+
+        info.appendChild(nome);
+        info.appendChild(descricao);
+        info.appendChild(preco);
+
+        const botao = document.createElement('button');
+        botao.textContent = 'Adicionar';
+        botao.onclick = () => adicionar(
+          produto.id,
+          produto.nome,
+          Number(produto.preco)
+        );
+
+        item.appendChild(info);
+        item.appendChild(botao);
+        secao.appendChild(item);
+
+      });
+
+      vitrine.appendChild(secao);
+
+    });
+
+    if(!vitrine.children.length){
+      vitrine.textContent = 'Nenhum produto disponível no momento.';
+    }
+
+  } catch(erro){
+
+    console.error(erro);
+
+    vitrine.textContent =
+      'Não foi possível carregar os produtos. Tente atualizar a página.';
+
+  }
 }
+
+function adicionar(id,nome,preco){
+
+  carrinho.push({id,nome,preco});
+  atualizar();
+
+}
+
 function atualizar(){
-document.getElementById('quantidade').textContent=carrinho.length;
-let lista=document.getElementById('itens');
-lista.innerHTML='';
-carrinho.forEach(item=>{
-let li=document.createElement('li');
-li.textContent=item.nome+' - R$ '+item.preco.toFixed(2).replace('.',',');
-lista.appendChild(li);
-});
-let total=carrinho.reduce((soma,item)=>soma+item.preco,0);
-document.getElementById('total').textContent=total.toFixed(2).replace('.',',');
+
+  document.getElementById('quantidade').textContent =
+    carrinho.length;
+
+  const lista = document.getElementById('itens');
+  lista.innerHTML = '';
+
+  if(carrinho.length === 0){
+    lista.innerHTML = '<li>Nenhum produto adicionado.</li>';
+  }
+
+  carrinho.forEach(item => {
+
+    const li = document.createElement('li');
+
+    li.textContent = item.nome + ' - ' +
+      item.preco.toLocaleString('pt-BR',{
+        style:'currency',
+        currency:'BRL'
+      });
+
+    lista.appendChild(li);
+
+  });
+
+  const total = carrinho.reduce(
+    (soma,item) => soma + item.preco,0
+  );
+
+  document.getElementById('total').textContent =
+    total.toFixed(2).replace('.',',');
+
 }
-function buscar(){
-let termo=document.getElementById('busca').value.toLowerCase();
-document.querySelectorAll('.produto').forEach(p=>{
-p.style.display=p.dataset.nome.includes(termo)?'flex':'none';
-});
-}
+
+document.getElementById('busca').addEventListener(
+  'input',function(){
+
+    const termo = this.value.toLowerCase();
+
+    document.querySelectorAll('.produto').forEach(item => {
+
+      item.style.display =
+        item.dataset.nome.includes(termo) ? 'flex' : 'none';
+
+    });
+
+  }
+);
+
 function finalizar(){
-if(!carrinho.length){
-alert('Adicione pelo menos um produto ao carrinho.');
-return;
+
+  if(!carrinho.length){
+    alert('Adicione pelo menos um produto ao carrinho.');
+    return;
+  }
+
+  const total = carrinho.reduce(
+    (soma,item) => soma + item.preco,0
+  );
+
+  alert(
+    'Carrinho preparado! Total: ' +
+    total.toLocaleString('pt-BR',{
+      style:'currency',
+      currency:'BRL'
+    })
+  );
+
 }
-alert('Pedido preparado! Total: R$ '+carrinho.reduce((s,i)=>s+i.preco,0).toFixed(2).replace('.',','));
-}
+
+carregarProdutos();
+
 </script>
 </body>
 </html>
