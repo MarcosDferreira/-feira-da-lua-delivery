@@ -35,7 +35,7 @@ main{max-width:700px;margin:auto;padding:18px}
 
 h2,h3{color:#fff}
 
-input,select{
+input{
  width:100%;
  padding:13px;
  margin:7px 0 14px;
@@ -56,7 +56,7 @@ button{
  cursor:pointer;
 }
 
-.barraca,.carrinho,.painel,.produto-admin{
+.barraca,.carrinho{
  background:#fff;
  color:#102044;
  padding:16px;
@@ -96,14 +96,12 @@ button{
 
 .produto button{width:100%}
 
-.finalizar,.verde{
+.finalizar{
  width:100%;
  background:#10265a;
  color:white;
  margin-top:10px;
 }
-
-.oculto{display:none!important}
 
 footer{
  text-align:center;
@@ -117,53 +115,20 @@ footer{
  color:#dce4ff;
 }
 
-.produto-admin{
- border:1px solid #ddd;
- padding:12px;
- margin:10px 0;
+.link-admin{
+ margin-top:15px;
+ font-size:12px;
 }
 
-.acoes{display:flex;gap:8px;margin-top:10px}
-.acoes button{flex:1}
-
-.editar{background:#10265a;color:white}
-.excluir{background:#c62828;color:white}
-.remover-foto{background:#c62828;color:white;width:100%;margin-top:8px}
-
-.cancelar{
- background:#777;
- color:white;
- width:100%;
- margin-top:8px;
+.link-admin a{
+ color:#dce4ff;
+ text-decoration:none;
+ opacity:.8;
 }
 
-#mensagemAdmin{
- font-weight:bold;
- color:#176b3a;
-}
-
-#previewFoto{
- display:block;
- max-width:100%;
- width:180px;
- max-height:180px;
- object-fit:cover;
- border-radius:10px;
- margin:5px 0 15px;
-}
-
-.foto-admin{
- width:75px;
- height:75px;
- object-fit:cover;
- border-radius:8px;
- margin:8px 0;
-}
-
-hr{
- border:0;
- border-top:1px solid #e5e9f1;
- margin:20px 0;
+.link-admin a:hover{
+ text-decoration:underline;
+ opacity:1;
 }
 
 @media(max-width:480px){
@@ -182,7 +147,7 @@ hr{
 
 <main>
 
-<input id="busca" placeholder="Buscar produtos ou barracas...">
+<input id="busca" placeholder="Buscar produtos ou barracas..." aria-label="Buscar produtos ou barracas">
 
 <h2>Conheça nossas barracas</h2>
 <div id="vitrine">Carregando produtos...</div>
@@ -194,9 +159,18 @@ hr{
 <button class="finalizar" onclick="finalizar()">Finalizar pedido</button>
 </section>
 
+</main>
+
 <footer>
  Feira da Lua de Ribeirão Grande
- <div class="patrocinio">Patrocínio: LEGADU Festas &amp; Eventos</div>
+
+ <div class="patrocinio">
+  Patrocínio: LEGADU Festas &amp; Eventos
+ </div>
+
+ <div class="link-admin">
+  <a href="admin.html">Área administrativa</a>
+ </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -205,47 +179,14 @@ hr{
 const SUPABASE_URL='https://bnnfplpccsxaaztgbxkr.supabase.co';
 const SUPABASE_KEY='sb_publishable_dws08TQirwdC5MI3UITfog_AWVc8eL5';
 
-const banco=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-
-const BUCKET='Produto';
+const banco=window.supabase.createClient(
+ SUPABASE_URL,
+ SUPABASE_KEY
+);
 
 let carrinho=[];
 let produtos=[];
 let barracas=[];
-let produtoEditando=null;
-let arquivoFotoSelecionado=null;
-
-document.getElementById('fotoProduto').addEventListener('change',function(){
- const arquivo=this.files[0];
- const preview=document.getElementById('previewFoto');
-
- arquivoFotoSelecionado=arquivo||null;
-
- if(!arquivo){
-  preview.src='';
-  preview.classList.add('oculto');
-  return;
- }
-
- if(!['image/jpeg','image/png','image/webp'].includes(arquivo.type)){
-  alert('Escolha uma imagem JPG, PNG ou WEBP.');
-  this.value='';
-  arquivoFotoSelecionado=null;
-  preview.classList.add('oculto');
-  return;
- }
-
- if(arquivo.size>5*1024*1024){
-  alert('A foto deve ter no máximo 5 MB.');
-  this.value='';
-  arquivoFotoSelecionado=null;
-  preview.classList.add('oculto');
-  return;
- }
-
- preview.src=URL.createObjectURL(arquivo);
- preview.classList.remove('oculto');
-});
 
 async function carregarProdutos(){
  const vitrine=document.getElementById('vitrine');
@@ -337,10 +278,6 @@ async function carregarProdutos(){
 
   aplicarBusca();
 
-  if(!document.getElementById('administracao').classList.contains('oculto')){
-   renderizarProdutosAdmin();
-  }
-
  }catch(e){
   console.error(e);
   vitrine.textContent='Erro ao carregar produtos. Atualize a página.';
@@ -372,319 +309,6 @@ function aplicarBusca(){
 
 document.getElementById('busca').addEventListener('input',aplicarBusca);
 
-function renderizarProdutosAdmin(){
- const lista=document.getElementById('listaAdmin');
- const campoPesquisa=document.getElementById('pesquisaBarraca');
- const campoFiltro=document.getElementById('filtroBarraca');
-
- if(!lista||!campoPesquisa||!campoFiltro)return;
-
- const pesquisa=campoPesquisa.value.trim().toLowerCase();
- const filtro=campoFiltro.value;
-
- lista.innerHTML='';
-
- const barracasFiltradas=barracas.filter(b=>{
-  const nomeCorresponde=(b.nome||'').toLowerCase().includes(pesquisa);
-  const selecaoCorresponde=!filtro||String(b.id)===filtro;
-  return nomeCorresponde&&selecaoCorresponde;
- });
-
- if(!barracasFiltradas.length){
-  lista.textContent='Nenhuma barraca encontrada.';
-  return;
- }
-
- barracasFiltradas.forEach(b=>{
-  const card=document.createElement('div');
-  card.className='produto-admin';
-
-  const titulo=document.createElement('h3');
-  titulo.textContent=b.nome;
-  card.appendChild(titulo);
-
-  const produtosBarraca=produtos.filter(
-   p=>String(p.feirante_id)===String(b.id)
-  );
-
-  if(!produtosBarraca.length){
-   const vazio=document.createElement('p');
-   vazio.textContent='Nenhum produto cadastrado nesta barraca.';
-   card.appendChild(vazio);
-  }
-
-  produtosBarraca.forEach(p=>{
-   const item=document.createElement('div');
-   item.className='produto-admin';
-
-   const nome=document.createElement('strong');
-   nome.textContent=p.nome;
-
-   const preco=document.createElement('p');
-   preco.textContent=Number(p.preco).toLocaleString(
-    'pt-BR',
-    {style:'currency',currency:'BRL'}
-   );
-
-   const descricao=document.createElement('p');
-   descricao.textContent=p.descricao||'Sem descrição';
-
-   item.append(nome,preco,descricao);
-
-   if(p.imagem_url){
-    const foto=document.createElement('img');
-    foto.className='foto-admin';
-    foto.src=p.imagem_url;
-    foto.alt=p.nome;
-    item.appendChild(foto);
-
-    const remover=document.createElement('button');
-    remover.className='remover-foto';
-    remover.textContent='Excluir foto';
-    remover.onclick=()=>excluirFotoProduto(p.id,p.imagem_url);
-    item.appendChild(remover);
-   }else{
-    const semFoto=document.createElement('p');
-    semFoto.textContent='Produto sem foto.';
-    item.appendChild(semFoto);
-   }
-
-   const acoes=document.createElement('div');
-   acoes.className='acoes';
-
-   const editar=document.createElement('button');
-   editar.className='editar';
-   editar.textContent='Editar';
-   editar.onclick=()=>editarProduto(p.id);
-
-   const excluir=document.createElement('button');
-   excluir.className='excluir';
-   excluir.textContent='Excluir produto';
-   excluir.onclick=()=>excluirProduto(p.id,p.nome);
-
-   acoes.append(editar,excluir);
-   item.appendChild(acoes);
-   card.appendChild(item);
-  });
-
-  lista.appendChild(card);
- });
-}
-
-function obterCaminhoFoto(url){
- if(!url)return null;
-
- const marcador='/storage/v1/object/public/'+BUCKET+'/';
- const posicao=url.indexOf(marcador);
-
- if(posicao===-1)return null;
-
- return decodeURIComponent(url.substring(posicao+marcador.length));
-}
-
-async function enviarFoto(produtoId,arquivo,imagemAntiga){
- const extensao=arquivo.name.split('.').pop().toLowerCase();
- const nomeSeguro=extensao.replace(/[^a-z0-9]/g,'')||'jpg';
- const caminho=produtoId+'/'+Date.now()+'-'+Math.random().toString(36).slice(2)+'.'+nomeSeguro;
-
- const {error:erroUpload}=await banco.storage
-  .from(BUCKET)
-  .upload(caminho,arquivo,{
-   cacheControl:'3600',
-   upsert:false,
-   contentType:arquivo.type
-  });
-
- if(erroUpload)throw erroUpload;
-
- const {data}=banco.storage.from(BUCKET).getPublicUrl(caminho);
- const novaUrl=data.publicUrl;
-
- const {error:erroAtualizacao}=await banco
-  .from('produtos')
-  .update({imagem_url:novaUrl})
-  .eq('id',produtoId);
-
- if(erroAtualizacao){
-  await banco.storage.from(BUCKET).remove([caminho]);
-  throw erroAtualizacao;
- }
-
- if(imagemAntiga){
-  const caminhoAntigo=obterCaminhoFoto(imagemAntiga);
-  if(caminhoAntigo){
-   await banco.storage.from(BUCKET).remove([caminhoAntigo]);
-  }
- }
-}
-
-async function excluirFotoProduto(id,url){
- if(!confirm('Deseja excluir a foto deste produto?'))return;
-
- const caminho=obterCaminhoFoto(url);
-
- if(caminho){
-  const {error}=await banco.storage.from(BUCKET).remove([caminho]);
-
-  if(error){
-   mensagem('Erro ao excluir a foto: '+error.message);
-   return;
-  }
- }
-
- const {error}=await banco.from('produtos')
-  .update({imagem_url:null})
-  .eq('id',id);
-
- if(error){
-  mensagem('A foto foi removida do armazenamento, mas não foi possível atualizar o produto: '+error.message);
-  return;
- }
-
- mensagem('Foto excluída com sucesso!');
- await carregarProdutos();
-}
-
-function editarProduto(id){
- const p=produtos.find(item=>Number(item.id)===Number(id));
- if(!p)return;
-
- produtoEditando=p.id;
- arquivoFotoSelecionado=null;
-
- document.getElementById('feiranteProduto').value=p.feirante_id;
- document.getElementById('nomeProduto').value=p.nome;
- document.getElementById('descricaoProduto').value=p.descricao||'';
- document.getElementById('precoProduto').value=p.preco;
- document.getElementById('fotoProduto').value='';
-
- const preview=document.getElementById('previewFoto');
-
- if(p.imagem_url){
-  preview.src=p.imagem_url;
-  preview.classList.remove('oculto');
- }else{
-  preview.src='';
-  preview.classList.add('oculto');
- }
-
- document.getElementById('tituloFormulario').textContent='Editar produto';
- document.getElementById('botaoSalvar').textContent='Salvar alterações';
- document.getElementById('botaoCancelar').classList.remove('oculto');
-
- document.getElementById('tituloFormulario').scrollIntoView({behavior:'smooth'});
-}
-
-function cancelarEdicao(){
- produtoEditando=null;
- arquivoFotoSelecionado=null;
-
- document.getElementById('feiranteProduto').value='';
- document.getElementById('nomeProduto').value='';
- document.getElementById('descricaoProduto').value='';
- document.getElementById('precoProduto').value='';
- document.getElementById('fotoProduto').value='';
-
- const preview=document.getElementById('previewFoto');
- preview.src='';
- preview.classList.add('oculto');
-
- document.getElementById('tituloFormulario').textContent='Cadastrar produto';
- document.getElementById('botaoSalvar').textContent='Cadastrar produto';
- document.getElementById('botaoCancelar').classList.add('oculto');
-}
-
-async function salvarProduto(){
- const feirante_id=document.getElementById('feiranteProduto').value;
- const nome=document.getElementById('nomeProduto').value.trim();
- const descricao=document.getElementById('descricaoProduto').value.trim();
- const preco=Number(document.getElementById('precoProduto').value);
-
- if(!feirante_id||!nome||!preco||preco<=0){
-  alert('Preencha a barraca, o nome e o preço.');
-  return;
- }
-
- const botao=document.getElementById('botaoSalvar');
- botao.disabled=true;
- botao.textContent='Salvando...';
-
- try{
-  let idProduto=produtoEditando;
-  let imagemAntiga=null;
-
-  if(produtoEditando!==null){
-   const produtoAtual=produtos.find(p=>Number(p.id)===Number(produtoEditando));
-   imagemAntiga=produtoAtual?.imagem_url||null;
-
-   const {error}=await banco.from('produtos')
-    .update({
-     feirante_id:Number(feirante_id),
-     nome,
-     descricao,
-     preco
-    })
-    .eq('id',produtoEditando)
-    .eq('ativo',true);
-
-   if(error)throw error;
-
-  }else{
-   const {data,error}=await banco.from('produtos')
-    .insert({
-     feirante_id:Number(feirante_id),
-     nome,
-     descricao,
-     preco,
-     ativo:true
-    })
-    .select('id')
-    .single();
-
-   if(error)throw error;
-   idProduto=data.id;
-  }
-
-  if(arquivoFotoSelecionado){
-   await enviarFoto(idProduto,arquivoFotoSelecionado,imagemAntiga);
-  }
-
-  const editou=produtoEditando!==null;
-
-  cancelarEdicao();
-  mensagem(editou?'Produto atualizado com sucesso!':'Produto cadastrado com sucesso!');
-
-  await carregarProdutos();
-
- }catch(e){
-  console.error(e);
-  mensagem('Erro ao salvar: '+e.message);
- }finally{
-  botao.disabled=false;
-  botao.textContent=produtoEditando!==null?'Salvar alterações':'Cadastrar produto';
- }
-}
-
-async function excluirProduto(id,nome){
- const confirmar=confirm('Deseja realmente retirar "'+nome+'" da vitrine?');
- if(!confirmar)return;
-
- const {error}=await banco.from('produtos')
-  .update({ativo:false})
-  .eq('id',id)
-  .eq('ativo',true);
-
- if(error){
-  mensagem('Erro ao excluir: '+error.message);
-  return;
- }
-
- if(Number(produtoEditando)===Number(id))cancelarEdicao();
-
- mensagem('Produto retirado da vitrine com sucesso!');
- await carregarProdutos();
-}
-
 function adicionar(id,nome,preco){
  carrinho.push({id,nome,preco});
  atualizar();
@@ -714,7 +338,6 @@ function atualizar(){
   total.toFixed(2).replace('.',',');
 }
 
-
 function finalizar(){
  if(!carrinho.length){
   alert('Adicione produtos ao carrinho.');
@@ -723,6 +346,7 @@ function finalizar(){
 
  const nomeCliente=prompt('Qual é o seu nome?');
  if(nomeCliente===null)return;
+
  if(!nomeCliente.trim()){
   alert('Informe seu nome para continuar.');
   return;
@@ -730,12 +354,14 @@ function finalizar(){
 
  const endereco=prompt('Informe o endereço para entrega ou escreva "Retirar na feira".');
  if(endereco===null)return;
+
  if(!endereco.trim()){
   alert('Informe o endereço ou a opção de retirada.');
   return;
  }
 
  const resumo={};
+
  carrinho.forEach(p=>{
   if(!resumo[p.id]){
    resumo[p.id]={nome:p.nome,preco:p.preco,quantidade:0};
@@ -745,7 +371,10 @@ function finalizar(){
 
  const linhas=Object.values(resumo).map(p=>{
   const subtotal=p.preco*p.quantidade;
-  return p.quantidade+'x '+p.nome+' - '+subtotal.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+  return p.quantidade+'x '+p.nome+' - '+subtotal.toLocaleString(
+   'pt-BR',
+   {style:'currency',currency:'BRL'}
+  );
  });
 
  const total=carrinho.reduce((s,p)=>s+p.preco,0);
@@ -759,7 +388,10 @@ function finalizar(){
   'Pedido:',
   ...linhas,
   '',
-  'Total: '+total.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}),
+  'Total: '+total.toLocaleString(
+   'pt-BR',
+   {style:'currency',currency:'BRL'}
+  ),
   '',
   'Aguardo a confirmação. Obrigado!'
  ].join('\n');
@@ -768,111 +400,6 @@ function finalizar(){
  const url='https://wa.me/'+telefone+'?text='+encodeURIComponent(mensagemPedido);
 
  window.open(url,'_blank');
-}
-
-async function entrar(){
- const email=document.getElementById('email').value.trim();
- const senha=document.getElementById('senha').value;
-
- if(!email||!senha){
-  alert('Informe e-mail e senha.');
-  return;
- }
-
- const {data,error}=await banco.auth.signInWithPassword({
-  email,
-  password:senha
- });
-
- if(error){
-  alert('Não foi possível entrar: '+error.message);
-  return;
- }
-
- const {data:admin,error:erroAdmin}=await banco
-  .from('admins')
-  .select('user_id')
-  .eq('user_id',data.user.id)
-  .maybeSingle();
-
- if(erroAdmin||!admin){
-  await banco.auth.signOut();
-  alert('Este usuário não tem permissão de administrador.');
-  return;
- }
-
- document.getElementById('login').classList.add('oculto');
- document.getElementById('administracao').classList.remove('oculto');
- document.getElementById('usuarioLogado').textContent='Acesso liberado: '+email;
-
- await carregarFeirantes();
- await carregarProdutos();
-}
-
-async function sair(){
- await banco.auth.signOut();
- cancelarEdicao();
-
- document.getElementById('login').classList.remove('oculto');
- document.getElementById('administracao').classList.add('oculto');
-}
-
-async function carregarFeirantes(){
- const {data,error}=await banco.from('feirantes')
-  .select('id,nome')
-  .order('nome');
-
- if(error){
-  mensagem(error.message);
-  return;
- }
-
- const select=document.getElementById('feiranteProduto');
- select.innerHTML='<option value="">Selecione a barraca</option>';
-
- const filtro=document.getElementById('filtroBarraca');
- filtro.innerHTML='<option value="">Todas as barracas</option>';
-
- (data||[]).forEach(f=>{
-  const op=document.createElement('option');
-  op.value=f.id;
-  op.textContent=f.nome;
-  select.appendChild(op);
-
-  const opcaoFiltro=document.createElement('option');
-  opcaoFiltro.value=f.id;
-  opcaoFiltro.textContent=f.nome;
-  filtro.appendChild(opcaoFiltro);
- });
-}
-
-async function cadastrarFeirante(){
- const nome=document.getElementById('nomeFeirante').value.trim();
- const responsavel=document.getElementById('responsavel').value.trim();
-
- if(!nome){
-  alert('Informe o nome da barraca.');
-  return;
- }
-
- const {error}=await banco.from('feirantes')
-  .insert({nome,responsavel,ativo:true});
-
- if(error){
-  mensagem('Erro: '+error.message);
-  return;
- }
-
- document.getElementById('nomeFeirante').value='';
- document.getElementById('responsavel').value='';
-
- mensagem('Feirante cadastrado com sucesso!');
- await carregarFeirantes();
- await carregarProdutos();
-}
-
-function mensagem(texto){
- document.getElementById('mensagemAdmin').textContent=texto;
 }
 
 carregarProdutos();
