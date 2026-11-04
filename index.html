@@ -4,174 +4,138 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Feira da Lua Delivery</title>
+
 <style>
-* {
-  box-sizing: border-box;
+*{box-sizing:border-box}
+
+body{
+ margin:0;
+ font-family:Arial,sans-serif;
+ background-color:#071638;
+ color:#fff;
+ background-image:
+ radial-gradient(#ffffff55 1px,transparent 1px),
+ radial-gradient(#ffffff33 1px,transparent 1px);
+ background-size:37px 37px,61px 61px;
+ background-position:0 0,18px 22px;
 }
 
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: #071638;
-  color: #ffffff;
-  background-image:
-    radial-gradient(#ffffff55 1px, transparent 1px),
-    radial-gradient(#ffffff33 1px, transparent 1px);
-  background-size: 37px 37px, 61px 61px;
-  background-position: 0 0, 18px 22px;
+header{
+ background:linear-gradient(180deg,#071638,#10265a);
+ text-align:center;
+ padding:25px 15px;
+ border-bottom:3px solid #df4c91;
 }
 
-header {
-  background: linear-gradient(180deg, #071638, #10265a);
-  color: white;
-  text-align: center;
-  padding: 25px 15px;
-  border-bottom: 3px solid #df4c91;
+header h1{font-size:27px;margin:8px 0}
+header p{color:#f5f5ff}
+
+main{max-width:700px;margin:auto;padding:18px}
+
+h2,h3{color:#fff}
+
+input,select{
+ width:100%;
+ padding:13px;
+ margin:7px 0 14px;
+ border:1px solid #cbd4e7;
+ border-radius:8px;
+ font-size:16px;
+ background:#fff;
+ color:#102044;
 }
 
-header h1 {
-  font-size: 27px;
-  margin: 8px 0;
+button{
+ background:#f2ad35;
+ color:#102044;
+ border:0;
+ padding:12px;
+ border-radius:8px;
+ font-weight:bold;
+ cursor:pointer;
 }
 
-header p {
-  color: #f5f5ff;
+.barraca,.carrinho,.painel,.produto-admin{
+ background:#fff;
+ color:#102044;
+ padding:16px;
+ border-radius:12px;
+ margin:15px 0;
+ box-shadow:0 5px 18px #0003;
 }
 
-main {
-  max-width: 700px;
-  margin: auto;
-  padding: 18px;
+.barraca h3{color:#10265a}
+
+.produto{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ gap:10px;
+ border-top:1px solid #e6eaf2;
+ padding:12px 0;
 }
 
-h2, h3 {
-  color: #ffffff;
+.produto p{color:#53617b}
+.preco{color:#10265a;font-weight:bold}
+
+.finalizar,.verde{
+ width:100%;
+ background:#10265a;
+ color:white;
+ margin-top:10px;
 }
 
-input, select {
-  width: 100%;
-  padding: 13px;
-  margin: 7px 0 14px;
-  border: 1px solid #cbd4e7;
-  border-radius: 8px;
-  font-size: 16px;
-  background: #ffffff;
-  color: #102044;
+.oculto{display:none}
+
+footer{
+ text-align:center;
+ padding:22px 15px;
+ color:#fff;
 }
 
-button {
-  background: #f2ad35;
-  color: #102044;
-  border: 0;
-  padding: 12px;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
+.patrocinio{
+ margin-top:10px;
+ font-size:12px;
+ color:#dce4ff;
 }
 
-.barraca,
-.carrinho,
-.painel,
-.produto-admin {
-  background: #ffffff;
-  color: #102044;
-  padding: 16px;
-  border-radius: 12px;
-  margin: 15px 0;
-  box-shadow: 0 5px 18px #0003;
+.produto-admin{
+ border:1px solid #ddd;
+ padding:12px;
+ margin:10px 0;
 }
 
-.barraca h3 {
-  color: #10265a;
+.acoes{display:flex;gap:8px;margin-top:10px}
+.acoes button{flex:1}
+
+.editar{background:#10265a;color:white}
+.excluir{background:#c62828;color:white}
+
+.cancelar{
+ background:#777;
+ color:white;
+ width:100%;
+ margin-top:8px;
 }
 
-.produto {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  border-top: 1px solid #e6eaf2;
-  padding: 12px 0;
+#mensagemAdmin{
+ font-weight:bold;
+ color:#176b3a;
 }
 
-.produto p {
-  color: #53617b;
+hr{
+ border:0;
+ border-top:1px solid #e5e9f1;
+ margin:20px 0;
 }
 
-.preco {
-  color: #10265a;
-  font-weight: bold;
+@media(max-width:480px){
+ .produto{align-items:flex-start}
+ .produto button{white-space:nowrap}
 }
-
-.finalizar,
-.verde {
-  width: 100%;
-  background: #10265a;
-  color: white;
-  margin-top: 10px;
-}
-
-.oculto {
-  display: none;
-}
-
-footer {
-  text-align: center;
-  padding: 22px 15px;
-  color: #ffffff;
-}
-
-.patrocinio {
-  margin-top: 10px;
-  font-size: 12px;
-  color: #dce4ff;
-}
-
-.produto-admin {
-  border: 1px solid #ddd;
-  padding: 12px;
-  margin: 10px 0;
-}
-
-.acoes {
-  display: flex;
-  gap: 8px;
-  margin-top: 10px;
-}
-
-.acoes button {
-  flex: 1;
-}
-
-.editar {
-  background: #10265a;
-  color: white;
-}
-
-.excluir {
-  background: #c62828;
-  color: white;
-}
-
-.cancelar {
-  background: #777;
-  color: white;
-  width: 100%;
-  margin-top: 8px;
-}
-
-#mensagemAdmin {
-  font-weight: bold;
-  color: #176b3a;
-}
-
-hr {
-  border: 0;
-  border-top: 1px solid #e5e9f1;
-  margin: 20px 0;
- }
 </style>
 </head>
+
 <body>
 
 <header>
@@ -180,7 +144,8 @@ hr {
 </header>
 
 <main>
-<input id="busca" placeholder="Buscar produtos...">
+
+<input id="busca" placeholder="Buscar produtos ou barracas...">
 
 <h2>Conheça nossas barracas</h2>
 <div id="vitrine">Carregando produtos...</div>
@@ -203,6 +168,7 @@ hr {
 </div>
 
 <div id="administracao" class="oculto">
+
 <p id="usuarioLogado"></p>
 <button onclick="sair()">Sair da administração</button>
 
@@ -214,9 +180,11 @@ hr {
 <hr>
 
 <h3 id="tituloFormulario">Cadastrar produto</h3>
+
 <select id="feiranteProduto">
 <option value="">Selecione a barraca</option>
 </select>
+
 <input id="nomeProduto" placeholder="Nome do produto">
 <input id="descricaoProduto" placeholder="Descrição (opcional)">
 <input id="precoProduto" type="number" step="0.01" placeholder="Preço">
@@ -241,13 +209,18 @@ hr {
 </select>
 
 <div id="listaAdmin">Carregando produtos...</div>
+
 </div>
 </section>
 </main>
 
-<footer>Feira da Lua de Ribeirão Grande</footer>
+<footer>
+ Feira da Lua de Ribeirão Grande
+ <div class="patrocinio">Patrocínio: LEGADU Festas &amp; Eventos</div>
+</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
 const SUPABASE_URL='https://bnnfplpccsxaaztgbxkr.supabase.co';
 const SUPABASE_KEY='sb_publishable_dws08TQirwdC5MI3UITfog_AWVc8eL5';
@@ -333,6 +306,8 @@ async function carregarProdutos(){
    vitrine.textContent='Nenhum produto disponível.';
   }
 
+  aplicarBusca();
+
   if(!document.getElementById('administracao')
    .classList.contains('oculto')){
    renderizarProdutosAdmin();
@@ -343,6 +318,31 @@ async function carregarProdutos(){
   vitrine.textContent='Erro ao carregar produtos. Atualize a página.';
  }
 }
+
+function aplicarBusca(){
+ const campo=document.getElementById('busca');
+ const termo=campo.value.trim().toLowerCase();
+
+ document.querySelectorAll('#vitrine .barraca').forEach(barraca=>{
+  const nomeBarraca=barraca.querySelector('h3').textContent.toLowerCase();
+  let encontrou=false;
+
+  barraca.querySelectorAll('.produto').forEach(produto=>{
+   const nomeProduto=produto.dataset.nome||'';
+   const corresponde=!termo||
+    nomeProduto.includes(termo)||
+    nomeBarraca.includes(termo);
+
+   produto.style.display=corresponde?'flex':'none';
+
+   if(corresponde)encontrou=true;
+  });
+
+  barraca.style.display=encontrou?'block':'none';
+ });
+}
+
+document.getElementById('busca').addEventListener('input',aplicarBusca);
 
 function renderizarProdutosAdmin(){
  const lista=document.getElementById('listaAdmin');
@@ -357,12 +357,8 @@ function renderizarProdutosAdmin(){
  lista.innerHTML='';
 
  const barracasFiltradas=barracas.filter(b=>{
-  const nomeCorresponde=(b.nome||'').toLowerCase()
-   .includes(pesquisa);
-
-  const selecaoCorresponde=
-   !filtro||String(b.id)===filtro;
-
+  const nomeCorresponde=(b.nome||'').toLowerCase().includes(pesquisa);
+  const selecaoCorresponde=!filtro||String(b.id)===filtro;
   return nomeCorresponde&&selecaoCorresponde;
  });
 
@@ -428,10 +424,7 @@ function renderizarProdutosAdmin(){
 }
 
 function editarProduto(id){
- const p=produtos.find(
-  item=>Number(item.id)===Number(id)
- );
-
+ const p=produtos.find(item=>Number(item.id)===Number(id));
  if(!p)return;
 
  produtoEditando=p.id;
@@ -445,8 +438,7 @@ function editarProduto(id){
  document.getElementById('botaoSalvar').textContent='Salvar alterações';
  document.getElementById('botaoCancelar').classList.remove('oculto');
 
- document.getElementById('tituloFormulario')
-  .scrollIntoView({behavior:'smooth'});
+ document.getElementById('tituloFormulario').scrollIntoView({behavior:'smooth'});
 }
 
 function cancelarEdicao(){
@@ -477,12 +469,7 @@ async function salvarProduto(){
 
  if(produtoEditando!==null){
   resultado=await banco.from('produtos')
-   .update({
-    feirante_id:Number(feirante_id),
-    nome,
-    descricao,
-    preco
-   })
+   .update({feirante_id:Number(feirante_id),nome,descricao,preco})
    .eq('id',produtoEditando)
    .eq('ativo',true);
  }else{
@@ -509,10 +496,7 @@ async function salvarProduto(){
 }
 
 async function excluirProduto(id,nome){
- const confirmar=confirm(
-  'Deseja realmente retirar "'+nome+'" da vitrine?'
- );
-
+ const confirmar=confirm('Deseja realmente retirar "'+nome+'" da vitrine?');
  if(!confirmar)return;
 
  const {error}=await banco.from('produtos')
@@ -525,9 +509,7 @@ async function excluirProduto(id,nome){
   return;
  }
 
- if(Number(produtoEditando)===Number(id)){
-  cancelarEdicao();
- }
+ if(Number(produtoEditando)===Number(id))cancelarEdicao();
 
  mensagem('Produto retirado da vitrine com sucesso!');
  await carregarProdutos();
@@ -561,14 +543,6 @@ function atualizar(){
  document.getElementById('total').textContent=
   total.toFixed(2).replace('.',',');
 }
-
-document.getElementById('busca').addEventListener('input',function(){
- const termo=this.value.toLowerCase();
-
- document.querySelectorAll('.produto').forEach(p=>{
-  p.style.display=p.dataset.nome.includes(termo)?'flex':'none';
- });
-});
 
 function finalizar(){
  if(!carrinho.length){
@@ -612,8 +586,7 @@ async function entrar(){
 
  document.getElementById('login').classList.add('oculto');
  document.getElementById('administracao').classList.remove('oculto');
- document.getElementById('usuarioLogado').textContent=
-  'Acesso liberado: '+email;
+ document.getElementById('usuarioLogado').textContent='Acesso liberado: '+email;
 
  await carregarFeirantes();
  await carregarProdutos();
@@ -687,5 +660,6 @@ function mensagem(texto){
 
 carregarProdutos();
 </script>
+
 </body>
 </html>
