@@ -12,11 +12,14 @@ header{background:#176b3a;color:white;text-align:center;padding:28px 15px}
 header h1{margin:0 0 8px}
 main{max-width:650px;margin:auto;padding:18px}
 input{width:100%;padding:14px;border:1px solid #ddd;border-radius:9px;font-size:16px;margin-bottom:20px}
-.produto,.carrinho{background:white;padding:16px;border-radius:12px;margin-bottom:12px}
-.produto{display:flex;justify-content:space-between;align-items:center;gap:10px}
-.produto p{color:#666;font-size:13px}
+h2{font-size:20px}
+.barraca{background:#fff;border-radius:12px;padding:16px;margin-bottom:15px}
+.barraca h3{margin:0 0 5px;color:#176b3a}
+.produto{display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:1px solid #eee;padding:14px 0}
+.produto p{color:#666;font-size:13px;margin:5px 0}
 .preco{color:#176b3a;font-weight:bold}
 button{background:#f0a51b;border:0;padding:12px;border-radius:8px;font-weight:bold}
+.carrinho{background:white;padding:16px;border-radius:12px;margin-top:20px}
 .finalizar{width:100%;background:#176b3a;color:white;margin-top:12px;font-size:16px}
 footer{text-align:center;padding:25px;color:#777;font-size:13px}
 </style>
@@ -28,40 +31,57 @@ footer{text-align:center;padding:25px;color:#777;font-size:13px}
 </header>
 <main>
 <input id="busca" placeholder="Buscar produtos..." oninput="buscar()">
-<h2>Produtos disponíveis</h2>
-<div id="produtos">
-<div class="produto" data-nome="pastel">
-<div><strong>Pastel</strong><p>Barraca do Feirante</p><span class="preco">Consulte o preço</span></div>
-<button onclick="adicionar('Pastel')">Adicionar</button>
+<h2>Conheça nossas barracas</h2>
+
+<section class="barraca">
+<h3>DoceEdna</h3>
+<p>Responsável: Edna</p>
+
+<div class="produto" data-nome="bolo de fatia">
+<div>
+<strong>Bolo de fatia</strong>
+<p>DoceEdna</p>
+<span class="preco">R$ 20,00</span>
 </div>
-<div class="produto" data-nome="caldo de cana">
-<div><strong>Caldo de cana</strong><p>Barraca do Feirante</p><span class="preco">Consulte o preço</span></div>
-<button onclick="adicionar('Caldo de cana')">Adicionar</button>
+<button onclick="adicionar('Bolo de fatia',20)">Adicionar</button>
 </div>
-<div class="produto" data-nome="bolo">
-<div><strong>Bolo caseiro</strong><p>Barraca do Feirante</p><span class="preco">Consulte o preço</span></div>
-<button onclick="adicionar('Bolo caseiro')">Adicionar</button>
+
+<div class="produto" data-nome="pão de mel">
+<div>
+<strong>Pão de mel</strong>
+<p>DoceEdna</p>
+<span class="preco">R$ 10,00</span>
 </div>
+<button onclick="adicionar('Pão de mel',10)">Adicionar</button>
 </div>
+</section>
+
 <section class="carrinho">
 <h2>Meu carrinho (<span id="quantidade">0</span>)</h2>
 <ul id="itens"><li>Nenhum produto adicionado.</li></ul>
+<p><strong>Total: R$ <span id="total">0,00</span></strong></p>
 <button class="finalizar" onclick="finalizar()">Finalizar pedido</button>
 </section>
 </main>
 <footer>Feira da Lua de Ribeirão Grande</footer>
+
 <script>
 let carrinho=[];
-function adicionar(nome){
-carrinho.push(nome);
+function adicionar(nome,preco){
+carrinho.push({nome,preco});
+atualizar();
+}
+function atualizar(){
 document.getElementById('quantidade').textContent=carrinho.length;
 let lista=document.getElementById('itens');
 lista.innerHTML='';
-carrinho.forEach(nome=>{
+carrinho.forEach(item=>{
 let li=document.createElement('li');
-li.textContent=nome;
+li.textContent=item.nome+' - R$ '+item.preco.toFixed(2).replace('.',',');
 lista.appendChild(li);
 });
+let total=carrinho.reduce((soma,item)=>soma+item.preco,0);
+document.getElementById('total').textContent=total.toFixed(2).replace('.',',');
 }
 function buscar(){
 let termo=document.getElementById('busca').value.toLowerCase();
@@ -70,8 +90,11 @@ p.style.display=p.dataset.nome.includes(termo)?'flex':'none';
 });
 }
 function finalizar(){
-if(!carrinho.length){alert('Adicione um produto ao carrinho.');return;}
-alert('Pedido preparado! Em breve vamos completar seus dados e a entrega.');
+if(!carrinho.length){
+alert('Adicione pelo menos um produto ao carrinho.');
+return;
+}
+alert('Pedido preparado! Total: R$ '+carrinho.reduce((s,i)=>s+i.preco,0).toFixed(2).replace('.',','));
 }
 </script>
 </body>
