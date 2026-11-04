@@ -780,13 +780,60 @@ function atualizar(){
   total.toFixed(2).replace('.',',');
 }
 
+
 function finalizar(){
  if(!carrinho.length){
   alert('Adicione produtos ao carrinho.');
   return;
  }
 
- alert('Carrinho preparado! O envio de pedidos será configurado na próxima etapa.');
+ const nomeCliente=prompt('Qual é o seu nome?');
+ if(nomeCliente===null)return;
+ if(!nomeCliente.trim()){
+  alert('Informe seu nome para continuar.');
+  return;
+ }
+
+ const endereco=prompt('Informe o endereço para entrega ou escreva "Retirar na feira".');
+ if(endereco===null)return;
+ if(!endereco.trim()){
+  alert('Informe o endereço ou a opção de retirada.');
+  return;
+ }
+
+ const resumo={};
+ carrinho.forEach(p=>{
+  if(!resumo[p.id]){
+   resumo[p.id]={nome:p.nome,preco:p.preco,quantidade:0};
+  }
+  resumo[p.id].quantidade++;
+ });
+
+ const linhas=Object.values(resumo).map(p=>{
+  const subtotal=p.preco*p.quantidade;
+  return p.quantidade+'x '+p.nome+' - '+subtotal.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+ });
+
+ const total=carrinho.reduce((s,p)=>s+p.preco,0);
+
+ const mensagemPedido=[
+  'Olá! Quero fazer um pedido pela Feira da Lua Delivery.',
+  '',
+  'Nome: '+nomeCliente.trim(),
+  'Entrega/retirada: '+endereco.trim(),
+  '',
+  'Pedido:',
+  ...linhas,
+  '',
+  'Total: '+total.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}),
+  '',
+  'Aguardo a confirmação. Obrigado!'
+ ].join('\n');
+
+ const telefone='5515997549326';
+ const url='https://wa.me/'+telefone+'?text='+encodeURIComponent(mensagemPedido);
+
+ window.open(url,'_blank');
 }
 
 async function entrar(){
