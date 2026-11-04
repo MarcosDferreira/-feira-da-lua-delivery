@@ -1,1 +1,78 @@
 
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Feira da Lua Delivery</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial;background:#f4f4f4;color:#222}
+header{background:#176b3a;color:white;text-align:center;padding:28px 15px}
+header h1{margin:0 0 8px}
+main{max-width:650px;margin:auto;padding:18px}
+input{width:100%;padding:14px;border:1px solid #ddd;border-radius:9px;font-size:16px;margin-bottom:20px}
+.produto,.carrinho{background:white;padding:16px;border-radius:12px;margin-bottom:12px}
+.produto{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.produto p{color:#666;font-size:13px}
+.preco{color:#176b3a;font-weight:bold}
+button{background:#f0a51b;border:0;padding:12px;border-radius:8px;font-weight:bold}
+.finalizar{width:100%;background:#176b3a;color:white;margin-top:12px;font-size:16px}
+footer{text-align:center;padding:25px;color:#777;font-size:13px}
+</style>
+</head>
+<body>
+<header>
+<h1>Feira da Lua Delivery</h1>
+<p>Os sabores da nossa feira na sua casa!</p>
+</header>
+<main>
+<input id="busca" placeholder="Buscar produtos..." oninput="buscar()">
+<h2>Produtos disponíveis</h2>
+<div id="produtos">
+<div class="produto" data-nome="pastel">
+<div><strong>Pastel</strong><p>Barraca do Feirante</p><span class="preco">Consulte o preço</span></div>
+<button onclick="adicionar('Pastel')">Adicionar</button>
+</div>
+<div class="produto" data-nome="caldo de cana">
+<div><strong>Caldo de cana</strong><p>Barraca do Feirante</p><span class="preco">Consulte o preço</span></div>
+<button onclick="adicionar('Caldo de cana')">Adicionar</button>
+</div>
+<div class="produto" data-nome="bolo">
+<div><strong>Bolo caseiro</strong><p>Barraca do Feirante</p><span class="preco">Consulte o preço</span></div>
+<button onclick="adicionar('Bolo caseiro')">Adicionar</button>
+</div>
+</div>
+<section class="carrinho">
+<h2>Meu carrinho (<span id="quantidade">0</span>)</h2>
+<ul id="itens"><li>Nenhum produto adicionado.</li></ul>
+<button class="finalizar" onclick="finalizar()">Finalizar pedido</button>
+</section>
+</main>
+<footer>Feira da Lua de Ribeirão Grande</footer>
+<script>
+let carrinho=[];
+function adicionar(nome){
+carrinho.push(nome);
+document.getElementById('quantidade').textContent=carrinho.length;
+let lista=document.getElementById('itens');
+lista.innerHTML='';
+carrinho.forEach(nome=>{
+let li=document.createElement('li');
+li.textContent=nome;
+lista.appendChild(li);
+});
+}
+function buscar(){
+let termo=document.getElementById('busca').value.toLowerCase();
+document.querySelectorAll('.produto').forEach(p=>{
+p.style.display=p.dataset.nome.includes(termo)?'flex':'none';
+});
+}
+function finalizar(){
+if(!carrinho.length){alert('Adicione um produto ao carrinho.');return;}
+alert('Pedido preparado! Em breve vamos completar seus dados e a entrega.');
+}
+</script>
+</body>
+</html>
