@@ -1,0 +1,13 @@
+# Feira da Lua Delivery
+
+Aplicativo de pedidos e entregas da Feira da Lua de Ribeirão Grande.
+
+## Funcionalidades
+
+- Cadastro de feirantes
+- Cadastro de produtos
+- Carrinho com vários produtos
+- Pagamento via Pix ou na entrega
+- Entrega centralizada
+- Taxa de entrega por distância
+- Painel administrativo
