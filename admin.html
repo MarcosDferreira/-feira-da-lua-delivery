@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -8,18 +9,25 @@
 *{box-sizing:border-box}
 body{margin:0;font-family:Arial,sans-serif;background:#071638;color:#fff}
 header{text-align:center;padding:22px;background:#10265a;border-bottom:3px solid #df4c91}
-main{max-width:700px;margin:auto;padding:16px}
-.card{background:#fff;color:#102044;padding:16px;border-radius:12px;margin:15px 0}
+main{max-width:760px;margin:auto;padding:12px}
+.card{background:#fff;color:#102044;padding:16px;border-radius:12px;margin:14px 0}
 h2,h3{color:#10265a}
 input,select{width:100%;padding:13px;margin:7px 0 14px;border:1px solid #cbd4e7;border-radius:8px;font-size:16px}
-button{background:#10265a;color:white;border:0;padding:12px;border-radius:8px;font-weight:bold;width:100%;margin-top:7px}
+button{background:#10265a;color:white;border:0;padding:12px;border-radius:8px;font-weight:bold;width:100%;margin-top:7px;cursor:pointer}
+button:disabled{opacity:.6}
 .verde{background:#176b3a}
 .excluir{background:#c62828}
 .cancelar{background:#777}
-.produto{border:1px solid #ddd;padding:12px;border-radius:8px;margin:12px 0}
+.amarelo{background:#a66b00}
+.azul{background:#2455a4}
+.produto,.pedido{border:1px solid #ddd;padding:12px;border-radius:9px;margin:12px 0}
 .foto{width:100px;height:100px;object-fit:cover;border-radius:8px}
 .oculto{display:none!important}
 #mensagem{font-weight:bold;color:#176b3a}
+.status{display:inline-block;padding:6px 9px;border-radius:6px;background:#e8edf7;color:#10265a;font-weight:bold;font-size:13px}
+.detalhe{background:#f2f5fa;padding:10px;border-radius:7px;margin:8px 0}
+.pequeno{font-size:13px;color:#555}
+.linha{border-top:1px solid #ddd;margin:12px 0}
 footer{text-align:center;padding:20px}
 </style>
 </head>
@@ -39,10 +47,18 @@ footer{text-align:center;padding:20px}
 </section>
 
 <section id="painel" class="oculto">
+
 <div class="card">
 <p id="usuario"></p>
 <button onclick="sair()">Sair da administração</button>
 <button class="cancelar" onclick="location.href='index.html'">Voltar para a loja</button>
+</div>
+
+<div class="card">
+<h2>Pedidos recebidos</h2>
+<p class="pequeno">Os pedidos aparecerão aqui quando a loja estiver conectada ao sistema de pedidos.</p>
+<button class="azul" onclick="carregarPedidos()">Atualizar pedidos</button>
+<div id="listaPedidos">Carregando pedidos...</div>
 </div>
 
 <div class="card">
@@ -54,15 +70,25 @@ footer{text-align:center;padding:20px}
 
 <div class="card">
 <h2 id="tituloProduto">Cadastrar produto</h2>
+
 <select id="feiranteProduto">
 <option value="">Selecione a barraca</option>
 </select>
+
 <input id="nomeProduto" placeholder="Nome do produto">
 <input id="descricaoProduto" placeholder="Descrição">
-<input id="precoProduto" type="number" step="0.01" placeholder="Preço">
+<input id="precoProduto" type="number" step="0.01" min="0.01" placeholder="Preço">
+
+<label><strong>Quantidade em estoque</strong></label>
+<input id="estoqueProduto" type="number" min="0" step="1" value="0">
+
+<label><strong>Estoque mínimo para aviso</strong></label>
+<input id="minimoProduto" type="number" min="0" step="1" value="3">
+
 <label><strong>Foto do produto</strong></label>
 <input id="fotoProduto" type="file" accept="image/jpeg,image/png,image/webp">
 <img id="preview" class="foto oculto" alt="Prévia da foto">
+
 <button class="verde" id="salvar" onclick="salvarProduto()">Cadastrar produto</button>
 <button class="cancelar oculto" id="cancelar" onclick="cancelarEdicao()">Cancelar edição</button>
 <p id="mensagem"></p>
@@ -73,6 +99,7 @@ footer{text-align:center;padding:20px}
 <input id="pesquisa" placeholder="Pesquisar produto ou barraca..." oninput="mostrarProdutos()">
 <div id="lista">Carregando...</div>
 </div>
+
 </section>
 </main>
 
@@ -100,6 +127,7 @@ document.getElementById('fotoProduto').addEventListener('change',function(){
   preview.classList.add('oculto');
   return;
  }
+
  if(!['image/jpeg','image/png','image/webp'].includes(arquivo.type)||arquivo.size>5*1024*1024){
   alert('Escolha uma foto JPG, PNG ou WEBP de até 5 MB.');
   this.value='';
@@ -107,12 +135,26 @@ document.getElementById('fotoProduto').addEventListener('change',function(){
   preview.classList.add('oculto');
   return;
  }
+
  preview.src=URL.createObjectURL(arquivo);
  preview.classList.remove('oculto');
 });
 
 function mensagem(texto){
  document.getElementById('mensagem').textContent=texto;
+}
+
+function moeda(valor){
+ return Number(valor||0).toLocaleString('pt-BR',{
+  style:'currency',currency:'BRL'
+ });
+}
+
+function criarElemento(tag, texto, classe){
+ const el=document.createElement(tag);
+ if(texto!==undefined)el.textContent=texto;
+ if(classe)el.className=classe;
+ return el;
 }
 
 async function entrar(){
@@ -124,7 +166,9 @@ async function entrar(){
   return;
  }
 
- const {data,error}=await banco.auth.signInWithPassword({email,password:senha});
+ const {data,error}=await banco.auth.signInWithPassword({
+  email,password:senha
+ });
 
  if(error){
   alert('Não foi possível entrar: '+error.message);
@@ -148,6 +192,7 @@ async function entrar(){
  document.getElementById('usuario').textContent='Acesso liberado: '+email;
 
  await carregarDados();
+ await carregarPedidos();
 }
 
 async function sair(){
@@ -157,12 +202,18 @@ async function sair(){
 
 async function carregarDados(){
  const [f,p]=await Promise.all([
-  banco.from('feirantes').select('id,nome,responsavel').order('nome'),
-  banco.from('produtos').select('id,feirante_id,nome,preco,descricao,imagem_url').eq('ativo',true)
+  banco.from('feirantes')
+   .select('id,nome,responsavel')
+   .order('nome'),
+
+  banco.from('produtos')
+   .select('id,feirante_id,nome,preco,descricao,imagem_url,estoque,estoque_minimo')
+   .eq('ativo',true)
+   .order('nome')
  ]);
 
  if(f.error||p.error){
-  mensagem('Erro ao carregar dados. Verifique as permissões.');
+  mensagem('Erro ao carregar dados: '+(f.error?.message||p.error?.message));
   return;
  }
 
@@ -210,9 +261,17 @@ async function salvarProduto(){
  const nome=document.getElementById('nomeProduto').value.trim();
  const descricao=document.getElementById('descricaoProduto').value.trim();
  const preco=Number(document.getElementById('precoProduto').value);
+ const estoque=Number(document.getElementById('estoqueProduto').value);
+ const estoque_minimo=Number(document.getElementById('minimoProduto').value);
 
- if(!feirante_id||!nome||!preco||preco<=0){
+ if(!feirante_id||!nome||!Number.isFinite(preco)||preco<=0){
   alert('Preencha a barraca, o nome e o preço.');
+  return;
+ }
+
+ if(!Number.isInteger(estoque)||estoque<0||
+    !Number.isInteger(estoque_minimo)||estoque_minimo<0){
+  alert('Informe quantidades inteiras e não negativas para o estoque.');
   return;
  }
 
@@ -224,19 +283,31 @@ async function salvarProduto(){
   let id=editando;
   let fotoAntiga=null;
 
+  const dados={
+   feirante_id:Number(feirante_id),
+   nome,
+   descricao,
+   preco,
+   estoque,
+   estoque_minimo
+  };
+
   if(editando!==null){
    const atual=produtos.find(p=>Number(p.id)===Number(editando));
    fotoAntiga=atual?.imagem_url||null;
 
-   const {error}=await banco.from('produtos').update({
-    feirante_id:Number(feirante_id),nome,descricao,preco
-   }).eq('id',editando).eq('ativo',true);
+   const {error}=await banco.from('produtos')
+    .update(dados)
+    .eq('id',editando)
+    .eq('ativo',true);
 
    if(error)throw error;
+
   }else{
-   const {data,error}=await banco.from('produtos').insert({
-    feirante_id:Number(feirante_id),nome,descricao,preco,ativo:true
-   }).select('id').single();
+   const {data,error}=await banco.from('produtos')
+    .insert({...dados,ativo:true})
+    .select('id')
+    .single();
 
    if(error)throw error;
    id=data.id;
@@ -301,9 +372,12 @@ function editarProduto(id){
  document.getElementById('nomeProduto').value=p.nome;
  document.getElementById('descricaoProduto').value=p.descricao||'';
  document.getElementById('precoProduto').value=p.preco;
+ document.getElementById('estoqueProduto').value=p.estoque??0;
+ document.getElementById('minimoProduto').value=p.estoque_minimo??3;
  document.getElementById('fotoProduto').value='';
 
  const preview=document.getElementById('preview');
+
  if(p.imagem_url){
   preview.src=p.imagem_url;
   preview.classList.remove('oculto');
@@ -321,10 +395,13 @@ function editarProduto(id){
 function cancelarEdicao(){
  editando=null;
  fotoSelecionada=null;
+
  document.getElementById('feiranteProduto').value='';
  document.getElementById('nomeProduto').value='';
  document.getElementById('descricaoProduto').value='';
  document.getElementById('precoProduto').value='';
+ document.getElementById('estoqueProduto').value=0;
+ document.getElementById('minimoProduto').value=3;
  document.getElementById('fotoProduto').value='';
  document.getElementById('preview').src='';
  document.getElementById('preview').classList.add('oculto');
@@ -340,7 +417,8 @@ function mostrarProdutos(){
 
  const encontrados=produtos.filter(p=>{
   const barraca=feirantes.find(f=>Number(f.id)===Number(p.feirante_id));
-  return p.nome.toLowerCase().includes(termo)||(barraca?.nome||'').toLowerCase().includes(termo);
+  return p.nome.toLowerCase().includes(termo)||
+   (barraca?.nome||'').toLowerCase().includes(termo);
  });
 
  if(!encontrados.length){
@@ -350,19 +428,26 @@ function mostrarProdutos(){
 
  encontrados.forEach(p=>{
   const barraca=feirantes.find(f=>Number(f.id)===Number(p.feirante_id));
-  const card=document.createElement('div');
-  card.className='produto';
+  const card=criarElemento('div',undefined,'produto');
 
-  const nome=document.createElement('h3');
-  nome.textContent=p.nome;
+  card.appendChild(criarElemento('h3',p.nome));
+  card.appendChild(criarElemento('p','Barraca: '+(barraca?.nome||'Não identificada')));
+  card.appendChild(criarElemento('p',moeda(p.preco)));
 
-  const nomeBarraca=document.createElement('p');
-  nomeBarraca.textContent='Barraca: '+(barraca?.nome||'Não identificada');
+  const quantidade=Number(p.estoque||0);
+  const minimo=Number(p.estoque_minimo||0);
 
-  const preco=document.createElement('p');
-  preco.textContent=Number(p.preco).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+  let textoEstoque='Estoque: '+quantidade+' unidade(s)';
+  let classeEstoque='detalhe';
 
-  card.append(nome,nomeBarraca,preco);
+  if(quantidade===0){
+   textoEstoque+=' | ESGOTADO';
+  }else if(quantidade<=minimo){
+   textoEstoque+=' | ÚLTIMAS UNIDADES';
+  }
+
+  card.appendChild(criarElemento('p',textoEstoque,classeEstoque));
+  card.appendChild(criarElemento('p','Aviso de estoque mínimo: '+minimo,'pequeno'));
 
   if(p.imagem_url){
    const img=document.createElement('img');
@@ -371,24 +456,17 @@ function mostrarProdutos(){
    img.alt=p.nome;
    card.appendChild(img);
 
-   const excluirFoto=document.createElement('button');
-   excluirFoto.className='excluir';
-   excluirFoto.textContent='Excluir foto';
+   const excluirFoto=criarElemento('button','Excluir foto','excluir');
    excluirFoto.onclick=()=>removerFoto(p.id,p.imagem_url);
    card.appendChild(excluirFoto);
   }else{
-   const semFoto=document.createElement('p');
-   semFoto.textContent='Produto sem foto.';
-   card.appendChild(semFoto);
+   card.appendChild(criarElemento('p','Produto sem foto.'));
   }
 
-  const editar=document.createElement('button');
-  editar.textContent='Editar produto';
+  const editar=criarElemento('button','Editar produto');
   editar.onclick=()=>editarProduto(p.id);
 
-  const excluir=document.createElement('button');
-  excluir.className='excluir';
-  excluir.textContent='Excluir produto';
+  const excluir=criarElemento('button','Retirar da vitrine','excluir');
   excluir.onclick=()=>excluirProduto(p.id,p.nome);
 
   card.append(editar,excluir);
@@ -396,10 +474,145 @@ function mostrarProdutos(){
  });
 }
 
+async function carregarPedidos(){
+ const lista=document.getElementById('listaPedidos');
+ lista.textContent='Carregando pedidos...';
+
+ const {data,error}=await banco.from('pedidos')
+  .select('id,cliente_nome,cliente_telefone,tipo_entrega,endereco,itens,total,status,criado_em')
+  .order('criado_em',{ascending:false})
+  .limit(100);
+
+ if(error){
+  lista.textContent='Erro ao carregar pedidos: '+error.message;
+  return;
+ }
+
+ lista.innerHTML='';
+
+ if(!data||!data.length){
+  lista.textContent='Nenhum pedido recebido até agora.';
+  return;
+ }
+
+ data.forEach(p=>mostrarPedido(p,lista));
+}
+
+function mostrarPedido(p,lista){
+ const card=criarElemento('div',undefined,'pedido');
+
+ card.appendChild(criarElemento('h3','Pedido #'+p.id));
+ card.appendChild(criarElemento('span',String(p.status||'').toUpperCase(),'status'));
+
+ card.appendChild(criarElemento('p','Cliente: '+(p.cliente_nome||'')));
+ card.appendChild(criarElemento('p','Telefone: '+(p.cliente_telefone||'')));
+
+ const entrega=p.tipo_entrega==='retirada'
+  ?'Retirada na Feira da Lua'
+  :'Entrega no endereço: '+(p.endereco||'Não informado');
+
+ card.appendChild(criarElemento('p',entrega));
+
+ const data=new Date(p.criado_em);
+ card.appendChild(criarElemento('p','Recebido: '+data.toLocaleString('pt-BR'),'pequeno'));
+
+ card.appendChild(criarElemento('div','Produtos','linha'));
+
+ if(Array.isArray(p.itens)){
+  p.itens.forEach(item=>{
+   const nome=item.nome||'Produto';
+   const qtd=Number(item.quantidade||0);
+   const preco=Number(item.preco_unitario||0);
+   card.appendChild(criarElemento(
+    'p',qtd+' x '+nome+' | '+moeda(preco*qtd)
+   ));
+  });
+ }
+
+ card.appendChild(criarElemento('h3','Total: '+moeda(p.total)));
+
+ if(p.status==='novo'){
+  const confirmar=criarElemento('button','Confirmar pedido','verde');
+  confirmar.onclick=()=>confirmarPedido(p.id);
+  card.appendChild(confirmar);
+ }
+
+ if(['confirmado','em_preparo','saiu_entrega'].includes(p.status)){
+  const etapas={
+   confirmado:{proximo:'em_preparo',texto:'Iniciar preparo'},
+   em_preparo:{proximo:'saiu_entrega',texto:'Saiu para entrega'},
+   saiu_entrega:{proximo:'concluido',texto:'Concluir pedido'}
+  };
+
+  const etapa=etapas[p.status];
+  const avancar=criarElemento('button',etapa.texto,'azul');
+  avancar.onclick=()=>atualizarStatus(p.id,etapa.proximo);
+  card.appendChild(avancar);
+ }
+
+ if(['novo','confirmado','em_preparo','saiu_entrega'].includes(p.status)){
+  const cancelar=criarElemento('button','Cancelar pedido','excluir');
+  cancelar.onclick=()=>cancelarPedido(p.id);
+  card.appendChild(cancelar);
+ }
+
+ lista.appendChild(card);
+}
+
+async function confirmarPedido(id){
+ if(!confirm('Confirmar este pedido e dar baixa no estoque?'))return;
+
+ const {error}=await banco.rpc('confirmar_pedido',{
+  p_pedido_id:id
+ });
+
+ if(error){
+  alert('Não foi possível confirmar: '+error.message);
+  return;
+ }
+
+ alert('Pedido confirmado e estoque atualizado!');
+ await carregarPedidos();
+ await carregarDados();
+}
+
+async function cancelarPedido(id){
+ if(!confirm('Deseja cancelar este pedido? Se já foi confirmado, o estoque será devolvido.'))return;
+
+ const {error}=await banco.rpc('cancelar_pedido',{
+  p_pedido_id:id
+ });
+
+ if(error){
+  alert('Não foi possível cancelar: '+error.message);
+  return;
+ }
+
+ alert('Pedido cancelado!');
+ await carregarPedidos();
+ await carregarDados();
+}
+
+async function atualizarStatus(id,status){
+ const {error}=await banco.rpc('atualizar_status_pedido',{
+  p_pedido_id:id,
+  p_novo_status:status
+ });
+
+ if(error){
+  alert('Erro ao atualizar pedido: '+error.message);
+  return;
+ }
+
+ alert('Pedido atualizado!');
+ await carregarPedidos();
+}
+
 async function removerFoto(id,url){
  if(!confirm('Deseja excluir a foto deste produto?'))return;
 
  const caminho=obterCaminhoFoto(url);
+
  if(caminho){
   const {error}=await banco.storage.from(BUCKET).remove([caminho]);
   if(error){
@@ -408,7 +621,9 @@ async function removerFoto(id,url){
   }
  }
 
- const {error}=await banco.from('produtos').update({imagem_url:null}).eq('id',id);
+ const {error}=await banco.from('produtos')
+  .update({imagem_url:null}).eq('id',id);
+
  if(error){
   mensagem('Erro ao atualizar produto: '+error.message);
   return;
@@ -421,7 +636,10 @@ async function removerFoto(id,url){
 async function excluirProduto(id,nome){
  if(!confirm('Deseja retirar "'+nome+'" da vitrine?'))return;
 
- const {error}=await banco.from('produtos').update({ativo:false}).eq('id',id).eq('ativo',true);
+ const {error}=await banco.from('produtos')
+  .update({ativo:false})
+  .eq('id',id)
+  .eq('ativo',true);
 
  if(error){
   mensagem('Erro ao excluir: '+error.message);
