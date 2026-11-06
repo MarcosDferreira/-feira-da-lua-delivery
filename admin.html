@@ -8,142 +8,35 @@
 
 <style>
 *{box-sizing:border-box}
-
-body{
- margin:0;
- font-family:Arial,sans-serif;
- background:#071638;
- color:#fff;
-}
-
-header{
- text-align:center;
- padding:22px;
- background:#10265a;
- border-bottom:3px solid #df4c91;
-}
-
-main{
- max-width:760px;
- margin:auto;
- padding:12px;
-}
-
-.card{
- background:#fff;
- color:#102044;
- padding:16px;
- border-radius:12px;
- margin:14px 0;
-}
-
+body{margin:0;font-family:Arial,sans-serif;background:#071638;color:#fff}
+header{text-align:center;padding:22px;background:#10265a;border-bottom:3px solid #df4c91}
+main{max-width:760px;margin:auto;padding:12px}
+.card{background:#fff;color:#102044;padding:16px;border-radius:12px;margin:14px 0}
 h2,h3{color:#10265a}
-
-input,select{
- width:100%;
- padding:13px;
- margin:7px 0 14px;
- border:1px solid #cbd4e7;
- border-radius:8px;
- font-size:16px;
-}
-
-button{
- background:#10265a;
- color:white;
- border:0;
- padding:12px;
- border-radius:8px;
- font-weight:bold;
- width:100%;
- margin-top:7px;
- cursor:pointer;
-}
-
+input,select{width:100%;padding:13px;margin:7px 0 14px;border:1px solid #cbd4e7;border-radius:8px;font-size:16px}
+button{background:#10265a;color:white;border:0;padding:12px;border-radius:8px;font-weight:bold;width:100%;margin-top:7px;cursor:pointer}
 button:disabled{opacity:.6}
-
 .verde{background:#176b3a}
 .excluir{background:#c62828}
 .cancelar{background:#777}
 .amarelo{background:#a66b00}
 .azul{background:#2455a4}
-
-.produto,.pedido{
- border:1px solid #ddd;
- padding:12px;
- border-radius:9px;
- margin:12px 0;
-}
-
-.foto{
- width:100px;
- height:100px;
- object-fit:cover;
- border-radius:8px;
-}
-
+.produto,.pedido,.frete-item{border:1px solid #ddd;padding:12px;border-radius:9px;margin:12px 0}
+.foto{width:100px;height:100px;object-fit:cover;border-radius:8px}
 .oculto{display:none!important}
-
-#mensagem{
- font-weight:bold;
- color:#176b3a;
-}
-
-.status{
- display:inline-block;
- padding:6px 9px;
- border-radius:6px;
- background:#e8edf7;
- color:#10265a;
- font-weight:bold;
- font-size:13px;
-}
-
-.detalhe{
- background:#f2f5fa;
- padding:10px;
- border-radius:7px;
- margin:8px 0;
-}
-
-.pequeno{
- font-size:13px;
- color:#555;
-}
-
-.linha{
- border-top:1px solid #ddd;
- margin:12px 0;
-}
-
-footer{
- text-align:center;
- padding:20px;
-}
-
-.menu-admin{
- display:grid;
- grid-template-columns:1fr 1fr;
- gap:12px;
- margin:16px 0;
-}
-
-.menu-admin button{
- min-height:115px;
- font-size:18px;
-}
-
+#mensagem{font-weight:bold;color:#176b3a}
+.status{display:inline-block;padding:6px 9px;border-radius:6px;background:#e8edf7;color:#10265a;font-weight:bold;font-size:13px}
+.detalhe{background:#f2f5fa;padding:10px;border-radius:7px;margin:8px 0}
+.pequeno{font-size:13px;color:#555}
+.linha{border-top:1px solid #ddd;margin:12px 0}
+footer{text-align:center;padding:20px}
+.menu-admin{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.menu-admin button{min-height:100px;font-size:17px}
 .area-admin{display:none}
 .area-admin.ativa{display:block}
-
-.voltar{
- background:#777;
- margin-bottom:12px;
-}
-
-@media(max-width:380px){
- .menu-admin{grid-template-columns:1fr}
-}
+.voltar{background:#777;margin-bottom:12px}
+.valor-frete{font-size:19px;font-weight:bold;color:#176b3a}
+@media(max-width:380px){.menu-admin{grid-template-columns:1fr}}
 </style>
 </head>
 
@@ -168,19 +61,17 @@ footer{
 <div class="card">
 <p id="usuario"></p>
 <button onclick="sair()">Sair da administração</button>
-<button class="cancelar" onclick="location.href='index.html'">
-Voltar para a loja
-</button>
+<button class="cancelar" onclick="location.href='index.html'">Voltar para a loja</button>
 </div>
 
 <div id="inicioAdmin">
 <div class="card">
 <h2 style="text-align:center">Painel de controle</h2>
 <p style="text-align:center">Escolha o que deseja acessar:</p>
-
 <div class="menu-admin">
 <button class="verde" onclick="abrirArea('pedidos')">PEDIDOS</button>
 <button class="azul" onclick="abrirArea('loja')">GERENCIAR LOJA</button>
+<button class="amarelo" onclick="abrirArea('fretes')">FRETE POR BAIRRO</button>
 </div>
 </div>
 </div>
@@ -188,12 +79,43 @@ Voltar para a loja
 <section id="areaPedidos" class="area-admin">
 <div class="card">
 <h2>Pedidos recebidos</h2>
-<p class="pequeno">Acompanhe os pedidos feitos pelos clientes da Feira da Lua.</p>
-
+<p class="pequeno">Acompanhe os pedidos feitos pelos clientes.</p>
 <button class="voltar" onclick="voltarInicio()">Voltar ao início</button>
 <button class="azul" onclick="carregarPedidos()">Atualizar pedidos</button>
-
 <div id="listaPedidos">Os pedidos aparecerão aqui.</div>
+</div>
+</section>
+
+<section id="areaFretes" class="area-admin">
+<div class="card">
+<h2>Frete por bairro</h2>
+<p class="pequeno">Cadastre os bairros e defina o valor da entrega. Você pode agrupar vários bairros com o mesmo valor.</p>
+<button class="voltar" onclick="voltarInicio()">Voltar ao início</button>
+
+<h3 id="tituloFrete">Cadastrar frete</h3>
+
+<label><strong>Tipo de entrega</strong></label>
+<select id="tipoFrete" onchange="alterarTipoFrete()">
+<option value="cidade">Bairro de Ribeirão Grande</option>
+<option value="externo">Entrega externa</option>
+</select>
+
+<label><strong>Nome do bairro ou região</strong></label>
+<input id="bairroFrete" placeholder="Ex.: Centro, Ferreira, Paineiras">
+
+<label><strong>Valor do frete (R$)</strong></label>
+<input id="valorFrete" type="number" min="0" step="0.01" placeholder="Ex.: 5,00">
+
+<button class="verde" id="botaoSalvarFrete" onclick="salvarFrete()">Cadastrar frete</button>
+<button class="cancelar oculto" id="botaoCancelarFrete" onclick="cancelarEdicaoFrete()">Cancelar edição</button>
+
+<p id="mensagemFrete"></p>
+</div>
+
+<div class="card">
+<h2>Fretes cadastrados</h2>
+<p class="pequeno">Você pode editar valores ou desativar bairros sem apagar os registros.</p>
+<div id="listaFretes">Carregando fretes...</div>
 </div>
 </section>
 
@@ -214,14 +136,11 @@ Voltar para a loja
 
 <div class="card">
 <h2 id="tituloProduto">Cadastrar produto</h2>
-
 <select id="feiranteProduto">
 <option value="">Selecione a barraca</option>
 </select>
-
 <input id="nomeProduto" placeholder="Nome do produto">
 <input id="descricaoProduto" placeholder="Descrição">
-
 <input id="precoProduto" type="number" step="0.01" min="0.01" placeholder="Preço">
 
 <label><strong>Quantidade em estoque</strong></label>
@@ -232,26 +151,21 @@ Voltar para a loja
 
 <label><strong>Foto do produto</strong></label>
 <input id="fotoProduto" type="file" accept="image/jpeg,image/png,image/webp">
-
 <img id="preview" class="foto oculto" alt="Prévia da foto">
 
 <button class="verde" id="salvar" onclick="salvarProduto()">Cadastrar produto</button>
 <button class="cancelar oculto" id="cancelar" onclick="cancelarEdicao()">Cancelar edição</button>
-
 <p id="mensagem"></p>
 </div>
 
 <div class="card">
 <h2>Produtos cadastrados</h2>
-
 <label><strong>Filtrar por barraca</strong></label>
 <select id="filtroBarraca" onchange="mostrarProdutos()">
 <option value="">Todas as barracas</option>
 </select>
-
 <label><strong>Pesquisar produto</strong></label>
 <input id="pesquisa" placeholder="Digite o nome do produto..." oninput="mostrarProdutos()">
-
 <div id="lista">Carregando...</div>
 </div>
 
@@ -266,7 +180,6 @@ Voltar para a loja
 <script>
 const SUPABASE_URL='https://bnnfplpccsxaaztgbxkr.supabase.co';
 const SUPABASE_KEY='sb_publishable_dws08TQirwdC5MI3UITfog_AWVc8eL5';
-
 const banco=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 const BUCKET='Produto';
 
@@ -274,13 +187,14 @@ let feirantes=[];
 let produtos=[];
 let editando=null;
 let fotoSelecionada=null;
+let fretes=[];
+let freteEditando=null;
 
 /* NAVEGAÇÃO */
 
 function abrirArea(area){
  document.getElementById('inicioAdmin').style.display='none';
- document.getElementById('areaPedidos').classList.remove('ativa');
- document.getElementById('areaLoja').classList.remove('ativa');
+ document.querySelectorAll('.area-admin').forEach(el=>el.classList.remove('ativa'));
 
  if(area==='pedidos'){
   document.getElementById('areaPedidos').classList.add('ativa');
@@ -292,12 +206,16 @@ function abrirArea(area){
   carregarDados();
  }
 
+ if(area==='fretes'){
+  document.getElementById('areaFretes').classList.add('ativa');
+  carregarFretes();
+ }
+
  window.scrollTo({top:0,behavior:'smooth'});
 }
 
 function voltarInicio(){
- document.getElementById('areaPedidos').classList.remove('ativa');
- document.getElementById('areaLoja').classList.remove('ativa');
+ document.querySelectorAll('.area-admin').forEach(el=>el.classList.remove('ativa'));
  document.getElementById('inicioAdmin').style.display='block';
  window.scrollTo({top:0,behavior:'smooth'});
 }
@@ -334,10 +252,7 @@ function mensagem(texto){
 }
 
 function moeda(valor){
- return Number(valor||0).toLocaleString('pt-BR',{
-  style:'currency',
-  currency:'BRL'
- });
+ return Number(valor||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 }
 
 function criarElemento(tag,texto,classe){
@@ -358,17 +273,14 @@ async function entrar(){
   return;
  }
 
- const {data,error}=await banco.auth.signInWithPassword({
-  email,password:senha
- });
+ const {data,error}=await banco.auth.signInWithPassword({email,password:senha});
 
  if(error){
   alert('Não foi possível entrar: '+error.message);
   return;
  }
 
- const {data:admin,error:erroAdmin}=await banco
-  .from('admins')
+ const {data:admin,error:erroAdmin}=await banco.from('admins')
   .select('user_id')
   .eq('user_id',data.user.id)
   .maybeSingle();
@@ -390,18 +302,157 @@ async function sair(){
  location.reload();
 }
 
+/* FRETES */
+
+function alterarTipoFrete(){
+ const tipo=document.getElementById('tipoFrete').value;
+ const campo=document.getElementById('bairroFrete');
+
+ if(tipo==='externo'){
+  campo.value='Externo';
+  campo.disabled=true;
+ }else{
+  campo.disabled=false;
+  if(campo.value==='Externo')campo.value='';
+ }
+}
+
+async function carregarFretes(){
+ const lista=document.getElementById('listaFretes');
+ lista.textContent='Carregando fretes...';
+
+ const {data,error}=await banco.from('frete_bairros')
+  .select('id,bairro,tipo,valor,ativo')
+  .order('tipo')
+  .order('bairro');
+
+ if(error){
+  lista.textContent='Erro ao carregar fretes: '+error.message;
+  return;
+ }
+
+ fretes=data||[];
+ lista.innerHTML='';
+
+ if(!fretes.length){
+  lista.textContent='Nenhum frete cadastrado ainda.';
+  return;
+ }
+
+ fretes.forEach(f=>{
+  const card=criarElemento('div',undefined,'frete-item');
+  card.appendChild(criarElemento('h3',f.tipo==='externo'?'Entrega externa':'Bairro: '+f.bairro));
+  card.appendChild(criarElemento('p','Valor: '+moeda(f.valor),'valor-frete'));
+  card.appendChild(criarElemento('p',f.ativo?'Frete ativo':'Frete desativado','pequeno'));
+
+  const editar=criarElemento('button','Editar frete','azul');
+  editar.onclick=()=>editarFrete(f.id);
+
+  const alternar=criarElemento('button',f.ativo?'Desativar frete':'Ativar frete',f.ativo?'excluir':'verde');
+  alternar.onclick=()=>alternarFrete(f.id,f.ativo);
+
+  card.append(editar,alternar);
+  lista.appendChild(card);
+ });
+}
+
+async function salvarFrete(){
+ const tipo=document.getElementById('tipoFrete').value;
+ const bairro=tipo==='externo'?'Externo':document.getElementById('bairroFrete').value.trim();
+ const valorTexto=document.getElementById('valorFrete').value;
+ const valor=Number(valorTexto);
+
+ if(!bairro){
+  alert('Informe o nome do bairro.');
+  return;
+ }
+
+ if(valorTexto===''||!Number.isFinite(valor)||valor<0){
+  alert('Informe um valor de frete válido.');
+  return;
+ }
+
+ const botao=document.getElementById('botaoSalvarFrete');
+ botao.disabled=true;
+ botao.textContent='Salvando...';
+
+ try{
+  const dados={bairro,tipo,valor,ativo:true};
+  let resultado;
+
+  if(freteEditando!==null){
+   resultado=await banco.from('frete_bairros')
+    .update(dados)
+    .eq('id',freteEditando);
+  }else{
+   resultado=await banco.from('frete_bairros').insert(dados);
+  }
+
+  if(resultado.error)throw resultado.error;
+
+  cancelarEdicaoFrete();
+  document.getElementById('mensagemFrete').textContent='Frete salvo com sucesso!';
+  await carregarFretes();
+
+ }catch(e){
+  document.getElementById('mensagemFrete').textContent='Erro ao salvar frete: '+e.message;
+ }finally{
+  botao.disabled=false;
+  botao.textContent='Cadastrar frete';
+ }
+}
+
+function editarFrete(id){
+ const f=fretes.find(x=>Number(x.id)===Number(id));
+ if(!f)return;
+
+ freteEditando=f.id;
+ document.getElementById('tipoFrete').value=f.tipo;
+ document.getElementById('bairroFrete').value=f.bairro;
+ document.getElementById('valorFrete').value=f.valor;
+ document.getElementById('bairroFrete').disabled=f.tipo==='externo';
+
+ document.getElementById('tituloFrete').textContent='Editar frete';
+ document.getElementById('botaoSalvarFrete').textContent='Salvar alterações';
+ document.getElementById('botaoCancelarFrete').classList.remove('oculto');
+
+ document.getElementById('tituloFrete').scrollIntoView({behavior:'smooth'});
+}
+
+function cancelarEdicaoFrete(){
+ freteEditando=null;
+ document.getElementById('tipoFrete').value='cidade';
+ document.getElementById('bairroFrete').value='';
+ document.getElementById('bairroFrete').disabled=false;
+ document.getElementById('valorFrete').value='';
+ document.getElementById('tituloFrete').textContent='Cadastrar frete';
+ document.getElementById('botaoSalvarFrete').textContent='Cadastrar frete';
+ document.getElementById('botaoCancelarFrete').classList.add('oculto');
+}
+
+async function alternarFrete(id,ativo){
+ const acao=ativo?'desativar':'ativar';
+
+ if(!confirm('Deseja '+acao+' este frete?'))return;
+
+ const {error}=await banco.from('frete_bairros')
+  .update({ativo:!ativo})
+  .eq('id',id);
+
+ if(error){
+  alert('Erro ao atualizar frete: '+error.message);
+  return;
+ }
+
+ await carregarFretes();
+}
+
 /* CARREGAR BARRACAS E PRODUTOS */
 
 async function carregarDados(){
  const [f,p]=await Promise.all([
-  banco.from('feirantes')
-   .select('id,nome,responsavel')
-   .order('nome'),
-
-  banco.from('produtos')
-   .select('id,feirante_id,nome,preco,descricao,imagem_url,estoque,estoque_minimo')
-   .eq('ativo',true)
-   .order('nome')
+  banco.from('feirantes').select('id,nome,responsavel').order('nome'),
+  banco.from('produtos').select('id,feirante_id,nome,preco,descricao,imagem_url,estoque,estoque_minimo').eq('ativo',true).order('nome')
  ]);
 
  if(f.error||p.error){
@@ -422,11 +473,8 @@ async function carregarDados(){
   select.appendChild(op);
  });
 
- /* PREENCHER FILTRO DE BARRACAS */
-
  const filtro=document.getElementById('filtroBarraca');
  const valorAnterior=filtro.value;
-
  filtro.innerHTML='<option value="">Todas as barracas</option>';
 
  feirantes.forEach(f=>{
@@ -436,9 +484,7 @@ async function carregarDados(){
   filtro.appendChild(op);
  });
 
- if(feirantes.some(f=>String(f.id)===valorAnterior)){
-  filtro.value=valorAnterior;
- }
+ if(feirantes.some(f=>String(f.id)===valorAnterior))filtro.value=valorAnterior;
 
  mostrarProdutos();
 }
@@ -454,9 +500,7 @@ async function cadastrarFeirante(){
   return;
  }
 
- const {error}=await banco.from('feirantes').insert({
-  nome,responsavel,ativo:true
- });
+ const {error}=await banco.from('feirantes').insert({nome,responsavel,ativo:true});
 
  if(error){
   mensagem('Erro: '+error.message);
@@ -494,37 +538,26 @@ async function salvarProduto(){
  botao.textContent='Salvando...';
 
  try{
-  let id=editando;
+  const id=editando;
   let fotoAntiga=null;
 
-  const dados={
-   feirante_id:Number(feirante_id),
-   nome,descricao,preco,estoque,estoque_minimo
-  };
+  const dados={feirante_id:Number(feirante_id),nome,descricao,preco,estoque,estoque_minimo};
 
   if(editando!==null){
    const atual=produtos.find(p=>Number(p.id)===Number(editando));
    fotoAntiga=atual?.imagem_url||null;
 
-   const {error}=await banco.from('produtos')
-    .update(dados)
-    .eq('id',editando)
-    .eq('ativo',true);
-
+   const {error}=await banco.from('produtos').update(dados).eq('id',editando).eq('ativo',true);
    if(error)throw error;
   }else{
-   const {data,error}=await banco.from('produtos')
-    .insert({...dados,ativo:true})
-    .select('id')
-    .single();
-
+   const {data,error}=await banco.from('produtos').insert({...dados,ativo:true}).select('id').single();
    if(error)throw error;
-   id=data.id;
+   dados.id=data.id;
   }
 
-  if(fotoSelecionada){
-   await enviarFoto(id,fotoSelecionada,fotoAntiga);
-  }
+  const idProduto=editando!==null?id:dados.id;
+
+  if(fotoSelecionada)await enviarFoto(idProduto,fotoSelecionada,fotoAntiga);
 
   cancelarEdicao();
   mensagem('Produto salvo com sucesso!');
@@ -545,18 +578,14 @@ async function enviarFoto(id,arquivo,fotoAntiga){
  const caminho=id+'/'+Date.now()+'-'+Math.random().toString(36).slice(2)+'.'+extensao;
 
  const {error}=await banco.storage.from(BUCKET).upload(caminho,arquivo,{
-  cacheControl:'3600',
-  upsert:false,
-  contentType:arquivo.type
+  cacheControl:'3600',upsert:false,contentType:arquivo.type
  });
 
  if(error)throw error;
 
  const {data}=banco.storage.from(BUCKET).getPublicUrl(caminho);
 
- const {error:erroBanco}=await banco.from('produtos')
-  .update({imagem_url:data.publicUrl})
-  .eq('id',id);
+ const {error:erroBanco}=await banco.from('produtos').update({imagem_url:data.publicUrl}).eq('id',id);
 
  if(erroBanco){
   await banco.storage.from(BUCKET).remove([caminho]);
@@ -565,9 +594,7 @@ async function enviarFoto(id,arquivo,fotoAntiga){
 
  if(fotoAntiga){
   const caminhoAntigo=obterCaminhoFoto(fotoAntiga);
-  if(caminhoAntigo){
-   await banco.storage.from(BUCKET).remove([caminhoAntigo]);
-  }
+  if(caminhoAntigo)await banco.storage.from(BUCKET).remove([caminhoAntigo]);
  }
 }
 
@@ -607,7 +634,6 @@ function editarProduto(id){
  document.getElementById('tituloProduto').textContent='Editar produto';
  document.getElementById('salvar').textContent='Salvar alterações';
  document.getElementById('cancelar').classList.remove('oculto');
-
  document.getElementById('tituloProduto').scrollIntoView({behavior:'smooth'});
 }
 
@@ -631,26 +657,18 @@ function cancelarEdicao(){
  document.getElementById('cancelar').classList.add('oculto');
 }
 
-/* MOSTRAR PRODUTOS COM FILTRO POR BARRACA */
+/* MOSTRAR PRODUTOS */
 
 function mostrarProdutos(){
  const termo=document.getElementById('pesquisa').value.trim().toLowerCase();
  const barracaSelecionada=document.getElementById('filtroBarraca').value;
  const lista=document.getElementById('lista');
-
  lista.innerHTML='';
 
  const encontrados=produtos.filter(p=>{
   const barraca=feirantes.find(f=>Number(f.id)===Number(p.feirante_id));
-
-  const combinaPesquisa=
-   p.nome.toLowerCase().includes(termo)||
-   (barraca?.nome||'').toLowerCase().includes(termo);
-
-  const combinaBarraca=
-   !barracaSelecionada||
-   String(p.feirante_id)===String(barracaSelecionada);
-
+  const combinaPesquisa=p.nome.toLowerCase().includes(termo)||(barraca?.nome||'').toLowerCase().includes(termo);
+  const combinaBarraca=!barracaSelecionada||String(p.feirante_id)===String(barracaSelecionada);
   return combinaPesquisa&&combinaBarraca;
  });
 
@@ -669,14 +687,10 @@ function mostrarProdutos(){
 
   const quantidade=Number(p.estoque||0);
   const minimo=Number(p.estoque_minimo||0);
-
   let textoEstoque='Estoque: '+quantidade+' unidade(s)';
 
-  if(quantidade===0){
-   textoEstoque+=' | ESGOTADO';
-  }else if(quantidade<=minimo){
-   textoEstoque+=' | ÚLTIMAS UNIDADES';
-  }
+  if(quantidade===0)textoEstoque+=' | ESGOTADO';
+  else if(quantidade<=minimo)textoEstoque+=' | ÚLTIMAS UNIDADES';
 
   card.appendChild(criarElemento('p',textoEstoque,'detalhe'));
   card.appendChild(criarElemento('p','Aviso de estoque mínimo: '+minimo,'pequeno'));
@@ -713,7 +727,7 @@ async function carregarPedidos(){
  lista.textContent='Carregando pedidos...';
 
  const {data,error}=await banco.from('pedidos')
-  .select('id,cliente_nome,cliente_telefone,tipo_entrega,endereco,itens,total,status,criado_em')
+  .select('id,cliente_nome,cliente_telefone,tipo_entrega,endereco,bairro,frete,itens,total,status,criado_em')
   .order('criado_em',{ascending:false})
   .limit(100);
 
@@ -747,6 +761,11 @@ function mostrarPedido(p,lista){
   :'Entrega no endereço: '+(p.endereco||'Não informado');
 
  card.appendChild(criarElemento('p',entrega));
+
+ if(p.tipo_entrega!=='retirada'){
+  card.appendChild(criarElemento('p','Bairro/região: '+(p.bairro||'Não informado')));
+  card.appendChild(criarElemento('p','Frete: '+moeda(p.frete)));
+ }
 
  const data=new Date(p.criado_em);
  card.appendChild(criarElemento('p','Recebido: '+data.toLocaleString('pt-BR'),'pequeno'));
@@ -851,16 +870,13 @@ async function removerFoto(id,url){
 
  if(caminho){
   const {error}=await banco.storage.from(BUCKET).remove([caminho]);
-
   if(error){
    mensagem('Erro ao excluir foto: '+error.message);
    return;
   }
  }
 
- const {error}=await banco.from('produtos')
-  .update({imagem_url:null})
-  .eq('id',id);
+ const {error}=await banco.from('produtos').update({imagem_url:null}).eq('id',id);
 
  if(error){
   mensagem('Erro ao atualizar produto: '+error.message);
