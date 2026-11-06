@@ -36,6 +36,9 @@ footer{text-align:center;padding:20px}
 .area-admin.ativa{display:block}
 .voltar{background:#777;margin-bottom:12px}
 .valor-frete{font-size:19px;font-weight:bold;color:#176b3a}
+.regiao-card{border:1px solid #ccd5e5;padding:13px;border-radius:10px;margin:12px 0}
+.bairro-card{background:#f2f5fa;padding:10px;border-radius:8px;margin:9px 0}
+.botao-pequeno{padding:9px;font-size:14px}
 @media(max-width:380px){.menu-admin{grid-template-columns:1fr}}
 </style>
 </head>
@@ -71,7 +74,7 @@ footer{text-align:center;padding:20px}
 <div class="menu-admin">
 <button class="verde" onclick="abrirArea('pedidos')">PEDIDOS</button>
 <button class="azul" onclick="abrirArea('loja')">GERENCIAR LOJA</button>
-<button class="amarelo" onclick="abrirArea('fretes')">FRETE POR BAIRRO</button>
+<button class="amarelo" onclick="abrirArea('fretes')">FRETE POR REGIÃO</button>
 </div>
 </div>
 </div>
@@ -87,36 +90,68 @@ footer{text-align:center;padding:20px}
 </section>
 
 <section id="areaFretes" class="area-admin">
+
 <div class="card">
-<h2>Frete por bairro</h2>
-<p class="pequeno">Cadastre os bairros e defina o valor da entrega. Você pode agrupar vários bairros com o mesmo valor.</p>
+<h2>Frete por região</h2>
+<p class="pequeno">Cadastre regiões e defina o valor do frete. Depois, vincule os bairros a cada região.</p>
 <button class="voltar" onclick="voltarInicio()">Voltar ao início</button>
 
-<h3 id="tituloFrete">Cadastrar frete</h3>
+<h3 id="tituloRegiao">Cadastrar região</h3>
 
-<label><strong>Tipo de entrega</strong></label>
-<select id="tipoFrete" onchange="alterarTipoFrete()">
-<option value="cidade">Bairro de Ribeirão Grande</option>
-<option value="externo">Entrega externa</option>
-</select>
-
-<label><strong>Nome do bairro ou região</strong></label>
-<input id="bairroFrete" placeholder="Ex.: Centro, Ferreira, Paineiras">
+<label><strong>Nome da região</strong></label>
+<input id="nomeRegiao" placeholder="Ex.: Região Central">
 
 <label><strong>Valor do frete (R$)</strong></label>
-<input id="valorFrete" type="number" min="0" step="0.01" placeholder="Ex.: 5,00">
+<input id="valorRegiao" type="number" min="0" step="0.01" placeholder="Ex.: 5,00">
 
-<button class="verde" id="botaoSalvarFrete" onclick="salvarFrete()">Cadastrar frete</button>
-<button class="cancelar oculto" id="botaoCancelarFrete" onclick="cancelarEdicaoFrete()">Cancelar edição</button>
-
-<p id="mensagemFrete"></p>
+<button class="verde" id="botaoSalvarRegiao" onclick="salvarRegiao()">Cadastrar região</button>
+<button class="cancelar oculto" id="botaoCancelarRegiao" onclick="cancelarEdicaoRegiao()">Cancelar edição</button>
+<p id="mensagemRegiao"></p>
 </div>
 
 <div class="card">
-<h2>Fretes cadastrados</h2>
-<p class="pequeno">Você pode editar valores ou desativar bairros sem apagar os registros.</p>
-<div id="listaFretes">Carregando fretes...</div>
+<h2>Cadastrar bairro</h2>
+
+<label><strong>Região</strong></label>
+<select id="regiaoBairro">
+<option value="">Selecione a região</option>
+</select>
+
+<label><strong>Nome do bairro</strong></label>
+<input id="nomeBairro" placeholder="Ex.: Centro, Nunes, Barreiro">
+
+<button class="verde" id="botaoSalvarBairro" onclick="salvarBairro()">Cadastrar bairro</button>
+<button class="cancelar oculto" id="botaoCancelarBairro" onclick="cancelarEdicaoBairro()">Cancelar edição</button>
+<p id="mensagemBairro"></p>
 </div>
+
+<div class="card">
+<h2>Entrega externa</h2>
+<p class="pequeno">Defina um valor exclusivo para entregas fora das regiões cadastradas.</p>
+
+<label><strong>Valor do frete externo (R$)</strong></label>
+<input id="valorExterno" type="number" min="0" step="0.01" placeholder="Ex.: 20,00">
+
+<button class="verde" onclick="salvarFreteExterno()">Salvar frete externo</button>
+<p id="mensagemExterno"></p>
+</div>
+
+<div class="card">
+<h2>Regiões e bairros cadastrados</h2>
+<div id="listaRegioes">Carregando regiões...</div>
+</div>
+
+<div class="card">
+<h2>Bairros sem região</h2>
+<p class="pequeno">Vincule estes bairros a uma região para organizar o frete.</p>
+<div id="listaBairrosSemRegiao">Carregando bairros...</div>
+</div>
+
+<div class="card">
+<h2>Entrega externa cadastrada</h2>
+<div id="listaFreteExterno">Carregando...</div>
+</div>
+
 </section>
 
 <section id="areaLoja" class="area-admin">
@@ -187,8 +222,11 @@ let feirantes=[];
 let produtos=[];
 let editando=null;
 let fotoSelecionada=null;
+
 let fretes=[];
-let freteEditando=null;
+let regioes=[];
+let regiaoEditando=null;
+let bairroEditando=null;
 
 /* NAVEGAÇÃO */
 
@@ -302,68 +340,188 @@ async function sair(){
  location.reload();
 }
 
-/* FRETES */
+/* FRETES E REGIÕES */
 
-function alterarTipoFrete(){
- const tipo=document.getElementById('tipoFrete').value;
- const campo=document.getElementById('bairroFrete');
+async function carregarFretes(){
+ const lista=document.getElementById('listaRegioes');
+ lista.textContent='Carregando regiões...';
 
- if(tipo==='externo'){
-  campo.value='Externo';
-  campo.disabled=true;
- }else{
-  campo.disabled=false;
-  if(campo.value==='Externo')campo.value='';
+ const [resultadoRegioes,resultadoFretes]=await Promise.all([
+  banco.from('frete_regioes')
+   .select('id,nome,tipo,valor,ativo')
+   .eq('tipo','cidade')
+   .order('nome'),
+
+  banco.from('frete_bairros')
+   .select('id,bairro,tipo,valor,ativo,regiao_id')
+   .order('bairro')
+ ]);
+
+ if(resultadoRegioes.error){
+  lista.textContent='Erro ao carregar regiões: '+resultadoRegioes.error.message;
+  return;
+ }
+
+ if(resultadoFretes.error){
+  lista.textContent='Erro ao carregar bairros: '+resultadoFretes.error.message;
+  return;
+ }
+
+ regioes=resultadoRegioes.data||[];
+ fretes=resultadoFretes.data||[];
+
+ atualizarSelectRegioes();
+ mostrarRegioes();
+ mostrarBairrosSemRegiao();
+ mostrarFreteExterno();
+}
+
+function atualizarSelectRegioes(){
+ const select=document.getElementById('regiaoBairro');
+ const anterior=select.value;
+
+ select.innerHTML='<option value="">Selecione a região</option>';
+
+ regioes.forEach(r=>{
+  if(!r.ativo)return;
+
+  const op=document.createElement('option');
+  op.value=r.id;
+  op.textContent=r.nome+' - '+moeda(r.valor);
+  select.appendChild(op);
+ });
+
+ if(regioes.some(r=>String(r.id)===anterior&&r.ativo)){
+  select.value=anterior;
  }
 }
 
-async function carregarFretes(){
- const lista=document.getElementById('listaFretes');
- lista.textContent='Carregando fretes...';
-
- const {data,error}=await banco.from('frete_bairros')
-  .select('id,bairro,tipo,valor,ativo')
-  .order('tipo')
-  .order('bairro');
-
- if(error){
-  lista.textContent='Erro ao carregar fretes: '+error.message;
-  return;
- }
-
- fretes=data||[];
+function mostrarRegioes(){
+ const lista=document.getElementById('listaRegioes');
  lista.innerHTML='';
 
- if(!fretes.length){
-  lista.textContent='Nenhum frete cadastrado ainda.';
+ if(!regioes.length){
+  lista.textContent='Nenhuma região cadastrada.';
   return;
  }
 
- fretes.forEach(f=>{
+ regioes.forEach(r=>{
+  const card=criarElemento('div',undefined,'regiao-card');
+
+  card.appendChild(criarElemento('h3',r.nome));
+  card.appendChild(criarElemento('p','Frete da região: '+moeda(r.valor),'valor-frete'));
+
+  const bairrosDaRegiao=fretes.filter(f=>
+   f.tipo==='cidade'&&Number(f.regiao_id)===Number(r.id)
+  );
+
+  card.appendChild(criarElemento('p','Bairros vinculados: '+bairrosDaRegiao.length,'pequeno'));
+
+  if(!bairrosDaRegiao.length){
+   card.appendChild(criarElemento('p','Nenhum bairro vinculado ainda.','pequeno'));
+  }
+
+  bairrosDaRegiao.forEach(b=>{
+   const linha=criarElemento('div',undefined,'bairro-card');
+
+   linha.appendChild(criarElemento('strong',b.bairro));
+   linha.appendChild(criarElemento('p','Frete: '+moeda(b.valor)));
+
+   const editar=criarElemento('button','Editar bairro','azul');
+   editar.classList.add('botao-pequeno');
+   editar.onclick=()=>editarBairro(b.id);
+
+   const alternar=criarElemento(
+    'button',
+    b.ativo?'Desativar bairro':'Ativar bairro',
+    b.ativo?'excluir':'verde'
+   );
+   alternar.classList.add('botao-pequeno');
+   alternar.onclick=()=>alternarBairro(b.id,b.ativo);
+
+   linha.append(editar,alternar);
+   card.appendChild(linha);
+  });
+
+  const editarRegiao=criarElemento('button','Editar região e valor','azul');
+  editarRegiao.onclick=()=>editarRegiao(r.id);
+  card.appendChild(editarRegiao);
+
+  lista.appendChild(card);
+ });
+}
+
+function mostrarBairrosSemRegiao(){
+ const lista=document.getElementById('listaBairrosSemRegiao');
+ lista.innerHTML='';
+
+ const semRegiao=fretes.filter(f=>
+  f.tipo==='cidade'&&f.regiao_id===null
+ );
+
+ if(!semRegiao.length){
+  lista.textContent='Todos os bairros estão vinculados a uma região.';
+  return;
+ }
+
+ semRegiao.forEach(b=>{
   const card=criarElemento('div',undefined,'frete-item');
-  card.appendChild(criarElemento('h3',f.tipo==='externo'?'Entrega externa':'Bairro: '+f.bairro));
-  card.appendChild(criarElemento('p','Valor: '+moeda(f.valor),'valor-frete'));
-  card.appendChild(criarElemento('p',f.ativo?'Frete ativo':'Frete desativado','pequeno'));
 
-  const editar=criarElemento('button','Editar frete','azul');
-  editar.onclick=()=>editarFrete(f.id);
+  card.appendChild(criarElemento('h3',b.bairro));
+  card.appendChild(criarElemento('p','Frete atual: '+moeda(b.valor),'valor-frete'));
 
-  const alternar=criarElemento('button',f.ativo?'Desativar frete':'Ativar frete',f.ativo?'excluir':'verde');
-  alternar.onclick=()=>alternarFrete(f.id,f.ativo);
+  const editar=criarElemento('button','Editar e vincular a uma região','azul');
+  editar.onclick=()=>editarBairro(b.id);
+
+  const alternar=criarElemento(
+   'button',
+   b.ativo?'Desativar bairro':'Ativar bairro',
+   b.ativo?'excluir':'verde'
+  );
+  alternar.onclick=()=>alternarBairro(b.id,b.ativo);
 
   card.append(editar,alternar);
   lista.appendChild(card);
  });
 }
 
-async function salvarFrete(){
- const tipo=document.getElementById('tipoFrete').value;
- const bairro=tipo==='externo'?'Externo':document.getElementById('bairroFrete').value.trim();
- const valorTexto=document.getElementById('valorFrete').value;
+function mostrarFreteExterno(){
+ const lista=document.getElementById('listaFreteExterno');
+ lista.innerHTML='';
+
+ const externo=fretes.find(f=>f.tipo==='externo');
+
+ if(!externo){
+  lista.textContent='Nenhum frete externo cadastrado.';
+  return;
+ }
+
+ document.getElementById('valorExterno').value=externo.valor;
+
+ const card=criarElemento('div',undefined,'frete-item');
+ card.appendChild(criarElemento('h3','Entrega externa'));
+ card.appendChild(criarElemento('p','Valor: '+moeda(externo.valor),'valor-frete'));
+ card.appendChild(criarElemento('p',externo.ativo?'Frete ativo':'Frete desativado','pequeno'));
+
+ const alternar=criarElemento(
+  'button',
+  externo.ativo?'Desativar frete externo':'Ativar frete externo',
+  externo.ativo?'excluir':'verde'
+ );
+ alternar.onclick=()=>alternarBairro(externo.id,externo.ativo);
+
+ lista.appendChild(card);
+}
+
+/* CADASTRAR E EDITAR REGIÃO */
+
+async function salvarRegiao(){
+ const nome=document.getElementById('nomeRegiao').value.trim();
+ const valorTexto=document.getElementById('valorRegiao').value;
  const valor=Number(valorTexto);
 
- if(!bairro){
-  alert('Informe o nome do bairro.');
+ if(nome.length<2){
+  alert('Informe o nome da região.');
   return;
  }
 
@@ -372,75 +530,223 @@ async function salvarFrete(){
   return;
  }
 
- const botao=document.getElementById('botaoSalvarFrete');
+ const botao=document.getElementById('botaoSalvarRegiao');
  botao.disabled=true;
  botao.textContent='Salvando...';
 
  try{
-  const dados={bairro,tipo,valor,ativo:true};
+  let idRegiao=regiaoEditando;
+
+  if(regiaoEditando!==null){
+   const {error}=await banco.from('frete_regioes')
+    .update({nome,valor})
+    .eq('id',regiaoEditando);
+
+   if(error)throw error;
+  }else{
+   const {data,error}=await banco.from('frete_regioes')
+    .insert({nome,tipo:'cidade',valor,ativo:true})
+    .select('id')
+    .single();
+
+   if(error)throw error;
+   idRegiao=data.id;
+  }
+
+  const {error:erroBairros}=await banco.from('frete_bairros')
+   .update({valor})
+   .eq('regiao_id',idRegiao)
+   .eq('tipo','cidade');
+
+  if(erroBairros){
+   throw new Error('A região foi salva, mas não foi possível atualizar os fretes dos bairros: '+erroBairros.message);
+  }
+
+  cancelarEdicaoRegiao();
+  document.getElementById('mensagemRegiao').textContent='Região salva. Fretes dos bairros vinculados atualizados!';
+  await carregarFretes();
+
+ }catch(e){
+  document.getElementById('mensagemRegiao').textContent='Erro: '+e.message;
+ }finally{
+  botao.disabled=false;
+  botao.textContent=regiaoEditando!==null?'Salvar alterações':'Cadastrar região';
+ }
+}
+
+function editarRegiao(id){
+ const r=regioes.find(x=>Number(x.id)===Number(id));
+ if(!r)return;
+
+ regiaoEditando=r.id;
+ document.getElementById('nomeRegiao').value=r.nome;
+ document.getElementById('valorRegiao').value=r.valor;
+ document.getElementById('tituloRegiao').textContent='Editar região';
+ document.getElementById('botaoSalvarRegiao').textContent='Salvar alterações';
+ document.getElementById('botaoCancelarRegiao').classList.remove('oculto');
+
+ document.getElementById('tituloRegiao').scrollIntoView({behavior:'smooth'});
+}
+
+function cancelarEdicaoRegiao(){
+ regiaoEditando=null;
+ document.getElementById('nomeRegiao').value='';
+ document.getElementById('valorRegiao').value='';
+ document.getElementById('tituloRegiao').textContent='Cadastrar região';
+ document.getElementById('botaoSalvarRegiao').textContent='Cadastrar região';
+ document.getElementById('botaoCancelarRegiao').classList.add('oculto');
+}
+
+/* CADASTRAR E EDITAR BAIRRO */
+
+async function salvarBairro(){
+ const regiaoId=document.getElementById('regiaoBairro').value;
+ const bairro=document.getElementById('nomeBairro').value.trim();
+
+ if(!regiaoId){
+  alert('Selecione uma região.');
+  return;
+ }
+
+ if(bairro.length<2){
+  alert('Informe o nome do bairro.');
+  return;
+ }
+
+ const regiao=regioes.find(r=>String(r.id)===String(regiaoId));
+
+ if(!regiao){
+  alert('Região não encontrada. Atualize a tela.');
+  return;
+ }
+
+ const botao=document.getElementById('botaoSalvarBairro');
+ botao.disabled=true;
+ botao.textContent='Salvando...';
+
+ try{
+  const dados={
+   bairro,
+   tipo:'cidade',
+   valor:Number(regiao.valor),
+   ativo:true,
+   regiao_id:Number(regiaoId)
+  };
+
   let resultado;
 
-  if(freteEditando!==null){
+  if(bairroEditando!==null){
    resultado=await banco.from('frete_bairros')
     .update(dados)
-    .eq('id',freteEditando);
+    .eq('id',bairroEditando);
   }else{
-   resultado=await banco.from('frete_bairros').insert(dados);
+   resultado=await banco.from('frete_bairros')
+    .insert(dados);
   }
 
   if(resultado.error)throw resultado.error;
 
-  cancelarEdicaoFrete();
-  document.getElementById('mensagemFrete').textContent='Frete salvo com sucesso!';
+  cancelarEdicaoBairro();
+  document.getElementById('mensagemBairro').textContent='Bairro salvo e vinculado à região!';
   await carregarFretes();
 
  }catch(e){
-  document.getElementById('mensagemFrete').textContent='Erro ao salvar frete: '+e.message;
+  document.getElementById('mensagemBairro').textContent='Erro ao salvar bairro: '+e.message;
  }finally{
   botao.disabled=false;
-  botao.textContent='Cadastrar frete';
+  botao.textContent=bairroEditando!==null?'Salvar alterações':'Cadastrar bairro';
  }
 }
 
-function editarFrete(id){
- const f=fretes.find(x=>Number(x.id)===Number(id));
- if(!f)return;
+function editarBairro(id){
+ const b=fretes.find(x=>Number(x.id)===Number(id));
+ if(!b)return;
 
- freteEditando=f.id;
- document.getElementById('tipoFrete').value=f.tipo;
- document.getElementById('bairroFrete').value=f.bairro;
- document.getElementById('valorFrete').value=f.valor;
- document.getElementById('bairroFrete').disabled=f.tipo==='externo';
+ if(b.tipo==='externo'){
+  alert('O frete externo é administrado no campo próprio.');
+  return;
+ }
 
- document.getElementById('tituloFrete').textContent='Editar frete';
- document.getElementById('botaoSalvarFrete').textContent='Salvar alterações';
- document.getElementById('botaoCancelarFrete').classList.remove('oculto');
+ bairroEditando=b.id;
 
- document.getElementById('tituloFrete').scrollIntoView({behavior:'smooth'});
+ document.getElementById('nomeBairro').value=b.bairro;
+ document.getElementById('regiaoBairro').value=b.regiao_id||'';
+
+ document.getElementById('botaoSalvarBairro').textContent='Salvar alterações';
+ document.getElementById('botaoCancelarBairro').classList.remove('oculto');
+
+ document.getElementById('nomeBairro').scrollIntoView({behavior:'smooth'});
 }
 
-function cancelarEdicaoFrete(){
- freteEditando=null;
- document.getElementById('tipoFrete').value='cidade';
- document.getElementById('bairroFrete').value='';
- document.getElementById('bairroFrete').disabled=false;
- document.getElementById('valorFrete').value='';
- document.getElementById('tituloFrete').textContent='Cadastrar frete';
- document.getElementById('botaoSalvarFrete').textContent='Cadastrar frete';
- document.getElementById('botaoCancelarFrete').classList.add('oculto');
+function cancelarEdicaoBairro(){
+ bairroEditando=null;
+ document.getElementById('nomeBairro').value='';
+ document.getElementById('regiaoBairro').value='';
+ document.getElementById('botaoSalvarBairro').textContent='Cadastrar bairro';
+ document.getElementById('botaoCancelarBairro').classList.add('oculto');
 }
 
-async function alternarFrete(id,ativo){
+/* FRETE EXTERNO */
+
+async function salvarFreteExterno(){
+ const texto=document.getElementById('valorExterno').value;
+ const valor=Number(texto);
+
+ if(texto===''||!Number.isFinite(valor)||valor<0){
+  alert('Informe um valor válido para o frete externo.');
+  return;
+ }
+
+ const existente=fretes.find(f=>f.tipo==='externo');
+
+ const botao=document.querySelector('#areaFretes .card:nth-of-type(3) button');
+ botao.disabled=true;
+ botao.textContent='Salvando...';
+
+ try{
+  let resultado;
+
+  if(existente){
+   resultado=await banco.from('frete_bairros')
+    .update({valor,ativo:true,bairro:'Externo'})
+    .eq('id',existente.id);
+  }else{
+   resultado=await banco.from('frete_bairros')
+    .insert({
+     bairro:'Externo',
+     tipo:'externo',
+     valor,
+     ativo:true,
+     regiao_id:null
+    });
+  }
+
+  if(resultado.error)throw resultado.error;
+
+  document.getElementById('mensagemExterno').textContent='Frete externo salvo com sucesso!';
+  await carregarFretes();
+
+ }catch(e){
+  document.getElementById('mensagemExterno').textContent='Erro ao salvar: '+e.message;
+ }finally{
+  botao.disabled=false;
+  botao.textContent='Salvar frete externo';
+ }
+}
+
+/* ATIVAR E DESATIVAR BAIRRO OU FRETE */
+
+async function alternarBairro(id,ativo){
  const acao=ativo?'desativar':'ativar';
 
- if(!confirm('Deseja '+acao+' este frete?'))return;
+ if(!confirm('Deseja '+acao+' este cadastro?'))return;
 
  const {error}=await banco.from('frete_bairros')
   .update({ativo:!ativo})
   .eq('id',id);
 
  if(error){
-  alert('Erro ao atualizar frete: '+error.message);
+  alert('Erro ao atualizar: '+error.message);
   return;
  }
 
@@ -637,7 +943,7 @@ function editarProduto(id){
  document.getElementById('tituloProduto').scrollIntoView({behavior:'smooth'});
 }
 
-/* CANCELAR EDIÇÃO */
+/* CANCELAR EDIÇÃO DE PRODUTO */
 
 function cancelarEdicao(){
  editando=null;
@@ -763,7 +1069,7 @@ function mostrarPedido(p,lista){
  card.appendChild(criarElemento('p',entrega));
 
  if(p.tipo_entrega!=='retirada'){
-  card.appendChild(criarElemento('p','Bairro/região: '+(p.bairro||'Não informado')));
+  card.appendChild(criarElemento('p','Bairro: '+(p.bairro||'Não informado')));
   card.appendChild(criarElemento('p','Frete: '+moeda(p.frete)));
  }
 
