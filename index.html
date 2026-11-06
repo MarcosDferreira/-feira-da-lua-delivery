@@ -10,33 +10,64 @@
 *{box-sizing:border-box}
 
 :root{
- --fundo:#fff8ed;
- --papel:#fffdf8;
- --vermelho:#b83232;
- --vermelho-escuro:#8f2529;
- --laranja:#e58b36;
- --verde:#3f7653;
- --texto:#342b25;
- --suave:#786b60;
- --linha:#f0e2d2;
- --sombra:0 8px 24px rgba(74,43,22,.09);
+ --fundo:#07152f;
+ --fundo-claro:#10264b;
+ --azul:#153b70;
+ --azul-claro:#2464a5;
+ --azul-brilho:#3c83c9;
+ --branco:#ffffff;
+ --papel:#f8fbff;
+ --dourado:#f4c95d;
+ --dourado-escuro:#dba936;
+ --texto:#172b49;
+ --suave:#64758c;
+ --linha:#dce7f3;
+ --sombra:0 8px 24px rgba(0,0,0,.18);
 }
 
 body{
  margin:0;
  font-family:Arial,sans-serif;
  background:var(--fundo);
- color:var(--texto);
+ color:var(--branco);
+ background-image:
+ radial-gradient(#ffffff25 1px,transparent 1px),
+ radial-gradient(#ffffff18 1px,transparent 1px);
+ background-size:55px 55px,85px 85px;
+ background-position:0 0,25px 35px;
 }
 
 header{
  text-align:center;
- padding:24px 16px 28px;
- background:linear-gradient(180deg,#fffdf8 0%,#fff1dc 100%);
- border-bottom:5px solid var(--laranja);
+ padding:25px 16px 30px;
+ background:linear-gradient(180deg,#102b55 0%,#07152f 100%);
+ border-bottom:4px solid var(--dourado);
+ position:relative;
+ overflow:hidden;
 }
 
-/* Área de exibição central do logo original */
+header:before{
+ content:"";
+ position:absolute;
+ width:180px;
+ height:180px;
+ border-radius:50%;
+ background:#f4c95d18;
+ top:-95px;
+ right:-55px;
+}
+
+header:after{
+ content:"";
+ position:absolute;
+ width:120px;
+ height:120px;
+ border-radius:50%;
+ background:#ffffff0d;
+ bottom:-75px;
+ left:-35px;
+}
+
 .logo-recorte{
  width:250px;
  height:132px;
@@ -44,7 +75,9 @@ header{
  margin:0 auto 15px;
  border-radius:16px;
  background:#fff;
- box-shadow:0 5px 18px #4a2b161c;
+ box-shadow:0 5px 22px #0005;
+ position:relative;
+ z-index:1;
 }
 
 .logo-feira{
@@ -59,18 +92,20 @@ header h1{
  font-family:Georgia,serif;
  font-size:clamp(27px,6vw,38px);
  margin:8px 0;
- color:var(--vermelho-escuro);
+ color:var(--dourado);
+ text-shadow:0 2px 8px #0005;
 }
 
 header p{
- font-size:17px;
- color:#634b38;
- margin:9px 0 5px;
+ font-size:16px;
+ color:#fff;
+ margin:10px 0 5px;
+ line-height:1.5;
 }
 
 header span{
  display:block;
- color:var(--verde);
+ color:#f4d98d;
  font-size:13px;
  font-weight:bold;
  margin-top:12px;
@@ -82,28 +117,29 @@ main{
  padding:20px 17px 28px;
 }
 
-h2,h3{color:var(--vermelho-escuro)}
+h2,h3{color:var(--azul)}
 
 main>h2{
  font-family:Georgia,serif;
  font-size:24px;
  margin:16px 0 12px;
+ color:var(--dourado);
 }
 
 #filtro-barracas{
  width:100%;
  padding:15px;
  margin:7px 0 20px;
- border:1px solid #ddc9b3;
+ border:2px solid #d5e3f2;
  border-radius:12px;
  font-size:16px;
- background:#fffdf8;
+ background:#fff;
  color:var(--texto);
- box-shadow:0 3px 10px #4a2b160d;
+ box-shadow:0 3px 10px #0002;
 }
 
 button{
- background:var(--verde);
+ background:var(--azul-claro);
  color:#fff;
  border:0;
  padding:13px;
@@ -111,10 +147,15 @@ button{
  font-weight:bold;
  font-size:15px;
  cursor:pointer;
+ transition:background .2s,transform .2s;
+}
+
+button:active{
+ transform:scale(.98);
 }
 
 button:disabled{
- background:#b8b2aa;
+ background:#aeb9c8;
  color:#fff;
  cursor:not-allowed;
 }
@@ -134,7 +175,8 @@ button:disabled{
  font-size:21px;
  margin:0 0 10px;
  padding-bottom:11px;
- border-bottom:2px solid #f1dfca;
+ border-bottom:2px solid #e5edf7;
+ color:var(--azul);
 }
 
 .produto{
@@ -156,7 +198,7 @@ button:disabled{
  height:112px;
  object-fit:cover;
  border-radius:13px;
- background:#f3eadf;
+ background:#e8eff8;
  flex-shrink:0;
 }
 
@@ -166,7 +208,7 @@ button:disabled{
 }
 
 .info-produto strong{
- color:#3d3027;
+ color:#172b49;
  font-size:16px;
 }
 
@@ -177,15 +219,19 @@ button:disabled{
 }
 
 .preco{
- color:var(--vermelho);
+ color:#b17b12;
  font-weight:bold;
- font-size:18px;
+ font-size:19px;
  margin-top:8px;
 }
 
 .produto button{
  width:100%;
- background:var(--vermelho);
+ background:var(--azul);
+}
+
+.produto button:hover{
+ background:var(--azul-claro);
 }
 
 .estoque{
@@ -196,10 +242,14 @@ button:disabled{
 
 .esgotado{color:#c62828}
 .ultimas{color:#c47b18}
-.disponivel{color:var(--verde)}
+.disponivel{color:#28764c}
+
+.carrinho{
+ border-top:4px solid var(--dourado);
+}
 
 .carrinho h2{
- color:var(--vermelho-escuro);
+ color:var(--azul);
  margin-top:0;
 }
 
@@ -222,16 +272,21 @@ button:disabled{
 
 .item-carrinho button{
  padding:6px 10px;
- background:var(--vermelho);
+ background:#b8323a;
 }
 
 .finalizar{
  width:100%;
- background:var(--vermelho);
+ background:var(--azul);
  color:white;
  margin-top:10px;
  padding:15px;
  font-size:16px;
+ border:2px solid var(--dourado);
+}
+
+.finalizar:hover{
+ background:var(--azul-claro);
 }
 
 #mensagem{
@@ -239,15 +294,15 @@ button:disabled{
  font-weight:bold;
  margin:12px 0;
  overflow-wrap:anywhere;
- color:var(--verde);
+ color:#28764c;
 }
 
 footer{
  text-align:center;
  padding:28px 15px;
  color:#fff;
- background:#382b25;
- border-top:5px solid var(--laranja);
+ background:linear-gradient(180deg,#102b55,#061329);
+ border-top:4px solid var(--dourado);
 }
 
 .patrocinio{
@@ -259,8 +314,9 @@ footer{
 }
 
 .patrocinio p{
- color:#f8e8d7;
+ color:var(--dourado);
  font-size:13px;
+ font-weight:bold;
  margin:0;
 }
 
@@ -277,9 +333,13 @@ footer{
 }
 
 .link-admin a{
- color:#f8e8d7;
+ color:#dceaff;
  text-decoration:none;
- opacity:.85;
+ opacity:.9;
+}
+
+.link-admin a:hover{
+ color:var(--dourado);
 }
 
 @media(max-width:480px){
@@ -318,7 +378,7 @@ footer{
 
  <h1>Feira da Lua Delivery</h1>
 
- <p>Sabores, carinho e produtos da nossa feira direto para você!</p>
+ <p>Os sabores da nossa feira pertinho de você!</p>
 
  <span>Valorize os feirantes de Ribeirão Grande</span>
 </header>
