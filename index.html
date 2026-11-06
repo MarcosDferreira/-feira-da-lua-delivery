@@ -516,11 +516,11 @@ footer{
     </div>
 
     <div class="campo">
-     <label for="clienteBairro">Bairro ou região</label>
-     <select id="clienteBairro">
+     <label for="clienteBairro">Bairro</label>
+     <select id="clienteBairro" required>
       <option value="">Carregando bairros...</option>
      </select>
-     <div class="ajuda">Escolha seu bairro para calcular o frete.</div>
+     <div class="ajuda">Selecione seu bairro. O frete será calculado automaticamente pela região cadastrada.</div>
     </div>
 
    </div>
@@ -593,6 +593,7 @@ let carrinho=[];
 let produtos=[];
 let barracas=[];
 let fretes=[];
+let regioes=[];
 let enviandoPedido=false;
 
 function moeda(valor){
@@ -607,6 +608,7 @@ function valorProdutos(){
 }
 
 function freteSelecionado(){
+
  if(document.getElementById('tipoEntrega').value!=='entrega'){
   return 0;
  }
@@ -668,31 +670,95 @@ async function carregarFretes(){
 
  try{
 
-  const {data,error}=await banco
-   .from('frete_bairros')
-   .select('id,bairro,tipo,valor')
-   .eq('ativo',true)
-   .order('bairro');
+  const [resBairros,resRegioes]=await Promise.all([
 
-  if(error)throw error;
+   banco
+    .from('frete_bairros')
+    .select('id,bairro,tipo,valor,ativo,regiao_id')
+    .eq('ativo',true)
+    .order('bairro'),
 
-  fretes=data||[];
+   banco
+    .from('frete_regioes')
+    .select('id,nome,valor,ativo')
+    .eq('ativo',true)
+    .order('nome')
 
-  seletor.innerHTML='<option value="">Selecione seu bairro ou região</option>';
+  ]);
 
-  const bairrosCidade=fretes.filter(f=>f.tipo==='cidade');
-  const bairrosExternos=fretes.filter(f=>f.tipo==='externo');
+  if(resBairros.error)throw resBairros.error;
+  if(resRegioes.error)throw resRegioes.error;
+
+  regioes=resRegioes.data||[];
+
+  const mapaRegioes=new Map(
+   regioes.map(regiao=>[
+    String(regiao.id),
+    regiao
+   ])
+  );
+
+  fretes=(resBairros.data||[]).reduce((lista,bairro)=>{
+
+   // Entrega externa continua usando seu próprio valor.
+   if(bairro.tipo==='externo'){
+
+    lista.push({
+     ...bairro,
+     valor:Number(bairro.valor)||0,
+     nomeRegiao:'Entrega externa'
+    });
+
+    return lista;
+   }
+
+   // Bairro da cidade precisa estar vinculado
+   // a uma região ativa.
+   if(bairro.tipo==='cidade'&&bairro.regiao_id){
+
+    const regiao=mapaRegioes.get(
+     String(bairro.regiao_id)
+    );
+
+    if(regiao){
+
+     lista.push({
+      ...bairro,
+      valor:Number(regiao.valor)||0,
+      nomeRegiao:regiao.nome
+     });
+
+    }
+   }
+
+   return lista;
+
+  },[]);
+
+  seletor.innerHTML='<option value="">Selecione seu bairro</option>';
+
+  const bairrosCidade=fretes.filter(
+   f=>f.tipo==='cidade'
+  );
+
+  const bairrosExternos=fretes.filter(
+   f=>f.tipo==='externo'
+  );
 
   if(bairrosCidade.length){
 
    const grupo=document.createElement('optgroup');
    grupo.label='Ribeirão Grande';
 
-   bairrosCidade.forEach(f=>{
+   bairrosCidade.forEach(bairro=>{
+
     const opcao=document.createElement('option');
-    opcao.value=String(f.id);
-    opcao.textContent=f.bairro+' - '+moeda(f.valor);
+
+    opcao.value=String(bairro.id);
+    opcao.textContent=bairro.bairro;
+
     grupo.appendChild(opcao);
+
    });
 
    seletor.appendChild(grupo);
@@ -703,18 +769,25 @@ async function carregarFretes(){
    const grupo=document.createElement('optgroup');
    grupo.label='Entrega externa';
 
-   bairrosExternos.forEach(f=>{
+   bairrosExternos.forEach(bairro=>{
+
     const opcao=document.createElement('option');
-    opcao.value=String(f.id);
-    opcao.textContent=f.bairro+' - '+moeda(f.valor);
+
+    opcao.value=String(bairro.id);
+    opcao.textContent=bairro.bairro;
+
     grupo.appendChild(opcao);
+
    });
 
    seletor.appendChild(grupo);
   }
 
   if(!fretes.length){
-   seletor.innerHTML='<option value="">Nenhum frete cadastrado</option>';
+
+   seletor.innerHTML=
+    '<option value="">Nenhum bairro com frete disponível</option>';
+
   }
 
   carregarPerfil();
@@ -722,8 +795,14 @@ async function carregarFretes(){
 
  }catch(e){
 
-  console.error(e);
-  seletor.innerHTML='<option value="">Erro ao carregar bairros</option>';
+  console.error('Erro ao carregar bairros e regiões:',e);
+
+  seletor.innerHTML=
+   '<option value="">Erro ao carregar bairros e regiões</option>';
+
+  fretes=[];
+
+  atualizar();
  }
 }
 
@@ -754,10 +833,14 @@ async function carregarProdutos(){
   filtro.innerHTML='<option value="todas">Todas as barracas</option>';
 
   barracas.forEach(b=>{
+
    const opcao=document.createElement('option');
+
    opcao.value=String(b.id);
    opcao.textContent=b.nome;
+
    filtro.appendChild(opcao);
+
   });
 
   vitrine.innerHTML='';
@@ -771,11 +854,14 @@ async function carregarProdutos(){
    if(!listaBarraca.length)return;
 
    const sec=document.createElement('section');
+
    sec.className='barraca';
    sec.dataset.barraca=String(b.id);
 
    const titulo=document.createElement('h3');
+
    titulo.textContent=b.nome;
+
    sec.appendChild(titulo);
 
    listaBarraca.forEach(p=>{
@@ -789,6 +875,7 @@ async function carregarProdutos(){
     if(p.imagem_url){
 
      const foto=document.createElement('img');
+
      foto.className='foto-produto';
      foto.src=p.imagem_url;
      foto.alt=p.nome;
@@ -833,6 +920,7 @@ async function carregarProdutos(){
     }
 
     info.append(nome,desc,preco,estoque);
+
     conteudo.appendChild(info);
 
     const botao=document.createElement('button');
@@ -849,10 +937,13 @@ async function carregarProdutos(){
     }
 
     item.append(conteudo,botao);
+
     sec.appendChild(item);
+
    });
 
    vitrine.appendChild(sec);
+
   });
 
   if(!vitrine.children.length){
@@ -864,13 +955,16 @@ async function carregarProdutos(){
  }catch(e){
 
   console.error(e);
-  vitrine.textContent='Erro ao carregar produtos. Atualize a página.';
+
+  vitrine.textContent=
+   'Erro ao carregar produtos. Atualize a página.';
  }
 }
 
 function aplicarFiltro(){
 
- const selecionada=document.getElementById('filtro-barracas').value;
+ const selecionada=
+  document.getElementById('filtro-barracas').value;
 
  document.querySelectorAll('#vitrine .barraca').forEach(sec=>{
 
@@ -933,9 +1027,11 @@ function remover(id){
 
 function atualizar(){
 
- document.getElementById('quantidade').textContent=carrinho.length;
+ document.getElementById('quantidade').textContent=
+  carrinho.length;
 
  const lista=document.getElementById('itens');
+
  lista.innerHTML='';
 
  if(!carrinho.length){
@@ -949,14 +1045,17 @@ function atualizar(){
   carrinho.forEach(p=>{
 
    if(!resumo[p.id]){
+
     resumo[p.id]={
      nome:p.nome,
      preco:p.preco,
      quantidade:0
     };
+
    }
 
    resumo[p.id].quantidade++;
+
   });
 
   Object.entries(resumo).forEach(([id,p])=>{
@@ -971,26 +1070,36 @@ function atualizar(){
     moeda(p.preco*p.quantidade);
 
    const botao=document.createElement('button');
+
    botao.textContent='Remover';
    botao.onclick=()=>remover(id);
 
    linha.append(texto,botao);
+
    lista.appendChild(linha);
+
   });
+
  }
 
  const subtotal=valorProdutos();
  const frete=freteSelecionado();
  const total=subtotal+frete;
 
- document.getElementById('subtotal').textContent=moeda(subtotal);
- document.getElementById('frete').textContent=moeda(frete);
- document.getElementById('total').textContent=moeda(total);
+ document.getElementById('subtotal').textContent=
+  moeda(subtotal);
+
+ document.getElementById('frete').textContent=
+  moeda(frete);
+
+ document.getElementById('total').textContent=
+  moeda(total);
 }
 
 function atualizarTipoEntrega(){
 
  const tipo=document.getElementById('tipoEntrega').value;
+
  const campos=document.getElementById('camposEntrega');
 
  campos.style.display=tipo==='entrega'?'block':'none';
@@ -1004,8 +1113,10 @@ document.getElementById('tipoEntrega')
 
 document.getElementById('clienteBairro')
  .addEventListener('change',()=>{
+
   atualizar();
   salvarPerfil();
+
  });
 
 [
@@ -1014,42 +1125,70 @@ document.getElementById('clienteBairro')
  'clienteEndereco'
 ].forEach(id=>{
 
- document.getElementById(id).addEventListener('change',salvarPerfil);
- document.getElementById(id).addEventListener('blur',salvarPerfil);
+ document.getElementById(id).addEventListener(
+  'change',
+  salvarPerfil
+ );
+
+ document.getElementById(id).addEventListener(
+  'blur',
+  salvarPerfil
+ );
 
 });
 
 function validarDados(){
 
- const nome=document.getElementById('clienteNome').value.trim();
- const telefone=document.getElementById('clienteTelefone').value.replace(/\D/g,'');
- const tipo=document.getElementById('tipoEntrega').value;
- const endereco=document.getElementById('clienteEndereco').value.trim();
- const bairroId=document.getElementById('clienteBairro').value;
+ const nome=
+  document.getElementById('clienteNome').value.trim();
+
+ const telefone=
+  document.getElementById('clienteTelefone').value.replace(/\D/g,'');
+
+ const tipo=
+  document.getElementById('tipoEntrega').value;
+
+ const endereco=
+  document.getElementById('clienteEndereco').value.trim();
+
+ const bairroId=
+  document.getElementById('clienteBairro').value;
 
  if(nome.length<2){
+
   alert('Informe seu nome corretamente.');
+
   document.getElementById('clienteNome').focus();
+
   return null;
  }
 
  if(telefone.length<10||telefone.length>13){
+
   alert('Informe um celular válido com DDD.');
+
   document.getElementById('clienteTelefone').focus();
+
   return null;
  }
 
  if(tipo==='entrega'){
 
   if(endereco.length<5){
+
    alert('Informe seu endereço completo.');
+
    document.getElementById('clienteEndereco').focus();
+
    return null;
   }
 
   if(!bairroId){
-   alert('Selecione seu bairro ou região para calcular o frete.');
+
+   alert('Selecione seu bairro. O frete será calculado automaticamente.');
+
    document.getElementById('clienteBairro').focus();
+
    return null;
   }
 
@@ -1058,7 +1197,11 @@ function validarDados(){
   );
 
   if(!bairro){
-   alert('O bairro selecionado não está disponível. Atualize a página.');
+
+   alert('O bairro selecionado não possui uma região de frete ativa. Atualize a página ou entre em contato com a Feira.');
+
+   document.getElementById('clienteBairro').focus();
+
    return null;
   }
  }
@@ -1077,7 +1220,9 @@ async function finalizar(){
  if(enviandoPedido)return;
 
  if(!carrinho.length){
+
   alert('Adicione produtos ao carrinho.');
+
   return;
  }
 
@@ -1090,30 +1235,38 @@ async function finalizar(){
  carrinho.forEach(p=>{
 
   if(!resumo[p.id]){
+
    resumo[p.id]={
     produto_id:p.id,
     quantidade:0,
     nome:p.nome,
     preco:p.preco
    };
+
   }
 
   resumo[p.id].quantidade++;
+
  });
 
  const itensPedido=Object.values(resumo).map(p=>({
+
   produto_id:p.produto_id,
   quantidade:p.quantidade
+
  }));
 
  const botao=document.getElementById('botaoFinalizar');
+
  const mensagem=document.getElementById('mensagem');
 
  enviandoPedido=true;
+
  botao.disabled=true;
  botao.textContent='Registrando pedido...';
 
- mensagem.textContent='Aguarde, estamos registrando seu pedido.';
+ mensagem.textContent=
+  'Aguarde, estamos registrando seu pedido.';
 
  salvarPerfil();
 
@@ -1134,16 +1287,22 @@ async function finalizar(){
   if(error)throw error;
 
   if(!data||!data.pedido_id){
-   throw new Error('O pedido não retornou um número válido.');
+
+   throw new Error(
+    'O pedido não retornou um número válido.'
+   );
   }
 
   const pedidoId=data.pedido_id;
+
   const subtotal=Number(data.subtotal);
   const frete=Number(data.frete);
   const total=Number(data.total);
 
   const bairroSelecionado=cliente.tipo==='entrega'
-   ?fretes.find(f=>String(f.id)===String(cliente.bairroId))
+   ?fretes.find(
+     f=>String(f.id)===String(cliente.bairroId)
+    )
    :null;
 
   const linhas=Object.values(resumo).map(p=>
@@ -1152,20 +1311,37 @@ async function finalizar(){
   );
 
   const mensagemPedido=[
+
    'Olá! Quero fazer um pedido pela Feira da Lua Delivery.',
    '',
    'Pedido número: '+pedidoId,
    'Nome: '+cliente.nome,
    'Telefone: '+cliente.telefone,
+
    'Recebimento: '+(
     cliente.tipo==='retirada'
      ?'Retirada na Feira da Lua'
      :'Entrega em casa'
    ),
+
    ...(cliente.tipo==='entrega'?[
+
     'Endereço: '+cliente.endereco,
-    'Bairro/região: '+(bairroSelecionado?bairroSelecionado.bairro:'')
+
+    'Bairro: '+(
+     bairroSelecionado
+      ?bairroSelecionado.bairro
+      :''
+    ),
+
+    'Região: '+(
+     bairroSelecionado
+      ?bairroSelecionado.nomeRegiao
+      :''
+    )
+
    ]:[]),
+
    '',
    'Pedido:',
    ...linhas,
@@ -1175,6 +1351,7 @@ async function finalizar(){
    'TOTAL: '+moeda(total),
    '',
    'Aguardo a confirmação. Obrigado!'
+
   ].join('\n');
 
   const telefoneFeira='5515997549326';
@@ -1191,6 +1368,7 @@ async function finalizar(){
   );
 
   carrinho=[];
+
   atualizar();
 
   window.location.href=url;
@@ -1203,18 +1381,23 @@ async function finalizar(){
    'Não foi possível registrar o pedido. Tente novamente.';
 
   mensagem.textContent=texto;
+
   alert(texto);
 
  }finally{
 
   enviandoPedido=false;
+
   botao.disabled=false;
+
   botao.textContent='Confirmar pedido';
  }
 }
 
 atualizarTipoEntrega();
+
 carregarFretes();
+
 carregarProdutos();
 </script>
 
