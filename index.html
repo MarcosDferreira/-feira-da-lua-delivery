@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -9,149 +10,224 @@
 *{box-sizing:border-box}
 
 :root{
- --fundo:#071638;
- --azul:#123778;
- --azul-claro:#2464bd;
- --vermelho:#e53945;
- --branco:#fff;
- --texto:#172746;
+ --fundo:#fff8ed;
+ --papel:#fffdf8;
+ --vermelho:#b83232;
+ --vermelho-escuro:#8f2529;
+ --laranja:#e58b36;
+ --verde:#3f7653;
+ --texto:#342b25;
+ --suave:#786b60;
+ --linha:#f0e2d2;
+ --sombra:0 8px 24px rgba(74,43,22,.09);
 }
 
 body{
  margin:0;
  font-family:Arial,sans-serif;
  background:var(--fundo);
- color:var(--branco);
- background-image:
- radial-gradient(#ffffff35 1px,transparent 1px),
- radial-gradient(#ffffff20 1px,transparent 1px);
- background-size:37px 37px,61px 61px;
- background-position:0 0,18px 22px;
+ color:var(--texto);
 }
 
 header{
- background:linear-gradient(180deg,#071638,#102b60);
  text-align:center;
- padding:25px 15px 30px;
- border-bottom:3px solid var(--azul-claro);
+ padding:24px 16px 28px;
+ background:linear-gradient(180deg,#fffdf8 0%,#fff1dc 100%);
+ border-bottom:5px solid var(--laranja);
+}
+
+/* Área de exibição central do logo original */
+.logo-recorte{
+ width:250px;
+ height:132px;
+ overflow:hidden;
+ margin:0 auto 15px;
+ border-radius:16px;
+ background:#fff;
+ box-shadow:0 5px 18px #4a2b161c;
 }
 
 .logo-feira{
- width:210px;
- max-width:75%;
- height:auto;
  display:block;
- margin:0 auto 15px;
+ width:100%;
+ height:100%;
+ object-fit:cover;
+ object-position:center;
 }
 
-header h1{font-size:28px;margin:8px 0;color:#fff}
-header p{color:#e3ebff;font-size:17px;margin:10px 0}
-header span{display:block;color:#fff;font-size:13px;margin-top:12px}
+header h1{
+ font-family:Georgia,serif;
+ font-size:clamp(27px,6vw,38px);
+ margin:8px 0;
+ color:var(--vermelho-escuro);
+}
 
-main{max-width:700px;margin:auto;padding:18px}
-h2,h3{color:#fff}
+header p{
+ font-size:17px;
+ color:#634b38;
+ margin:9px 0 5px;
+}
+
+header span{
+ display:block;
+ color:var(--verde);
+ font-size:13px;
+ font-weight:bold;
+ margin-top:12px;
+}
+
+main{
+ max-width:760px;
+ margin:auto;
+ padding:20px 17px 28px;
+}
+
+h2,h3{color:var(--vermelho-escuro)}
+
+main>h2{
+ font-family:Georgia,serif;
+ font-size:24px;
+ margin:16px 0 12px;
+}
 
 #filtro-barracas{
  width:100%;
  padding:15px;
  margin:7px 0 20px;
- border:2px solid #31558c;
+ border:1px solid #ddc9b3;
  border-radius:12px;
  font-size:16px;
- background:#fff;
- color:#102044;
+ background:#fffdf8;
+ color:var(--texto);
+ box-shadow:0 3px 10px #4a2b160d;
 }
 
-main>h2{font-size:22px;margin:20px 0}
-
 button{
- background:var(--azul-claro);
+ background:var(--verde);
  color:#fff;
  border:0;
  padding:13px;
- border-radius:9px;
+ border-radius:10px;
  font-weight:bold;
  font-size:15px;
  cursor:pointer;
 }
 
-button:disabled{background:#aeb5c2;color:#fff;cursor:not-allowed}
+button:disabled{
+ background:#b8b2aa;
+ color:#fff;
+ cursor:not-allowed;
+}
 
 .barraca,.carrinho{
- background:#fff;
+ background:var(--papel);
  color:var(--texto);
- padding:17px;
- border-radius:15px;
+ padding:18px;
+ border:1px solid var(--linha);
+ border-radius:17px;
  margin:16px 0;
- box-shadow:0 6px 20px #0004;
+ box-shadow:var(--sombra);
 }
 
 .barraca h3{
- color:#123778;
- font-size:20px;
+ font-family:Georgia,serif;
+ font-size:21px;
  margin:0 0 10px;
- padding-bottom:10px;
- border-bottom:2px solid #e7edf7;
+ padding-bottom:11px;
+ border-bottom:2px solid #f1dfca;
 }
 
 .produto{
  display:flex;
  flex-direction:column;
  gap:11px;
- border-top:1px solid #e6eaf2;
+ border-top:1px solid var(--linha);
  padding:17px 0;
 }
 
-.produto-conteudo{display:flex;align-items:center;gap:13px}
+.produto-conteudo{
+ display:flex;
+ align-items:center;
+ gap:14px;
+}
 
 .foto-produto{
- width:105px;
- height:105px;
+ width:112px;
+ height:112px;
  object-fit:cover;
- border-radius:11px;
- background:#e9edf5;
+ border-radius:13px;
+ background:#f3eadf;
  flex-shrink:0;
 }
 
-.info-produto{flex:1;min-width:0}
-.info-produto strong{color:#142b54;font-size:16px}
-.info-produto p{color:#53617b;margin:7px 0;font-size:14px}
+.info-produto{
+ flex:1;
+ min-width:0;
+}
+
+.info-produto strong{
+ color:#3d3027;
+ font-size:16px;
+}
+
+.info-produto p{
+ color:var(--suave);
+ margin:7px 0;
+ font-size:14px;
+}
 
 .preco{
- color:#174b9c;
+ color:var(--vermelho);
  font-weight:bold;
- font-size:17px;
+ font-size:18px;
  margin-top:8px;
 }
 
-.produto button{width:100%;background:#e53945}
-.estoque{font-size:13px;font-weight:bold;margin-top:8px}
-.esgotado{color:#d62828}
-.ultimas{color:#d97706}
-.disponivel{color:#16834a}
+.produto button{
+ width:100%;
+ background:var(--vermelho);
+}
 
-.carrinho h2{color:#123778;margin-top:0}
-.carrinho ul{padding-left:22px;line-height:1.8}
-.carrinho p{color:#172746}
+.estoque{
+ font-size:13px;
+ font-weight:bold;
+ margin-top:8px;
+}
+
+.esgotado{color:#c62828}
+.ultimas{color:#c47b18}
+.disponivel{color:var(--verde)}
+
+.carrinho h2{
+ color:var(--vermelho-escuro);
+ margin-top:0;
+}
+
+.carrinho ul{
+ padding-left:22px;
+ line-height:1.8;
+}
+
+.carrinho p{color:var(--texto)}
 
 .item-carrinho{
  display:flex;
  justify-content:space-between;
  align-items:center;
  gap:10px;
- padding:7px 0;
- border-bottom:1px solid #e6eaf2;
- color:#172746;
+ padding:8px 0;
+ border-bottom:1px solid var(--linha);
+ color:var(--texto);
 }
 
 .item-carrinho button{
- padding:5px 10px;
- background:#e53945;
+ padding:6px 10px;
+ background:var(--vermelho);
 }
 
 .finalizar{
  width:100%;
- background:#e53945;
+ background:var(--vermelho);
  color:white;
  margin-top:10px;
  padding:15px;
@@ -163,15 +239,15 @@ button:disabled{background:#aeb5c2;color:#fff;cursor:not-allowed}
  font-weight:bold;
  margin:12px 0;
  overflow-wrap:anywhere;
- color:#174b9c;
+ color:var(--verde);
 }
 
 footer{
  text-align:center;
  padding:28px 15px;
  color:#fff;
- background:linear-gradient(180deg,#071638,#0d2450);
- border-top:2px solid #244a85;
+ background:#382b25;
+ border-top:5px solid var(--laranja);
 }
 
 .patrocinio{
@@ -182,24 +258,50 @@ footer{
  gap:10px;
 }
 
-.patrocinio p{color:#dce4ff;font-size:13px;margin:0}
+.patrocinio p{
+ color:#f8e8d7;
+ font-size:13px;
+ margin:0;
+}
 
 .logo-legadu{
  width:100%;
- max-width:310px;
+ max-width:270px;
  height:auto;
+ object-fit:contain;
 }
 
-.link-admin{margin-top:18px;font-size:12px}
-.link-admin a{color:#dce4ff;text-decoration:none;opacity:.8}
+.link-admin{
+ margin-top:18px;
+ font-size:12px;
+}
+
+.link-admin a{
+ color:#f8e8d7;
+ text-decoration:none;
+ opacity:.85;
+}
 
 @media(max-width:480px){
- main{padding:13px}
- .foto-produto{width:90px;height:90px}
- .produto-conteudo{align-items:flex-start}
- .logo-feira{width:185px}
- header h1{font-size:25px}
- .barraca,.carrinho{padding:14px}
+ main{padding:14px}
+
+ .foto-produto{
+  width:94px;
+  height:94px;
+ }
+
+ .produto-conteudo{
+  align-items:flex-start;
+ }
+
+ .logo-recorte{
+  width:225px;
+  height:118px;
+ }
+
+ .barraca,.carrinho{
+  padding:14px;
+ }
 }
 </style>
 </head>
@@ -207,13 +309,18 @@ footer{
 <body>
 
 <header>
- <img src="logo-feira-da-lua.jpg"
-      class="logo-feira"
-      alt="Logo Feira da Lua">
+ <div class="logo-recorte">
+  <img
+   src="logo-feira-da-lua.jpg"
+   class="logo-feira"
+   alt="Logo Feira da Lua">
+ </div>
 
  <h1>Feira da Lua Delivery</h1>
- <p>Os sabores da nossa feira na sua casa!</p>
- <span>Compre dos nossos feirantes sem sair de casa!</span>
+
+ <p>Sabores, carinho e produtos da nossa feira direto para você!</p>
+
+ <span>Valorize os feirantes de Ribeirão Grande</span>
 </header>
 
 <main>
@@ -227,20 +334,26 @@ footer{
  <div id="vitrine">Carregando produtos...</div>
 
  <section class="carrinho">
+
   <h2>Meu carrinho (<span id="quantidade">0</span>)</h2>
 
   <div id="itens">
    Nenhum produto adicionado.
   </div>
 
-  <p><strong>Total: R$ <span id="total">0,00</span></strong></p>
+  <p>
+   <strong>Total: R$ <span id="total">0,00</span></strong>
+  </p>
 
   <div id="mensagem"></div>
 
-  <button class="finalizar" id="botaoFinalizar"
-          onclick="finalizar()">
+  <button
+   class="finalizar"
+   id="botaoFinalizar"
+   onclick="finalizar()">
    Finalizar pedido
   </button>
+
  </section>
 
 </main>
@@ -250,9 +363,11 @@ footer{
 
  <div class="patrocinio">
   <p>Patrocínio</p>
-  <img src="logo-legadu.jpg"
-       class="logo-legadu"
-       alt="Logo LEGADU Festas e Eventos">
+
+  <img
+   src="logo-legadu.jpg"
+   class="logo-legadu"
+   alt="Logo LEGADU Festas e Eventos">
  </div>
 
  <div class="link-admin">
@@ -284,10 +399,12 @@ function moeda(valor){
 }
 
 async function carregarProdutos(){
+
  const vitrine=document.getElementById('vitrine');
  const filtro=document.getElementById('filtro-barracas');
 
  try{
+
   const {data:listaBarracas,error:e1}=await banco
    .from('feirantes')
    .select('id,nome,responsavel')
@@ -317,6 +434,7 @@ async function carregarProdutos(){
   vitrine.innerHTML='';
 
   barracas.forEach(b=>{
+
    const listaBarraca=produtos.filter(
     p=>Number(p.feirante_id)===Number(b.id)
    );
@@ -332,6 +450,7 @@ async function carregarProdutos(){
    sec.appendChild(titulo);
 
    listaBarraca.forEach(p=>{
+
     const item=document.createElement('div');
     item.className='produto';
 
@@ -339,11 +458,13 @@ async function carregarProdutos(){
     conteudo.className='produto-conteudo';
 
     if(p.imagem_url){
+
      const foto=document.createElement('img');
      foto.className='foto-produto';
      foto.src=p.imagem_url;
      foto.alt=p.nome;
      foto.loading='lazy';
+
      conteudo.appendChild(foto);
     }
 
@@ -367,12 +488,17 @@ async function carregarProdutos(){
     const minimo=Number(p.estoque_minimo)||0;
 
     if(quantidadeEstoque<=0){
+
      estoque.textContent='ESGOTADO';
      estoque.classList.add('esgotado');
+
     }else if(quantidadeEstoque<=minimo){
+
      estoque.textContent='ÚLTIMAS UNIDADES: '+quantidadeEstoque;
      estoque.classList.add('ultimas');
+
     }else{
+
      estoque.textContent='Disponível';
      estoque.classList.add('disponivel');
     }
@@ -383,9 +509,12 @@ async function carregarProdutos(){
     const botao=document.createElement('button');
 
     if(quantidadeEstoque<=0){
+
      botao.textContent='Esgotado';
      botao.disabled=true;
+
     }else{
+
      botao.textContent='Adicionar';
      botao.onclick=()=>adicionar(p.id);
     }
@@ -404,19 +533,23 @@ async function carregarProdutos(){
   aplicarFiltro();
 
  }catch(e){
+
   console.error(e);
   vitrine.textContent='Erro ao carregar produtos. Atualize a página.';
  }
 }
 
 function aplicarFiltro(){
+
  const selecionada=document.getElementById('filtro-barracas').value;
 
  document.querySelectorAll('#vitrine .barraca').forEach(sec=>{
+
   sec.style.display=
    selecionada==='todas'||sec.dataset.barraca===selecionada
     ?'block'
     :'none';
+
  });
 }
 
@@ -424,6 +557,7 @@ document.getElementById('filtro-barracas')
  .addEventListener('change',aplicarFiltro);
 
 function adicionar(id){
+
  const produto=produtos.find(
   p=>Number(p.id)===Number(id)
  );
@@ -456,6 +590,7 @@ function adicionar(id){
 }
 
 function remover(id){
+
  const indice=carrinho.findIndex(
   p=>Number(p.id)===Number(id)
  );
@@ -468,6 +603,7 @@ function remover(id){
 }
 
 function atualizar(){
+
  document.getElementById('quantidade').textContent=
   carrinho.length;
 
@@ -475,11 +611,15 @@ function atualizar(){
  lista.innerHTML='';
 
  if(!carrinho.length){
+
   lista.textContent='Nenhum produto adicionado.';
+
  }else{
+
   const resumo={};
 
   carrinho.forEach(p=>{
+
    if(!resumo[p.id]){
     resumo[p.id]={
      nome:p.nome,
@@ -492,10 +632,12 @@ function atualizar(){
   });
 
   Object.entries(resumo).forEach(([id,p])=>{
+
    const linha=document.createElement('div');
    linha.className='item-carrinho';
 
    const texto=document.createElement('span');
+
    texto.textContent=
     p.quantidade+'x '+p.nome+' - '+
     moeda(p.preco*p.quantidade);
@@ -516,6 +658,7 @@ function atualizar(){
 }
 
 async function finalizar(){
+
  if(enviandoPedido)return;
 
  if(!carrinho.length){
@@ -524,6 +667,7 @@ async function finalizar(){
  }
 
  const nomeCliente=prompt('Qual é o seu nome?');
+
  if(nomeCliente===null)return;
 
  if(nomeCliente.trim().length<2){
@@ -532,6 +676,7 @@ async function finalizar(){
  }
 
  const telefoneCliente=prompt('Informe seu telefone com DDD:');
+
  if(telefoneCliente===null)return;
 
  const telefoneLimpo=telefoneCliente.replace(/\D/g,'');
@@ -553,9 +698,11 @@ async function finalizar(){
  let endereco='';
 
  if(tipo==='entrega'){
+
   tipoEntrega='entrega';
 
   const resposta=prompt('Informe seu endereço completo:');
+
   if(resposta===null)return;
 
   if(resposta.trim().length<5){
@@ -566,8 +713,11 @@ async function finalizar(){
   endereco=resposta.trim();
 
  }else if(tipo==='retirada'){
+
   tipoEntrega='retirada';
+
  }else{
+
   alert('Digite ENTREGA ou RETIRADA.');
   return;
  }
@@ -575,6 +725,7 @@ async function finalizar(){
  const resumo={};
 
  carrinho.forEach(p=>{
+
   if(!resumo[p.id]){
    resumo[p.id]={
     produto_id:p.id,
@@ -598,9 +749,11 @@ async function finalizar(){
  enviandoPedido=true;
  botao.disabled=true;
  botao.textContent='Registrando pedido...';
+
  mensagem.textContent='Aguarde, estamos registrando seu pedido.';
 
  try{
+
   const {data:pedidoId,error}=await banco.rpc(
    'criar_pedido',
    {
@@ -660,6 +813,7 @@ async function finalizar(){
   window.location.href=url;
 
  }catch(e){
+
   console.error(e);
 
   const texto=e.message||
@@ -669,6 +823,7 @@ async function finalizar(){
   alert(texto);
 
  }finally{
+
   enviandoPedido=false;
   botao.disabled=false;
   botao.textContent='Finalizar pedido';
