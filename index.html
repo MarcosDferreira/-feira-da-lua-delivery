@@ -1,74 +1,109 @@
 
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Feira da Lua Delivery</title>
-
 <style>
 *{box-sizing:border-box}
+
+:root{
+ --fundo:#071638;
+ --azul:#123778;
+ --azul-claro:#2464bd;
+ --vermelho:#e53945;
+ --branco:#fff;
+ --texto:#172746;
+}
 
 body{
  margin:0;
  font-family:Arial,sans-serif;
- background:#071638;
- color:#fff;
+ background:var(--fundo);
+ color:var(--branco);
  background-image:
- radial-gradient(#ffffff55 1px,transparent 1px),
- radial-gradient(#ffffff33 1px,transparent 1px);
+ radial-gradient(#ffffff35 1px,transparent 1px),
+ radial-gradient(#ffffff20 1px,transparent 1px);
  background-size:37px 37px,61px 61px;
  background-position:0 0,18px 22px;
 }
 
 header{
- background:linear-gradient(180deg,#071638,#10265a);
+ background:linear-gradient(180deg,#071638,#102b60);
  text-align:center;
  padding:25px 15px 30px;
- border-bottom:3px solid #df4c91;
+ border-bottom:3px solid var(--azul-claro);
 }
 
 .logo-feira{
- width:190px;
- max-width:65%;
+ width:210px;
+ max-width:75%;
  height:auto;
  display:block;
  margin:0 auto 15px;
- border-radius:20px;
+ border:0;
+ border-radius:0;
+ background:transparent;
+ box-shadow:none;
 }
 
-header h1{font-size:27px;margin:8px 0}
-header p{color:#f5f5ff;font-size:17px}
+header h1{
+ font-size:28px;
+ margin:8px 0;
+ color:#fff;
+}
+
+header p{
+ color:#e3ebff;
+ font-size:17px;
+ margin:10px 0;
+}
+
 header span{
  display:block;
- color:#f2ad35;
+ color:#fff;
  font-size:13px;
  margin-top:12px;
 }
 
-main{max-width:700px;margin:auto;padding:18px}
+main{
+ max-width:700px;
+ margin:auto;
+ padding:18px;
+}
 
 h2,h3{color:#fff}
 
-input{
+#busca{
  width:100%;
- padding:13px;
- margin:7px 0 14px;
- border:1px solid #cbd4e7;
- border-radius:8px;
+ padding:15px;
+ margin:7px 0 20px;
+ border:2px solid #31558c;
+ border-radius:12px;
  font-size:16px;
  background:#fff;
  color:#102044;
+ outline:none;
+}
+
+#busca:focus{
+ border-color:#e53945;
+}
+
+main>h2{
+ font-size:22px;
+ margin:20px 0;
 }
 
 button{
- background:#f2ad35;
- color:#102044;
+ background:var(--azul-claro);
+ color:#fff;
  border:0;
- padding:12px;
- border-radius:8px;
+ padding:13px;
+ border-radius:9px;
  font-weight:bold;
+ font-size:15px;
  cursor:pointer;
+ transition:.2s;
+}
+
+button:hover{
+ background:#174b9c;
 }
 
 button:disabled{
@@ -79,21 +114,27 @@ button:disabled{
 
 .barraca,.carrinho{
  background:#fff;
- color:#102044;
- padding:16px;
- border-radius:12px;
- margin:15px 0;
- box-shadow:0 5px 18px #0003;
+ color:var(--texto);
+ padding:17px;
+ border-radius:15px;
+ margin:16px 0;
+ box-shadow:0 6px 20px #0004;
 }
 
-.barraca h3{color:#10265a}
+.barraca h3{
+ color:#123778;
+ font-size:20px;
+ margin:0 0 10px;
+ padding-bottom:10px;
+ border-bottom:2px solid #e7edf7;
+}
 
 .produto{
  display:flex;
  flex-direction:column;
- gap:10px;
+ gap:11px;
  border-top:1px solid #e6eaf2;
- padding:15px 0;
+ padding:17px 0;
 }
 
 .produto-conteudo{
@@ -106,15 +147,43 @@ button:disabled{
  width:105px;
  height:105px;
  object-fit:cover;
- border-radius:10px;
+ border-radius:11px;
  background:#e9edf5;
  flex-shrink:0;
 }
 
-.info-produto{flex:1;min-width:0}
-.info-produto p{color:#53617b;margin:7px 0}
-.preco{color:#10265a;font-weight:bold;margin-top:8px}
-.produto button{width:100%}
+.info-produto{
+ flex:1;
+ min-width:0;
+}
+
+.info-produto strong{
+ color:#142b54;
+ font-size:16px;
+}
+
+.info-produto p{
+ color:#53617b;
+ margin:7px 0;
+ font-size:14px;
+}
+
+.preco{
+ color:#174b9c;
+ font-weight:bold;
+ font-size:17px;
+ margin-top:8px;
+}
+
+.produto button{
+ width:100%;
+ background:#e53945;
+ color:#fff;
+}
+
+.produto button:hover{
+ background:#c62836;
+}
 
 .estoque{
  font-size:13px;
@@ -126,11 +195,31 @@ button:disabled{
 .ultimas{color:#d97706}
 .disponivel{color:#16834a}
 
+.carrinho h2{
+ color:#123778;
+ margin-top:0;
+}
+
+.carrinho ul{
+ padding-left:22px;
+ line-height:1.8;
+}
+
+.carrinho p{
+ color:#172746;
+}
+
 .finalizar{
  width:100%;
- background:#10265a;
+ background:#e53945;
  color:white;
  margin-top:10px;
+ padding:15px;
+ font-size:16px;
+}
+
+.finalizar:hover{
+ background:#c62836;
 }
 
 #mensagem{
@@ -138,12 +227,15 @@ button:disabled{
  font-weight:bold;
  margin:12px 0;
  overflow-wrap:anywhere;
+ color:#174b9c;
 }
 
 footer{
  text-align:center;
- padding:25px 15px;
+ padding:28px 15px;
  color:#fff;
+ background:linear-gradient(180deg,#071638,#0d2450);
+ border-top:2px solid #244a85;
 }
 
 .patrocinio{
@@ -164,9 +256,9 @@ footer{
  width:100%;
  max-width:310px;
  height:auto;
- border-radius:12px;
- background:#fff;
- padding:5px;
+ border-radius:0;
+ background:transparent;
+ padding:0;
 }
 
 .link-admin{
@@ -186,466 +278,11 @@ footer{
 }
 
 @media(max-width:480px){
+ main{padding:13px}
  .foto-produto{width:90px;height:90px}
  .produto-conteudo{align-items:flex-start}
- .logo-feira{width:170px}
+ .logo-feira{width:185px}
+ header h1{font-size:25px}
+ .barraca,.carrinho{padding:14px}
 }
 </style>
-</head>
-
-<body>
-
-<header>
- <img
-  src="logo-feira-da-lua.jpg"
-  class="logo-feira"
-  alt="Feira da Lua de Ribeirão Grande"
- >
- <h1>Feira da Lua Delivery</h1>
- <p>Os sabores da nossa feira na sua casa!</p>
- <span>Compre dos nossos feirantes sem sair de casa!</span>
-</header>
-
-<main>
-
-<input
- id="busca"
- placeholder="Buscar produtos ou barracas..."
- aria-label="Buscar produtos ou barracas"
->
-
-<h2>Conheça nossas barracas</h2>
-<div id="vitrine">Carregando produtos...</div>
-
-<section class="carrinho">
- <h2>Meu carrinho (<span id="quantidade">0</span>)</h2>
- <ul id="itens">
-  <li>Nenhum produto adicionado.</li>
- </ul>
- <p><strong>Total: R$ <span id="total">0,00</span></strong></p>
- <div id="mensagem"></div>
- <button class="finalizar" id="botaoFinalizar" onclick="finalizar()">
-  Finalizar pedido
- </button>
-</section>
-
-</main>
-
-<footer>
- <p>Feira da Lua de Ribeirão Grande</p>
-
- <div class="patrocinio">
-  <p>Patrocínio</p>
-  <img
-   src="logo-legadu.jpg"
-   class="logo-legadu"
-   alt="LEGADU Festas e Eventos"
-  >
- </div>
-
- <div class="link-admin">
-  <a href="admin.html">Área administrativa</a>
- </div>
-</footer>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<script>
-const SUPABASE_URL='https://bnnfplpccsxaaztgbxkr.supabase.co';
-const SUPABASE_KEY='sb_publishable_dws08TQirwdC5MI3UITfog_AWVc8eL5';
-
-const banco=window.supabase.createClient(
- SUPABASE_URL,
- SUPABASE_KEY
-);
-
-let carrinho=[];
-let produtos=[];
-let barracas=[];
-let enviandoPedido=false;
-
-function moeda(valor){
- return Number(valor).toLocaleString('pt-BR',{
-  style:'currency',
-  currency:'BRL'
- });
-}
-
-async function carregarProdutos(){
- const vitrine=document.getElementById('vitrine');
-
- try{
-  const {data:listaBarracas,error:e1}=await banco
-   .from('feirantes')
-   .select('id,nome,responsavel')
-   .eq('ativo',true);
-
-  if(e1)throw e1;
-
-  const {data:lista,error:e2}=await banco
-   .from('produtos')
-   .select('id,feirante_id,nome,preco,descricao,imagem_url,estoque,estoque_minimo')
-   .eq('ativo',true);
-
-  if(e2)throw e2;
-
-  produtos=lista||[];
-  barracas=listaBarracas||[];
-
-  vitrine.innerHTML='';
-
-  barracas.forEach(b=>{
-   const listaBarraca=produtos.filter(
-    p=>Number(p.feirante_id)===Number(b.id)
-   );
-
-   if(!listaBarraca.length)return;
-
-   const sec=document.createElement('section');
-   sec.className='barraca';
-
-   const titulo=document.createElement('h3');
-   titulo.textContent=b.nome;
-   sec.appendChild(titulo);
-
-   listaBarraca.forEach(p=>{
-    const item=document.createElement('div');
-    item.className='produto';
-    item.dataset.nome=p.nome.toLowerCase();
-
-    const conteudo=document.createElement('div');
-    conteudo.className='produto-conteudo';
-
-    if(p.imagem_url){
-     const foto=document.createElement('img');
-     foto.className='foto-produto';
-     foto.src=p.imagem_url;
-     foto.alt=p.nome;
-     foto.loading='lazy';
-     conteudo.appendChild(foto);
-    }
-
-    const info=document.createElement('div');
-    info.className='info-produto';
-
-    const nome=document.createElement('strong');
-    nome.textContent=p.nome;
-
-    const desc=document.createElement('p');
-    desc.textContent=p.descricao||'';
-
-    const preco=document.createElement('div');
-    preco.className='preco';
-    preco.textContent=moeda(p.preco);
-
-    const estoque=document.createElement('div');
-    estoque.className='estoque';
-
-    const quantidadeEstoque=Number(p.estoque)||0;
-    const minimo=Number(p.estoque_minimo)||0;
-
-    if(quantidadeEstoque<=0){
-     estoque.textContent='ESGOTADO';
-     estoque.classList.add('esgotado');
-    }else if(quantidadeEstoque<=minimo){
-     estoque.textContent='ÚLTIMAS UNIDADES: '+quantidadeEstoque;
-     estoque.classList.add('ultimas');
-    }else{
-     estoque.textContent='Disponível';
-     estoque.classList.add('disponivel');
-    }
-
-    info.append(nome,desc,preco,estoque);
-    conteudo.appendChild(info);
-
-    const botao=document.createElement('button');
-
-    if(quantidadeEstoque<=0){
-     botao.textContent='Esgotado';
-     botao.disabled=true;
-    }else{
-     botao.textContent='Adicionar';
-     botao.onclick=()=>adicionar(p.id);
-    }
-
-    item.append(conteudo,botao);
-    sec.appendChild(item);
-   });
-
-   vitrine.appendChild(sec);
-  });
-
-  if(!vitrine.children.length){
-   vitrine.textContent='Nenhum produto disponível.';
-  }
-
-  aplicarBusca();
-
- }catch(e){
-  console.error(e);
-  vitrine.textContent='Erro ao carregar produtos. Atualize a página.';
- }
-}
-
-function aplicarBusca(){
- const termo=document.getElementById('busca')
-  .value.trim().toLowerCase();
-
- document.querySelectorAll('#vitrine .barraca').forEach(barraca=>{
-  const nomeBarraca=barraca.querySelector('h3')
-   .textContent.toLowerCase();
-
-  let encontrou=false;
-
-  barraca.querySelectorAll('.produto').forEach(produto=>{
-   const nomeProduto=produto.dataset.nome||'';
-
-   const corresponde=!termo||
-    nomeProduto.includes(termo)||
-    nomeBarraca.includes(termo);
-
-   produto.style.display=corresponde?'flex':'none';
-
-   if(corresponde)encontrou=true;
-  });
-
-  barraca.style.display=encontrou?'block':'none';
- });
-}
-
-document.getElementById('busca')
- .addEventListener('input',aplicarBusca);
-
-function adicionar(id){
- const produto=produtos.find(
-  p=>Number(p.id)===Number(id)
- );
-
- if(!produto)return;
-
- const estoque=Number(produto.estoque)||0;
-
- if(estoque<=0){
-  alert('Este produto está esgotado.');
-  return;
- }
-
- const quantidadeNoCarrinho=carrinho.filter(
-  p=>Number(p.id)===Number(id)
- ).length;
-
- if(quantidadeNoCarrinho>=estoque){
-  alert('Você já adicionou todas as unidades disponíveis deste produto.');
-  return;
- }
-
- carrinho.push({
-  id:produto.id,
-  nome:produto.nome,
-  preco:Number(produto.preco)
- });
-
- atualizar();
-}
-
-function atualizar(){
- document.getElementById('quantidade').textContent=
-  carrinho.length;
-
- const lista=document.getElementById('itens');
- lista.innerHTML='';
-
- const resumo={};
-
- carrinho.forEach(p=>{
-  if(!resumo[p.id]){
-   resumo[p.id]={
-    nome:p.nome,
-    preco:p.preco,
-    quantidade:0
-   };
-  }
-
-  resumo[p.id].quantidade++;
- });
-
- Object.values(resumo).forEach(p=>{
-  const li=document.createElement('li');
-  li.textContent=p.quantidade+'x '+p.nome+
-   ' - '+moeda(p.preco*p.quantidade);
-  lista.appendChild(li);
- });
-
- if(!carrinho.length){
-  lista.innerHTML='<li>Nenhum produto adicionado.</li>';
- }
-
- const total=carrinho.reduce((s,p)=>s+p.preco,0);
-
- document.getElementById('total').textContent=
-  total.toFixed(2).replace('.',',');
-}
-
-async function finalizar(){
- if(enviandoPedido)return;
-
- if(!carrinho.length){
-  alert('Adicione produtos ao carrinho.');
-  return;
- }
-
- const nomeCliente=prompt('Qual é o seu nome?');
- if(nomeCliente===null)return;
-
- if(nomeCliente.trim().length<2){
-  alert('Informe seu nome corretamente.');
-  return;
- }
-
- const telefoneCliente=prompt('Informe seu telefone com DDD:');
- if(telefoneCliente===null)return;
-
- const telefoneLimpo=telefoneCliente.replace(/\D/g,'');
-
- if(telefoneLimpo.length<10){
-  alert('Informe um telefone válido com DDD.');
-  return;
- }
-
- const escolha=prompt(
-  'Como deseja receber seu pedido?\n\nDigite ENTREGA para receber em casa ou RETIRADA para retirar na feira.'
- );
-
- if(escolha===null)return;
-
- const tipo=escolha.trim().toLowerCase();
-
- let tipoEntrega='';
- let endereco='';
-
- if(tipo==='entrega'){
-  tipoEntrega='entrega';
-
-  endereco=prompt('Informe seu endereço completo:');
-  if(endereco===null)return;
-
-  if(endereco.trim().length<5){
-   alert('Informe um endereço completo.');
-   return;
-  }
-
- }else if(tipo==='retirada'){
-  tipoEntrega='retirada';
- }else{
-  alert('Digite ENTREGA ou RETIRADA.');
-  return;
- }
-
- const resumo={};
-
- carrinho.forEach(p=>{
-  if(!resumo[p.id]){
-   resumo[p.id]={
-    produto_id:p.id,
-    quantidade:0,
-    nome:p.nome,
-    preco:p.preco
-   };
-  }
-
-  resumo[p.id].quantidade++;
- });
-
- const itensPedido=Object.values(resumo).map(p=>({
-  produto_id:p.produto_id,
-  quantidade:p.quantidade
- }));
-
- const botao=document.getElementById('botaoFinalizar');
- const mensagem=document.getElementById('mensagem');
-
- enviandoPedido=true;
- botao.disabled=true;
- botao.textContent='Registrando pedido...';
- mensagem.textContent='Aguarde, estamos registrando seu pedido.';
-
- try{
-  const {data:pedidoId,error}=await banco.rpc(
-   'criar_pedido',
-   {
-    p_cliente_nome:nomeCliente.trim(),
-    p_cliente_telefone:telefoneLimpo,
-    p_tipo_entrega:tipoEntrega,
-    p_endereco:endereco.trim(),
-    p_itens:itensPedido
-   }
-  );
-
-  if(error)throw error;
-
-  const linhas=Object.values(resumo).map(p=>{
-   return p.quantidade+'x '+p.nome+
-    ' - '+moeda(p.preco*p.quantidade);
-  });
-
-  const total=carrinho.reduce((s,p)=>s+p.preco,0);
-
-  const mensagemPedido=[
-   'Olá! Quero fazer um pedido pela Feira da Lua Delivery.',
-   '',
-   'Pedido número: '+pedidoId,
-   'Nome: '+nomeCliente.trim(),
-   'Telefone: '+telefoneLimpo,
-   'Entrega/retirada: '+(
-    tipoEntrega==='retirada'
-     ?'Retirada na feira'
-     :endereco.trim()
-   ),
-   '',
-   'Pedido:',
-   ...linhas,
-   '',
-   'Total: '+moeda(total),
-   '',
-   'Aguardo a confirmação. Obrigado!'
-  ].join('\n');
-
-  const telefoneFeira='5515997549326';
-
-  const url='https://wa.me/'+telefoneFeira+
-   '?text='+encodeURIComponent(mensagemPedido);
-
-  mensagem.textContent=
-   'Pedido nº '+pedidoId+' recebido com sucesso!';
-
-  alert(
-   'Pedido nº '+pedidoId+
-   ' registrado com sucesso! Você será direcionado ao WhatsApp.'
-  );
-
-  carrinho=[];
-  atualizar();
-
-  window.location.href=url;
-
- }catch(e){
-  console.error(e);
-
-  const texto=e.message||
-   'Não foi possível registrar o pedido. Tente novamente.';
-
-  mensagem.textContent=texto;
-  alert(texto);
-
- }finally{
-  enviandoPedido=false;
-  botao.disabled=false;
-  botao.textContent='Finalizar pedido';
- }
-}
-
-carregarProdutos();
-</script>
-
-</body>
-</html>
