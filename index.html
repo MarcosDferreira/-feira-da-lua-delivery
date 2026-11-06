@@ -1,3 +1,9 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Feira da Lua Delivery</title>
 
 <style>
 *{box-sizing:border-box}
@@ -36,40 +42,16 @@ header{
  height:auto;
  display:block;
  margin:0 auto 15px;
- border:0;
- border-radius:0;
- background:transparent;
- box-shadow:none;
 }
 
-header h1{
- font-size:28px;
- margin:8px 0;
- color:#fff;
-}
+header h1{font-size:28px;margin:8px 0;color:#fff}
+header p{color:#e3ebff;font-size:17px;margin:10px 0}
+header span{display:block;color:#fff;font-size:13px;margin-top:12px}
 
-header p{
- color:#e3ebff;
- font-size:17px;
- margin:10px 0;
-}
-
-header span{
- display:block;
- color:#fff;
- font-size:13px;
- margin-top:12px;
-}
-
-main{
- max-width:700px;
- margin:auto;
- padding:18px;
-}
-
+main{max-width:700px;margin:auto;padding:18px}
 h2,h3{color:#fff}
 
-#busca{
+#filtro-barracas{
  width:100%;
  padding:15px;
  margin:7px 0 20px;
@@ -78,17 +60,9 @@ h2,h3{color:#fff}
  font-size:16px;
  background:#fff;
  color:#102044;
- outline:none;
 }
 
-#busca:focus{
- border-color:#e53945;
-}
-
-main>h2{
- font-size:22px;
- margin:20px 0;
-}
+main>h2{font-size:22px;margin:20px 0}
 
 button{
  background:var(--azul-claro);
@@ -99,18 +73,9 @@ button{
  font-weight:bold;
  font-size:15px;
  cursor:pointer;
- transition:.2s;
 }
 
-button:hover{
- background:#174b9c;
-}
-
-button:disabled{
- background:#aeb5c2;
- color:#fff;
- cursor:not-allowed;
-}
+button:disabled{background:#aeb5c2;color:#fff;cursor:not-allowed}
 
 .barraca,.carrinho{
  background:#fff;
@@ -137,11 +102,7 @@ button:disabled{
  padding:17px 0;
 }
 
-.produto-conteudo{
- display:flex;
- align-items:center;
- gap:13px;
-}
+.produto-conteudo{display:flex;align-items:center;gap:13px}
 
 .foto-produto{
  width:105px;
@@ -152,21 +113,9 @@ button:disabled{
  flex-shrink:0;
 }
 
-.info-produto{
- flex:1;
- min-width:0;
-}
-
-.info-produto strong{
- color:#142b54;
- font-size:16px;
-}
-
-.info-produto p{
- color:#53617b;
- margin:7px 0;
- font-size:14px;
-}
+.info-produto{flex:1;min-width:0}
+.info-produto strong{color:#142b54;font-size:16px}
+.info-produto p{color:#53617b;margin:7px 0;font-size:14px}
 
 .preco{
  color:#174b9c;
@@ -175,38 +124,29 @@ button:disabled{
  margin-top:8px;
 }
 
-.produto button{
- width:100%;
- background:#e53945;
- color:#fff;
-}
-
-.produto button:hover{
- background:#c62836;
-}
-
-.estoque{
- font-size:13px;
- font-weight:bold;
- margin-top:8px;
-}
-
+.produto button{width:100%;background:#e53945}
+.estoque{font-size:13px;font-weight:bold;margin-top:8px}
 .esgotado{color:#d62828}
 .ultimas{color:#d97706}
 .disponivel{color:#16834a}
 
-.carrinho h2{
- color:#123778;
- margin-top:0;
-}
+.carrinho h2{color:#123778;margin-top:0}
+.carrinho ul{padding-left:22px;line-height:1.8}
+.carrinho p{color:#172746}
 
-.carrinho ul{
- padding-left:22px;
- line-height:1.8;
-}
-
-.carrinho p{
+.item-carrinho{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ gap:10px;
+ padding:7px 0;
+ border-bottom:1px solid #e6eaf2;
  color:#172746;
+}
+
+.item-carrinho button{
+ padding:5px 10px;
+ background:#e53945;
 }
 
 .finalizar{
@@ -216,10 +156,6 @@ button:disabled{
  margin-top:10px;
  padding:15px;
  font-size:16px;
-}
-
-.finalizar:hover{
- background:#c62836;
 }
 
 #mensagem{
@@ -246,36 +182,16 @@ footer{
  gap:10px;
 }
 
-.patrocinio p{
- color:#dce4ff;
- font-size:13px;
- margin:0;
-}
+.patrocinio p{color:#dce4ff;font-size:13px;margin:0}
 
 .logo-legadu{
  width:100%;
  max-width:310px;
  height:auto;
- border-radius:0;
- background:transparent;
- padding:0;
 }
 
-.link-admin{
- margin-top:18px;
- font-size:12px;
-}
-
-.link-admin a{
- color:#dce4ff;
- text-decoration:none;
- opacity:.8;
-}
-
-.link-admin a:hover{
- text-decoration:underline;
- opacity:1;
-}
+.link-admin{margin-top:18px;font-size:12px}
+.link-admin a{color:#dce4ff;text-decoration:none;opacity:.8}
 
 @media(max-width:480px){
  main{padding:13px}
@@ -286,3 +202,481 @@ footer{
  .barraca,.carrinho{padding:14px}
 }
 </style>
+</head>
+
+<body>
+
+<header>
+ <img src="logo-feira-da-lua.jpg"
+      class="logo-feira"
+      alt="Logo Feira da Lua">
+
+ <h1>Feira da Lua Delivery</h1>
+ <p>Os sabores da nossa feira na sua casa!</p>
+ <span>Compre dos nossos feirantes sem sair de casa!</span>
+</header>
+
+<main>
+
+ <h2>Escolha uma barraca</h2>
+
+ <select id="filtro-barracas">
+  <option value="todas">Todas as barracas</option>
+ </select>
+
+ <div id="vitrine">Carregando produtos...</div>
+
+ <section class="carrinho">
+  <h2>Meu carrinho (<span id="quantidade">0</span>)</h2>
+
+  <div id="itens">
+   Nenhum produto adicionado.
+  </div>
+
+  <p><strong>Total: R$ <span id="total">0,00</span></strong></p>
+
+  <div id="mensagem"></div>
+
+  <button class="finalizar" id="botaoFinalizar"
+          onclick="finalizar()">
+   Finalizar pedido
+  </button>
+ </section>
+
+</main>
+
+<footer>
+ Feira da Lua de Ribeirão Grande
+
+ <div class="patrocinio">
+  <p>Patrocínio</p>
+  <img src="logo-legadu.jpg"
+       class="logo-legadu"
+       alt="Logo LEGADU Festas e Eventos">
+ </div>
+
+ <div class="link-admin">
+  <a href="admin.html">Área administrativa</a>
+ </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const SUPABASE_URL='https://bnnfplpccsxaaztgbxkr.supabase.co';
+const SUPABASE_KEY='sb_publishable_dws08TQirwdC5MI3UITfog_AWVc8eL5';
+
+const banco=window.supabase.createClient(
+ SUPABASE_URL,
+ SUPABASE_KEY
+);
+
+let carrinho=[];
+let produtos=[];
+let barracas=[];
+let enviandoPedido=false;
+
+function moeda(valor){
+ return Number(valor).toLocaleString('pt-BR',{
+  style:'currency',
+  currency:'BRL'
+ });
+}
+
+async function carregarProdutos(){
+ const vitrine=document.getElementById('vitrine');
+ const filtro=document.getElementById('filtro-barracas');
+
+ try{
+  const {data:listaBarracas,error:e1}=await banco
+   .from('feirantes')
+   .select('id,nome,responsavel')
+   .eq('ativo',true);
+
+  if(e1)throw e1;
+
+  const {data:lista,error:e2}=await banco
+   .from('produtos')
+   .select('id,feirante_id,nome,preco,descricao,imagem_url,estoque,estoque_minimo')
+   .eq('ativo',true);
+
+  if(e2)throw e2;
+
+  produtos=lista||[];
+  barracas=listaBarracas||[];
+
+  filtro.innerHTML='<option value="todas">Todas as barracas</option>';
+
+  barracas.forEach(b=>{
+   const opcao=document.createElement('option');
+   opcao.value=String(b.id);
+   opcao.textContent=b.nome;
+   filtro.appendChild(opcao);
+  });
+
+  vitrine.innerHTML='';
+
+  barracas.forEach(b=>{
+   const listaBarraca=produtos.filter(
+    p=>Number(p.feirante_id)===Number(b.id)
+   );
+
+   if(!listaBarraca.length)return;
+
+   const sec=document.createElement('section');
+   sec.className='barraca';
+   sec.dataset.barraca=String(b.id);
+
+   const titulo=document.createElement('h3');
+   titulo.textContent=b.nome;
+   sec.appendChild(titulo);
+
+   listaBarraca.forEach(p=>{
+    const item=document.createElement('div');
+    item.className='produto';
+
+    const conteudo=document.createElement('div');
+    conteudo.className='produto-conteudo';
+
+    if(p.imagem_url){
+     const foto=document.createElement('img');
+     foto.className='foto-produto';
+     foto.src=p.imagem_url;
+     foto.alt=p.nome;
+     foto.loading='lazy';
+     conteudo.appendChild(foto);
+    }
+
+    const info=document.createElement('div');
+    info.className='info-produto';
+
+    const nome=document.createElement('strong');
+    nome.textContent=p.nome;
+
+    const desc=document.createElement('p');
+    desc.textContent=p.descricao||'';
+
+    const preco=document.createElement('div');
+    preco.className='preco';
+    preco.textContent=moeda(p.preco);
+
+    const estoque=document.createElement('div');
+    estoque.className='estoque';
+
+    const quantidadeEstoque=Number(p.estoque)||0;
+    const minimo=Number(p.estoque_minimo)||0;
+
+    if(quantidadeEstoque<=0){
+     estoque.textContent='ESGOTADO';
+     estoque.classList.add('esgotado');
+    }else if(quantidadeEstoque<=minimo){
+     estoque.textContent='ÚLTIMAS UNIDADES: '+quantidadeEstoque;
+     estoque.classList.add('ultimas');
+    }else{
+     estoque.textContent='Disponível';
+     estoque.classList.add('disponivel');
+    }
+
+    info.append(nome,desc,preco,estoque);
+    conteudo.appendChild(info);
+
+    const botao=document.createElement('button');
+
+    if(quantidadeEstoque<=0){
+     botao.textContent='Esgotado';
+     botao.disabled=true;
+    }else{
+     botao.textContent='Adicionar';
+     botao.onclick=()=>adicionar(p.id);
+    }
+
+    item.append(conteudo,botao);
+    sec.appendChild(item);
+   });
+
+   vitrine.appendChild(sec);
+  });
+
+  if(!vitrine.children.length){
+   vitrine.textContent='Nenhum produto disponível.';
+  }
+
+  aplicarFiltro();
+
+ }catch(e){
+  console.error(e);
+  vitrine.textContent='Erro ao carregar produtos. Atualize a página.';
+ }
+}
+
+function aplicarFiltro(){
+ const selecionada=document.getElementById('filtro-barracas').value;
+
+ document.querySelectorAll('#vitrine .barraca').forEach(sec=>{
+  sec.style.display=
+   selecionada==='todas'||sec.dataset.barraca===selecionada
+    ?'block'
+    :'none';
+ });
+}
+
+document.getElementById('filtro-barracas')
+ .addEventListener('change',aplicarFiltro);
+
+function adicionar(id){
+ const produto=produtos.find(
+  p=>Number(p.id)===Number(id)
+ );
+
+ if(!produto)return;
+
+ const estoque=Number(produto.estoque)||0;
+
+ if(estoque<=0){
+  alert('Este produto está esgotado.');
+  return;
+ }
+
+ const quantidadeNoCarrinho=carrinho.filter(
+  p=>Number(p.id)===Number(id)
+ ).length;
+
+ if(quantidadeNoCarrinho>=estoque){
+  alert('Você já adicionou todas as unidades disponíveis deste produto.');
+  return;
+ }
+
+ carrinho.push({
+  id:produto.id,
+  nome:produto.nome,
+  preco:Number(produto.preco)
+ });
+
+ atualizar();
+}
+
+function remover(id){
+ const indice=carrinho.findIndex(
+  p=>Number(p.id)===Number(id)
+ );
+
+ if(indice>=0){
+  carrinho.splice(indice,1);
+ }
+
+ atualizar();
+}
+
+function atualizar(){
+ document.getElementById('quantidade').textContent=
+  carrinho.length;
+
+ const lista=document.getElementById('itens');
+ lista.innerHTML='';
+
+ if(!carrinho.length){
+  lista.textContent='Nenhum produto adicionado.';
+ }else{
+  const resumo={};
+
+  carrinho.forEach(p=>{
+   if(!resumo[p.id]){
+    resumo[p.id]={
+     nome:p.nome,
+     preco:p.preco,
+     quantidade:0
+    };
+   }
+
+   resumo[p.id].quantidade++;
+  });
+
+  Object.entries(resumo).forEach(([id,p])=>{
+   const linha=document.createElement('div');
+   linha.className='item-carrinho';
+
+   const texto=document.createElement('span');
+   texto.textContent=
+    p.quantidade+'x '+p.nome+' - '+
+    moeda(p.preco*p.quantidade);
+
+   const botao=document.createElement('button');
+   botao.textContent='Remover';
+   botao.onclick=()=>remover(id);
+
+   linha.append(texto,botao);
+   lista.appendChild(linha);
+  });
+ }
+
+ const total=carrinho.reduce((s,p)=>s+p.preco,0);
+
+ document.getElementById('total').textContent=
+  total.toFixed(2).replace('.',',');
+}
+
+async function finalizar(){
+ if(enviandoPedido)return;
+
+ if(!carrinho.length){
+  alert('Adicione produtos ao carrinho.');
+  return;
+ }
+
+ const nomeCliente=prompt('Qual é o seu nome?');
+ if(nomeCliente===null)return;
+
+ if(nomeCliente.trim().length<2){
+  alert('Informe seu nome corretamente.');
+  return;
+ }
+
+ const telefoneCliente=prompt('Informe seu telefone com DDD:');
+ if(telefoneCliente===null)return;
+
+ const telefoneLimpo=telefoneCliente.replace(/\D/g,'');
+
+ if(telefoneLimpo.length<10){
+  alert('Informe um telefone válido com DDD.');
+  return;
+ }
+
+ const escolha=prompt(
+  'Como deseja receber seu pedido?\n\nDigite ENTREGA para receber em casa ou RETIRADA para retirar na feira.'
+ );
+
+ if(escolha===null)return;
+
+ const tipo=escolha.trim().toLowerCase();
+
+ let tipoEntrega='';
+ let endereco='';
+
+ if(tipo==='entrega'){
+  tipoEntrega='entrega';
+
+  const resposta=prompt('Informe seu endereço completo:');
+  if(resposta===null)return;
+
+  if(resposta.trim().length<5){
+   alert('Informe um endereço completo.');
+   return;
+  }
+
+  endereco=resposta.trim();
+
+ }else if(tipo==='retirada'){
+  tipoEntrega='retirada';
+ }else{
+  alert('Digite ENTREGA ou RETIRADA.');
+  return;
+ }
+
+ const resumo={};
+
+ carrinho.forEach(p=>{
+  if(!resumo[p.id]){
+   resumo[p.id]={
+    produto_id:p.id,
+    quantidade:0,
+    nome:p.nome,
+    preco:p.preco
+   };
+  }
+
+  resumo[p.id].quantidade++;
+ });
+
+ const itensPedido=Object.values(resumo).map(p=>({
+  produto_id:p.produto_id,
+  quantidade:p.quantidade
+ }));
+
+ const botao=document.getElementById('botaoFinalizar');
+ const mensagem=document.getElementById('mensagem');
+
+ enviandoPedido=true;
+ botao.disabled=true;
+ botao.textContent='Registrando pedido...';
+ mensagem.textContent='Aguarde, estamos registrando seu pedido.';
+
+ try{
+  const {data:pedidoId,error}=await banco.rpc(
+   'criar_pedido',
+   {
+    p_cliente_nome:nomeCliente.trim(),
+    p_cliente_telefone:telefoneLimpo,
+    p_tipo_entrega:tipoEntrega,
+    p_endereco:endereco,
+    p_itens:itensPedido
+   }
+  );
+
+  if(error)throw error;
+
+  const linhas=Object.values(resumo).map(p=>
+   p.quantidade+'x '+p.nome+' - '+
+   moeda(p.preco*p.quantidade)
+  );
+
+  const total=carrinho.reduce((s,p)=>s+p.preco,0);
+
+  const mensagemPedido=[
+   'Olá! Quero fazer um pedido pela Feira da Lua Delivery.',
+   '',
+   'Pedido número: '+pedidoId,
+   'Nome: '+nomeCliente.trim(),
+   'Telefone: '+telefoneLimpo,
+   'Entrega/retirada: '+(
+    tipoEntrega==='retirada'
+     ?'Retirada na feira'
+     :endereco
+   ),
+   '',
+   'Pedido:',
+   ...linhas,
+   '',
+   'Total: '+moeda(total),
+   '',
+   'Aguardo a confirmação. Obrigado!'
+  ].join('\n');
+
+  const telefoneFeira='5515997549326';
+
+  const url='https://wa.me/'+telefoneFeira+
+   '?text='+encodeURIComponent(mensagemPedido);
+
+  mensagem.textContent=
+   'Pedido nº '+pedidoId+' recebido com sucesso!';
+
+  alert(
+   'Pedido nº '+pedidoId+
+   ' registrado com sucesso! Você será direcionado ao WhatsApp.'
+  );
+
+  carrinho=[];
+  atualizar();
+
+  window.location.href=url;
+
+ }catch(e){
+  console.error(e);
+
+  const texto=e.message||
+   'Não foi possível registrar o pedido. Tente novamente.';
+
+  mensagem.textContent=texto;
+  alert(texto);
+
+ }finally{
+  enviandoPedido=false;
+  botao.disabled=false;
+  botao.textContent='Finalizar pedido';
+ }
+}
+
+carregarProdutos();
+</script>
+
+</body>
+</html>
