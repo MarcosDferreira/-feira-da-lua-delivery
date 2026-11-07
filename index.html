@@ -660,23 +660,7 @@ footer{
   </div>
 
   <div id="areaCheckout" class="checkout" style="display:none">
-   <h3>Seus dados</h3>
-
-   <div class="campo">
-    <label>Nome completo</label>
-    <input id="clienteNome" readonly>
-   </div>
-
-   <div class="campo">
-    <label>Celular com DDD</label>
-    <input id="clienteTelefone" readonly>
-   </div>
-
-   <div id="avisoPerfil" class="aviso-perfil">
-    Dados vinculados à sua conta.
-   </div>
-
-   <h3 style="margin-top:22px">Como deseja receber?</h3>
+   <h3>Como deseja receber?</h3>
 
    <div class="campo">
     <label for="tipoEntrega">Forma de recebimento</label>
@@ -725,7 +709,8 @@ footer{
   <button
    class="finalizar"
    id="botaoFinalizar"
-   onclick="finalizar()">
+   onclick="finalizar()"
+   disabled>
    Confirmar pedido
   </button>
 
@@ -797,6 +782,9 @@ function bairroDoCliente(){
 }
 
 function freteSelecionado(){
+ /* Carrinho vazio nunca cobra frete */
+ if(!carrinho.length)return 0;
+
  if(document.getElementById('tipoEntrega').value!=='entrega'){
   return 0;
  }
@@ -870,7 +858,6 @@ function mostrarCadastro(){
  mensagemAcesso('');
 }
 
-/* SOLICITAÇÃO DE AJUDA PARA RECUPERAR A SENHA */
 function solicitarAjudaSenha(){
  const telefone=document
   .getElementById('loginTelefone')
@@ -894,8 +881,6 @@ function aplicarCliente(c){
 
  document.getElementById('areaCheckout').style.display='block';
 
- document.getElementById('clienteNome').value=c.nome||'';
- document.getElementById('clienteTelefone').value=c.telefone||'';
  document.getElementById('clienteEndereco').value=c.endereco||'';
 
  const b=bairroDoCliente();
@@ -905,10 +890,6 @@ function aplicarCliente(c){
 
  document.getElementById('boasVindas').textContent=
   'Olá, '+(c.nome||'cliente')+'! Sua conta está conectada.';
-
- if(!pedidoConcluido){
-  document.getElementById('botaoFinalizar').disabled=false;
- }
 
  atualizar();
 }
@@ -923,8 +904,6 @@ function limparCliente(){
  document.getElementById('botaoFinalizar').disabled=true;
 
  [
-  'clienteNome',
-  'clienteTelefone',
   'clienteEndereco',
   'clienteBairroNome'
  ].forEach(id=>{
@@ -1453,14 +1432,12 @@ function adicionar(id){
   return;
  }
 
- /* REABRE O BOTÃO PARA UM NOVO PEDIDO */
  if(pedidoConcluido){
   pedidoConcluido=false;
 
   const botao=document.getElementById('botaoFinalizar');
 
   botao.textContent='Confirmar pedido';
-  botao.disabled=!clienteLogado;
 
   document.getElementById('mensagem').textContent='';
  }
@@ -1537,6 +1514,18 @@ function atualizar(){
  document.getElementById('subtotal').textContent=moeda(s);
  document.getElementById('frete').textContent=moeda(f);
  document.getElementById('total').textContent=moeda(s+f);
+
+ const botao=document.getElementById('botaoFinalizar');
+
+ botao.disabled=
+  !clienteLogado||
+  !carrinho.length||
+  pedidoConcluido||
+  enviandoPedido;
+
+ if(!pedidoConcluido&&!enviandoPedido){
+  botao.textContent='Confirmar pedido';
+ }
 }
 
 function atualizarTipoEntrega(){
@@ -1657,7 +1646,6 @@ async function finalizar(){
 
   const pedidoId=data.pedido_id;
 
-  /* MARCA O PEDIDO COMO CONCLUÍDO */
   pedidoConcluido=true;
 
   const subtotal=Number(data.subtotal);
@@ -1724,12 +1712,14 @@ async function finalizar(){
  }finally{
   enviandoPedido=false;
 
+  const botaoFinal=document.getElementById('botaoFinalizar');
+
   if(pedidoConcluido){
-   botao.disabled=true;
-   botao.textContent='Pedido enviado!';
+   botaoFinal.disabled=true;
+   botaoFinal.textContent='Pedido enviado!';
   }else{
-   botao.disabled=!clienteLogado;
-   botao.textContent='Confirmar pedido';
+   botaoFinal.disabled=!clienteLogado||!carrinho.length;
+   botaoFinal.textContent='Confirmar pedido';
   }
  }
 }
