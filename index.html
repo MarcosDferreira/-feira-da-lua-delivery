@@ -321,6 +321,29 @@ button:disabled{
 
 #acessoCliente button{margin:4px}
 
+#painelConta{
+ padding:12px 14px;
+ background:#fff;
+ border:1px solid #dce7f3;
+ border-radius:12px;
+}
+
+#painelConta .aviso-perfil{
+ font-size:14px;
+ font-weight:bold;
+ margin:4px 0 12px;
+}
+
+.acoes-conta{
+ display:flex;
+ flex-wrap:wrap;
+ gap:8px;
+}
+
+.acoes-conta button{
+ margin:0;
+}
+
 .ajuda{
  font-size:12px;
  color:var(--suave);
@@ -602,12 +625,15 @@ footer{
 
    <div id="painelConta" style="display:none">
     <p class="aviso-perfil" id="boasVindas"></p>
-    <button type="button" onclick="mostrarEdicao()">Editar meu cadastro</button>
-    <button type="button" onclick="sairCliente()">Sair da conta</button>
+
+    <div class="acoes-conta">
+     <button type="button" onclick="mostrarEdicao()">Atualizar meu cadastro</button>
+     <button type="button" onclick="sairCliente()">Sair da conta</button>
+    </div>
    </div>
 
    <div id="painelEdicao" style="display:none">
-    <h3>Editar meu cadastro</h3>
+    <h3>Atualizar meu cadastro</h3>
 
     <div class="campo">
      <label for="edicaoNome">Nome completo</label>
@@ -672,7 +698,7 @@ footer{
     </div>
 
     <div class="ajuda">
-     Para mudar seu endereço ou bairro, use “Editar meu cadastro”.
+     Para mudar seu endereço ou bairro, use “Atualizar meu cadastro”.
     </div>
    </div>
 
@@ -880,7 +906,9 @@ function aplicarCliente(c){
  document.getElementById('boasVindas').textContent=
   'Olá, '+(c.nome||'cliente')+'! Sua conta está conectada.';
 
- document.getElementById('botaoFinalizar').disabled=false;
+ if(!pedidoConcluido){
+  document.getElementById('botaoFinalizar').disabled=false;
+ }
 
  atualizar();
 }
@@ -1425,6 +1453,18 @@ function adicionar(id){
   return;
  }
 
+ /* REABRE O BOTÃO PARA UM NOVO PEDIDO */
+ if(pedidoConcluido){
+  pedidoConcluido=false;
+
+  const botao=document.getElementById('botaoFinalizar');
+
+  botao.textContent='Confirmar pedido';
+  botao.disabled=!clienteLogado;
+
+  document.getElementById('mensagem').textContent='';
+ }
+
  carrinho.push({
   id:p.id,
   nome:p.nome,
@@ -1524,12 +1564,12 @@ function validarDados(){
   tipo==='entrega'&&
   (!clienteLogado.endereco||clienteLogado.endereco.trim().length<5)
  ){
-  alert('Atualize seu endereço em “Editar meu cadastro”.');
+  alert('Atualize seu endereço em “Atualizar meu cadastro”.');
   return null;
  }
 
  if(tipo==='entrega'&&(!clienteLogado.bairro_id||!b)){
-  alert('Atualize seu bairro em “Editar meu cadastro”.');
+  alert('Atualize seu bairro em “Atualizar meu cadastro”.');
   return null;
  }
 
@@ -1546,6 +1586,10 @@ function validarDados(){
 
 async function finalizar(){
  if(enviandoPedido)return;
+
+ if(pedidoConcluido){
+  return;
+ }
 
  if(!clienteLogado){
   alert('Entre na sua conta para continuar.');
@@ -1612,6 +1656,10 @@ async function finalizar(){
   }
 
   const pedidoId=data.pedido_id;
+
+  /* MARCA O PEDIDO COMO CONCLUÍDO */
+  pedidoConcluido=true;
+
   const subtotal=Number(data.subtotal);
   const frete=Number(data.frete);
   const total=Number(data.total);
@@ -1676,9 +1724,13 @@ async function finalizar(){
  }finally{
   enviandoPedido=false;
 
-  botao.disabled=!clienteLogado;
-
-  botao.textContent='Confirmar pedido';
+  if(pedidoConcluido){
+   botao.disabled=true;
+   botao.textContent='Pedido enviado!';
+  }else{
+   botao.disabled=!clienteLogado;
+   botao.textContent='Confirmar pedido';
+  }
  }
 }
 
