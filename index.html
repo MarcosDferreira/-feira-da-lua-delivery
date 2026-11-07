@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -497,6 +498,13 @@ footer{
      <input id="loginSenha" type="password" autocomplete="current-password" placeholder="Sua senha">
     </div>
 
+    <button
+     type="button"
+     onclick="solicitarAjudaSenha()"
+     style="background:transparent;color:#2464a5;text-decoration:underline;padding:8px 0">
+     Esqueci minha senha
+    </button>
+
     <button type="button" class="finalizar" onclick="entrarCliente()">Entrar</button>
 
     <p class="ajuda">
@@ -783,6 +791,23 @@ function mostrarLogin(){
 function mostrarCadastro(){
  exibirPainel('painelCadastro');
  mensagemAcesso('');
+}
+
+/* SOLICITAÇÃO DE AJUDA PARA RECUPERAR A SENHA */
+function solicitarAjudaSenha(){
+ const telefone=document
+  .getElementById('loginTelefone')
+  .value.trim();
+
+ let texto='Olá! Esqueci minha senha da Feira da Lua Delivery e preciso de ajuda para recuperar meu acesso.';
+
+ if(telefone){
+  texto+=' Meu celular cadastrado é: '+telefone+'.';
+ }
+
+ const link='https://wa.me/5515997549326?text='+encodeURIComponent(texto);
+
+ window.open(link,'_blank');
 }
 
 function aplicarCliente(c){
@@ -1616,4 +1641,4 @@ carregarProdutos();
 </script>
 
 </body>
-                                           </html>
+</html>
