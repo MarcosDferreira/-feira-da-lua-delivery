@@ -235,10 +235,11 @@ footer{text-align:center;padding:20px}
 <script>
 const SUPABASE_URL='https://bnnfplpccsxaaztgbxkr.supabase.co';
 const SUPABASE_KEY='sb_publishable_dws08TQirwdC5MI3UITfog_AWVc8eL5';
+
 const banco=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{
  auth:{
   flowType:'pkce',
-  detectSessionInUrl:true,
+  detectSessionInUrl:false,
   persistSession:true,
   autoRefreshToken:true
  }
@@ -255,7 +256,10 @@ let regioes=[];
 let regiaoEditando=null;
 let bairroEditando=null;
 
+
 /* RECUPERAÇÃO DE SENHA */
+
+let processandoRecuperacao=false;
 
 function ocultarTelasAcesso(){
  document.getElementById('login').classList.add('oculto');
@@ -301,20 +305,79 @@ async function enviarRecuperacao(){
 
  try{
   const redirectTo=window.location.origin+window.location.pathname;
+
   const {error}=await banco.auth.resetPasswordForEmail(email,{
    redirectTo
   });
 
   if(error)throw error;
 
-  mensagem.textContent='Se o e-mail estiver cadastrado, você receberá um link para criar uma nova senha. Confira também a caixa de spam.';
+  mensagem.textContent='Link enviado! Abra o e-mail mais recente no mesmo navegador em que solicitou a recuperação.';
  }catch(e){
-  mensagem.textContent='Não foi possível enviar o e-mail: '+e.message;
+  mensagem.textContent='Erro ao enviar: '+e.message;
  }finally{
   botao.disabled=false;
   botao.textContent='Enviar link de recuperação';
  }
 }
+
+/* PROCESSAR O CÓDIGO DE RECUPERAÇÃO */
+
+async function verificarLinkRecuperacao(){
+ const url=new URL(window.location.href);
+ const code=url.searchParams.get('code');
+ const erro=url.searchParams.get('error_description');
+
+ if(erro){
+  voltarLogin();
+  document.getElementById('mensagemLogin').textContent=
+   'O link de recuperação expirou ou é inválido. Solicite um novo.';
+  return;
+ }
+
+ if(!code||processandoRecuperacao)return;
+
+ processandoRecuperacao=true;
+ mostrarTelaNovaSenha();
+
+ document.getElementById('mensagemNovaSenha').textContent=
+  'Validando o link de recuperação...';
+
+ try{
+  const {data,error}=await banco.auth.exchangeCodeForSession(code);
+
+  if(error)throw error;
+
+  if(!data.session){
+   throw new Error('Não foi possível confirmar sua sessão.');
+  }
+
+  window.history.replaceState(
+   {},
+   document.title,
+   window.location.pathname
+  );
+
+  mostrarTelaNovaSenha();
+
+ }catch(e){
+  window.history.replaceState(
+   {},
+   document.title,
+   window.location.pathname
+  );
+
+  voltarLogin();
+
+  document.getElementById('mensagemLogin').textContent=
+   'Não foi possível validar o link: '+e.message+
+   '. Solicite uma nova recuperação usando este mesmo navegador.';
+ }finally{
+  processandoRecuperacao=false;
+ }
+}
+
+/* ENVIO DA NOVA SENHA */
 
 async function salvarNovaSenha(){
  const senha=document.getElementById('novaSenhaCampo').value;
@@ -337,14 +400,17 @@ async function salvarNovaSenha(){
  mensagem.textContent='';
 
  try{
-  const {error}=await banco.auth.updateUser({password:senha});
+  const {data,error}=await banco.auth.updateUser({password:senha});
+
   if(error)throw error;
 
   mensagem.textContent='Senha alterada com sucesso! Você já pode entrar com a nova senha.';
+
   document.getElementById('novaSenhaCampo').value='';
   document.getElementById('confirmarNovaSenha').value='';
 
   await banco.auth.signOut();
+
   setTimeout(voltarLogin,1800);
 
  }catch(e){
@@ -355,13 +421,18 @@ async function salvarNovaSenha(){
  }
 }
 
-/* O SUPABASE AVISA QUANDO O LINK DE RECUPERAÇÃO É ABERTO */
+/* EVENTO DE RECUPERAÇÃO DO SUPABASE */
 
 banco.auth.onAuthStateChange((evento,session)=>{
- if(evento==='PASSWORD_RECOVERY'){
+ if(evento==='PASSWORD_RECOVERY'&&session){
   mostrarTelaNovaSenha();
  }
 });
+
+/* VERIFICAR SE A PÁGINA RECEBEU UM LINK */
+
+verificarLinkRecuperacao();
+
 
 /* NAVEGAÇÃO */
 
