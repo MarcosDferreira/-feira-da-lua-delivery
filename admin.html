@@ -265,22 +265,54 @@ async function salvarNovaSenha(){
  const confirmacao=document.getElementById('confirmarNovaSenha').value;
  const mensagem=document.getElementById('mensagemNovaSenha');
  const botao=document.getElementById('botaoSalvarNovaSenha');
- if(senha.length<6){mensagem.textContent='A senha precisa ter pelo menos 6 caracteres.';return;}
- if(senha!==confirmacao){mensagem.textContent='As senhas não são iguais.';return;}
- botao.disabled=true;botao.textContent='Salvando...';mensagem.textContent='';
+
+ if(senha.length<6){
+  mensagem.textContent='A senha precisa ter pelo menos 6 caracteres.';
+  return;
+ }
+
+ if(senha!==confirmacao){
+  mensagem.textContent='As senhas não são iguais.';
+  return;
+ }
+
+ botao.disabled=true;
+ botao.textContent='Salvando...';
+ mensagem.textContent='';
+
  try{
-  const {error}=await banco.auth.updateUser({password:senha});
-  if(error)throw error;
+  const {data,error:erroSessao}=await banco.auth.getSession();
+
+  if(erroSessao) throw erroSessao;
+
+  if(!data.session){
+   throw new Error('Sua sessão de recuperação não foi encontrada. Solicite um novo link de recuperação.');
+  }
+
+  const {error}=await banco.auth.updateUser({
+   password:senha
+  });
+
+  if(error) throw error;
+
   await banco.auth.signOut();
+
   document.getElementById('novaSenha').value='';
   document.getElementById('confirmarNovaSenha').value='';
   document.getElementById('senha').value='';
-  mostrarSomente('login');
-  document.getElementById('mensagemLogin').textContent='Senha alterada com sucesso! Entre com sua nova senha.';
- }catch(e){mensagem.textContent='Não foi possível alterar a senha: '+(e.message||'erro desconhecido');}
- finally{botao.disabled=false;botao.textContent='Salvar nova senha';}
-}
 
+  mostrarSomente('login');
+
+  document.getElementById('mensagemLogin').textContent=
+   'Senha alterada com sucesso! Entre com sua nova senha.';
+
+ }catch(e){
+  mensagem.textContent='Não foi possível alterar a senha: '+(e.message||'erro desconhecido');
+ }finally{
+  botao.disabled=false;
+  botao.textContent='Salvar nova senha';
+ }
+}
 /* LOGIN */
 async function entrar(){
  const email=document.getElementById('email').value.trim();
@@ -299,10 +331,16 @@ async function entrar(){
 async function sair(){await banco.auth.signOut();location.reload();}
 
 /* Detecta quando o usuário abre o link de recuperação enviado pelo Supabase */
-banco.auth.onAuthStateChange((evento)=>{
+banco.auth.onAuthStateChange((evento, session)=>{
  if(evento==='PASSWORD_RECOVERY'){
-  document.getElementById('mensagemNovaSenha').textContent='';
-  mostrarSomente('areaNovaSenha');
+  if(session && session.access_token){
+   document.getElementById('mensagemNovaSenha').textContent='';
+   mostrarSomente('areaNovaSenha');
+  }else{
+   mostrarSomente('login');
+   document.getElementById('mensagemLogin').textContent=
+    'O link de recuperação não gerou uma sessão válida. Solicite um novo link.';
+  }
  }
 });
 
