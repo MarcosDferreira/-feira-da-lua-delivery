@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -366,6 +365,21 @@ button:disabled{
  color:var(--azul);
 }
 
+#acessoCliente{
+ background:#edf4fb;
+ color:var(--texto);
+ padding:14px;
+ border-radius:12px;
+ margin-bottom:18px;
+}
+
+#acessoCliente button{margin:4px}
+
+#areaCheckout input[readonly]{
+ background:#f0f3f7;
+ color:#40536d;
+}
+
 .aviso-perfil{
  color:#28764c;
  font-size:12px;
@@ -468,31 +482,115 @@ footer{
    Nenhum produto adicionado.
   </div>
 
-  <div class="checkout">
+  <div id="acessoCliente" class="checkout">
+   <h3>Entre para fazer seu pedido</h3>
+   <p class="ajuda">Use seu celular e sua senha. Se ainda não tem conta, crie seu cadastro.</p>
 
+   <div id="painelLogin">
+    <div class="campo">
+     <label for="loginTelefone">Celular com DDD</label>
+     <input id="loginTelefone" type="tel" inputmode="tel" autocomplete="tel" placeholder="(15) 99999-9999">
+    </div>
+
+    <div class="campo">
+     <label for="loginSenha">Senha</label>
+     <input id="loginSenha" type="password" autocomplete="current-password" placeholder="Sua senha">
+    </div>
+
+    <button type="button" class="finalizar" onclick="entrarCliente()">Entrar</button>
+
+    <p class="ajuda">
+     Ainda não tem conta?
+     <button type="button" onclick="mostrarCadastro()">Criar cadastro</button>
+    </p>
+   </div>
+
+   <div id="painelCadastro" style="display:none">
+    <h3>Criar minha conta</h3>
+
+    <div class="campo">
+     <label for="cadastroNome">Nome completo</label>
+     <input id="cadastroNome" autocomplete="name">
+    </div>
+
+    <div class="campo">
+     <label for="cadastroTelefone">Celular com DDD</label>
+     <input id="cadastroTelefone" type="tel" inputmode="tel" autocomplete="tel">
+    </div>
+
+    <div class="campo">
+     <label for="cadastroSenha">Crie uma senha</label>
+     <input id="cadastroSenha" type="password" autocomplete="new-password" minlength="6" placeholder="Mínimo de 6 caracteres">
+    </div>
+
+    <div class="campo">
+     <label for="cadastroEndereco">Endereço completo</label>
+     <input id="cadastroEndereco" autocomplete="street-address">
+    </div>
+
+    <div class="campo">
+     <label for="cadastroBairro">Bairro</label>
+     <select id="cadastroBairro">
+      <option value="">Carregando bairros...</option>
+     </select>
+    </div>
+
+    <button type="button" class="finalizar" onclick="cadastrarCliente()">Criar minha conta</button>
+
+    <p class="ajuda">
+     <button type="button" onclick="mostrarLogin()">Voltar para entrar</button>
+    </p>
+   </div>
+
+   <div id="painelConta" style="display:none">
+    <p class="aviso-perfil" id="boasVindas"></p>
+    <button type="button" onclick="mostrarEdicao()">Editar meu cadastro</button>
+    <button type="button" onclick="sairCliente()">Sair da conta</button>
+   </div>
+
+   <div id="painelEdicao" style="display:none">
+    <h3>Editar meu cadastro</h3>
+
+    <div class="campo">
+     <label for="edicaoNome">Nome completo</label>
+     <input id="edicaoNome" autocomplete="name">
+    </div>
+
+    <div class="campo">
+     <label for="edicaoEndereco">Endereço completo</label>
+     <input id="edicaoEndereco" autocomplete="street-address">
+    </div>
+
+    <div class="campo">
+     <label for="edicaoBairro">Bairro</label>
+     <select id="edicaoBairro">
+      <option value="">Selecione seu bairro</option>
+     </select>
+    </div>
+
+    <button type="button" onclick="salvarEdicao()">Salvar alterações</button>
+    <button type="button" onclick="cancelarEdicao()">Cancelar</button>
+   </div>
+
+   <p id="mensagemAcesso" class="aviso-perfil"></p>
+  </div>
+
+  <div id="areaCheckout" class="checkout" style="display:none">
    <h3>Seus dados</h3>
 
    <div class="campo">
-    <label for="clienteNome">Nome completo</label>
-    <input
-     id="clienteNome"
-     type="text"
-     autocomplete="name"
-     placeholder="Digite seu nome">
+    <label>Nome completo</label>
+    <input id="clienteNome" readonly>
    </div>
 
    <div class="campo">
-    <label for="clienteTelefone">Celular com DDD</label>
-    <input
-     id="clienteTelefone"
-     type="tel"
-     inputmode="tel"
-     autocomplete="tel"
-     placeholder="Ex.: (15) 99999-9999">
-    <div class="ajuda">Usaremos seu celular para identificar seus dados nas próximas compras neste aparelho.</div>
+    <label>Celular com DDD</label>
+    <input id="clienteTelefone" readonly>
    </div>
 
-   <div id="avisoPerfil" class="aviso-perfil"></div>
+   <div id="avisoPerfil" class="aviso-perfil">
+    Dados vinculados à sua conta.
+   </div>
 
    <h3 style="margin-top:22px">Como deseja receber?</h3>
 
@@ -505,28 +603,22 @@ footer{
    </div>
 
    <div id="camposEntrega">
-
     <div class="campo">
-     <label for="clienteEndereco">Endereço completo</label>
-     <input
-      id="clienteEndereco"
-      type="text"
-      autocomplete="street-address"
-      placeholder="Rua, número e complemento">
+     <label>Endereço de entrega</label>
+     <input id="clienteEndereco" readonly>
     </div>
 
     <div class="campo">
-     <label for="clienteBairro">Bairro</label>
-     <select id="clienteBairro" required>
-      <option value="">Carregando bairros...</option>
-     </select>
-     <div class="ajuda">Selecione seu bairro. O frete será calculado automaticamente pela região cadastrada.</div>
+     <label>Bairro</label>
+     <input id="clienteBairroNome" readonly>
     </div>
 
+    <div class="ajuda">
+     Para mudar seu endereço ou bairro, use “Editar meu cadastro”.
+    </div>
    </div>
 
    <div class="resumo-valores">
-
     <div class="linha-valor">
      <span>Produtos</span>
      <strong id="subtotal">R$ 0,00</strong>
@@ -541,9 +633,7 @@ footer{
      <span>Total do pedido</span>
      <strong id="total">R$ 0,00</strong>
     </div>
-
    </div>
-
   </div>
 
   <div id="mensagem"></div>
@@ -587,7 +677,11 @@ const banco=window.supabase.createClient(
  SUPABASE_KEY
 );
 
-const CHAVE_PERFIL='feiraLuaCliente';
+const AUTH_URL=SUPABASE_URL+'/functions/v1/cliente-auth';
+const CHAVE_SESSAO='feiraLuaSessao';
+
+let tokenCliente=localStorage.getItem(CHAVE_SESSAO)||'';
+let clienteLogado=null;
 
 let carrinho=[];
 let produtos=[];
@@ -596,8 +690,8 @@ let fretes=[];
 let regioes=[];
 let enviandoPedido=false;
 
-function moeda(valor){
- return Number(valor||0).toLocaleString('pt-BR',{
+function moeda(v){
+ return Number(v||0).toLocaleString('pt-BR',{
   style:'currency',
   currency:'BRL'
  });
@@ -607,71 +701,367 @@ function valorProdutos(){
  return carrinho.reduce((s,p)=>s+Number(p.preco),0);
 }
 
-function freteSelecionado(){
+function normalizarTelefone(v){
+ return String(v||'').replace(/\D/g,'');
+}
 
+function bairroDoCliente(){
+ return clienteLogado
+  ?fretes.find(f=>String(f.id)===String(clienteLogado.bairro_id))
+  :null;
+}
+
+function freteSelecionado(){
  if(document.getElementById('tipoEntrega').value!=='entrega'){
   return 0;
  }
 
- const id=document.getElementById('clienteBairro').value;
+ const b=bairroDoCliente();
 
- const bairro=fretes.find(
-  f=>String(f.id)===String(id)
- );
-
- return bairro?Number(bairro.valor):0;
+ return b?Number(b.valor)||0:0;
 }
 
-function salvarPerfil(){
-
- const perfil={
-  nome:document.getElementById('clienteNome').value.trim(),
-  telefone:document.getElementById('clienteTelefone').value.trim(),
-  endereco:document.getElementById('clienteEndereco').value.trim(),
-  bairro_id:document.getElementById('clienteBairro').value
+async function chamarAuth(dados,token=''){
+ const headers={
+  'Content-Type':'application/json',
+  'apikey':SUPABASE_KEY
  };
 
+ if(token){
+  headers.Authorization='Bearer '+token;
+ }
+
+ const resp=await fetch(AUTH_URL,{
+  method:'POST',
+  headers,
+  body:JSON.stringify(dados)
+ });
+
+ let r={};
+
  try{
-  localStorage.setItem(CHAVE_PERFIL,JSON.stringify(perfil));
- }catch(e){
-  console.warn('Não foi possível salvar os dados neste aparelho.',e);
+  r=await resp.json();
+ }catch(e){}
+
+ if(!resp.ok){
+  throw new Error(
+   r.erro||
+   r.mensagem||
+   'Não foi possível concluir. Confira os dados e tente novamente.'
+  );
+ }
+
+ return r;
+}
+
+function mensagemAcesso(t,erro=false){
+ const e=document.getElementById('mensagemAcesso');
+
+ if(e){
+  e.textContent=t||'';
+  e.style.color=erro?'#b8323a':'#28764c';
  }
 }
 
-function carregarPerfil(){
+function exibirPainel(id){
+ [
+  'painelLogin',
+  'painelCadastro',
+  'painelConta',
+  'painelEdicao'
+ ].forEach(x=>{
+  document.getElementById(x).style.display=
+   x===id?'block':'none';
+ });
+}
+
+function mostrarLogin(){
+ exibirPainel('painelLogin');
+ mensagemAcesso('');
+}
+
+function mostrarCadastro(){
+ exibirPainel('painelCadastro');
+ mensagemAcesso('');
+}
+
+function aplicarCliente(c){
+ clienteLogado=c;
+
+ exibirPainel('painelConta');
+
+ document.getElementById('areaCheckout').style.display='block';
+
+ document.getElementById('clienteNome').value=c.nome||'';
+ document.getElementById('clienteTelefone').value=c.telefone||'';
+ document.getElementById('clienteEndereco').value=c.endereco||'';
+
+ const b=bairroDoCliente();
+
+ document.getElementById('clienteBairroNome').value=
+  b?b.bairro:'Bairro não informado';
+
+ document.getElementById('boasVindas').textContent=
+  'Olá, '+(c.nome||'cliente')+'! Sua conta está conectada.';
+
+ document.getElementById('botaoFinalizar').disabled=false;
+
+ atualizar();
+}
+
+function limparCliente(){
+ clienteLogado=null;
+
+ document.getElementById('areaCheckout').style.display='none';
+
+ exibirPainel('painelLogin');
+
+ document.getElementById('botaoFinalizar').disabled=true;
+
+ [
+  'clienteNome',
+  'clienteTelefone',
+  'clienteEndereco',
+  'clienteBairroNome'
+ ].forEach(id=>{
+  document.getElementById(id).value='';
+ });
+}
+
+async function entrarCliente(){
+ const telefone=normalizarTelefone(
+  document.getElementById('loginTelefone').value
+ );
+
+ const senha=document.getElementById('loginSenha').value;
+
+ if(telefone.length<10||telefone.length>13){
+  mensagemAcesso('Informe um celular válido com DDD.',true);
+  return;
+ }
+
+ if(!senha){
+  mensagemAcesso('Digite sua senha.',true);
+  return;
+ }
+
+ mensagemAcesso('Entrando...');
 
  try{
+  const r=await chamarAuth({
+   acao:'login',
+   telefone,
+   senha
+  });
 
-  const salvo=localStorage.getItem(CHAVE_PERFIL);
+  tokenCliente=r.token;
 
-  if(!salvo)return;
+  localStorage.setItem(CHAVE_SESSAO,tokenCliente);
 
-  const perfil=JSON.parse(salvo);
+  const p=await chamarAuth(
+   {acao:'me'},
+   tokenCliente
+  );
 
-  document.getElementById('clienteNome').value=perfil.nome||'';
-  document.getElementById('clienteTelefone').value=perfil.telefone||'';
-  document.getElementById('clienteEndereco').value=perfil.endereco||'';
+  aplicarCliente(p.cliente);
 
-  if(perfil.bairro_id){
-   document.getElementById('clienteBairro').value=String(perfil.bairro_id);
-  }
-
-  document.getElementById('avisoPerfil').textContent=
-   'Seus dados anteriores foram preenchidos. Você pode atualizar quando quiser.';
+  mensagemAcesso('Login realizado com sucesso!');
 
  }catch(e){
-  console.warn('Não foi possível recuperar o perfil.',e);
+  mensagemAcesso(e.message,true);
+ }
+}
+
+async function cadastrarCliente(){
+ const nome=document.getElementById('cadastroNome').value.trim();
+
+ const telefone=normalizarTelefone(
+  document.getElementById('cadastroTelefone').value
+ );
+
+ const senha=document.getElementById('cadastroSenha').value;
+
+ const endereco=document.getElementById('cadastroEndereco').value.trim();
+
+ const bairro_id=document.getElementById('cadastroBairro').value;
+
+ if(nome.length<2){
+  mensagemAcesso('Informe seu nome completo.',true);
+  return;
+ }
+
+ if(telefone.length<10||telefone.length>13){
+  mensagemAcesso('Informe um celular válido com DDD.',true);
+  return;
+ }
+
+ if(senha.length<6){
+  mensagemAcesso('A senha precisa ter pelo menos 6 caracteres.',true);
+  return;
+ }
+
+ if(endereco.length<5){
+  mensagemAcesso('Informe seu endereço completo.',true);
+  return;
+ }
+
+ if(!bairro_id){
+  mensagemAcesso('Selecione seu bairro.',true);
+  return;
+ }
+
+ mensagemAcesso('Criando sua conta...');
+
+ try{
+  const r=await chamarAuth({
+   acao:'register',
+   nome,
+   telefone,
+   senha
+  });
+
+  tokenCliente=r.token;
+
+  localStorage.setItem(CHAVE_SESSAO,tokenCliente);
+
+  const u=await chamarAuth({
+   acao:'update_profile',
+   nome,
+   endereco,
+   bairro_id:Number(bairro_id)
+  },tokenCliente);
+
+  const c=u.cliente||{
+   id:r.cliente.id,
+   nome,
+   telefone:r.cliente.telefone||telefone,
+   endereco,
+   bairro_id:Number(bairro_id)
+  };
+
+  aplicarCliente(c);
+
+  mensagemAcesso('Cadastro realizado com sucesso!');
+
+ }catch(e){
+  mensagemAcesso(e.message,true);
+ }
+}
+
+async function restaurarSessao(){
+ if(!tokenCliente){
+  limparCliente();
+  return;
+ }
+
+ try{
+  const r=await chamarAuth(
+   {acao:'me'},
+   tokenCliente
+  );
+
+  aplicarCliente(r.cliente);
+
+ }catch(e){
+  tokenCliente='';
+
+  localStorage.removeItem(CHAVE_SESSAO);
+
+  limparCliente();
+
+  mensagemAcesso('Sua sessão expirou. Entre novamente.');
+ }
+}
+
+async function sairCliente(){
+ try{
+  if(tokenCliente){
+   await chamarAuth(
+    {acao:'logout'},
+    tokenCliente
+   );
+  }
+ }catch(e){
+  console.warn(e);
+ }
+
+ tokenCliente='';
+
+ localStorage.removeItem(CHAVE_SESSAO);
+
+ limparCliente();
+
+ mensagemAcesso('Você saiu da sua conta.');
+}
+
+function mostrarEdicao(){
+ if(!clienteLogado)return;
+
+ document.getElementById('painelConta').style.display='none';
+ document.getElementById('painelEdicao').style.display='block';
+
+ document.getElementById('edicaoNome').value=
+  clienteLogado.nome||'';
+
+ document.getElementById('edicaoEndereco').value=
+  clienteLogado.endereco||'';
+
+ document.getElementById('edicaoBairro').value=
+  clienteLogado.bairro_id
+   ?String(clienteLogado.bairro_id)
+   :'';
+
+ mensagemAcesso('');
+}
+
+function cancelarEdicao(){
+ document.getElementById('painelEdicao').style.display='none';
+ document.getElementById('painelConta').style.display='block';
+}
+
+async function salvarEdicao(){
+ const nome=document.getElementById('edicaoNome').value.trim();
+
+ const endereco=document.getElementById('edicaoEndereco').value.trim();
+
+ const bairro_id=document.getElementById('edicaoBairro').value;
+
+ if(nome.length<2||endereco.length<5||!bairro_id){
+  mensagemAcesso('Preencha nome, endereço e bairro.',true);
+  return;
+ }
+
+ mensagemAcesso('Salvando alterações...');
+
+ try{
+  const r=await chamarAuth({
+   acao:'update_profile',
+   nome,
+   endereco,
+   bairro_id:Number(bairro_id)
+  },tokenCliente);
+
+  aplicarCliente(
+   r.cliente||{
+    ...clienteLogado,
+    nome,
+    endereco,
+    bairro_id:Number(bairro_id)
+   }
+  );
+
+  mensagemAcesso('Cadastro atualizado com sucesso!');
+
+ }catch(e){
+  mensagemAcesso(e.message,true);
  }
 }
 
 async function carregarFretes(){
-
- const seletor=document.getElementById('clienteBairro');
+ const ids=['cadastroBairro','edicaoBairro'];
 
  try{
-
-  const [resBairros,resRegioes]=await Promise.all([
-
+  const [rb,rr]=await Promise.all([
    banco
     .from('frete_bairros')
     .select('id,bairro,tipo,valor,ativo,regiao_id')
@@ -683,124 +1073,93 @@ async function carregarFretes(){
     .select('id,nome,valor,ativo')
     .eq('ativo',true)
     .order('nome')
-
   ]);
 
-  if(resBairros.error)throw resBairros.error;
-  if(resRegioes.error)throw resRegioes.error;
+  if(rb.error)throw rb.error;
+  if(rr.error)throw rr.error;
 
-  regioes=resRegioes.data||[];
+  regioes=rr.data||[];
 
-  const mapaRegioes=new Map(
-   regioes.map(regiao=>[
-    String(regiao.id),
-    regiao
-   ])
+  const mapa=new Map(
+   regioes.map(r=>[String(r.id),r])
   );
 
-  fretes=(resBairros.data||[]).reduce((lista,bairro)=>{
-
-   // Entrega externa continua usando seu próprio valor.
-   if(bairro.tipo==='externo'){
-
-    lista.push({
-     ...bairro,
-     valor:Number(bairro.valor)||0,
+  fretes=(rb.data||[]).reduce((l,b)=>{
+   if(b.tipo==='externo'){
+    l.push({
+     ...b,
+     valor:Number(b.valor)||0,
      nomeRegiao:'Entrega externa'
     });
 
-    return lista;
+    return l;
    }
 
-   // Bairro da cidade precisa estar vinculado
-   // a uma região ativa.
-   if(bairro.tipo==='cidade'&&bairro.regiao_id){
+   if(b.tipo==='cidade'&&b.regiao_id){
+    const r=mapa.get(String(b.regiao_id));
 
-    const regiao=mapaRegioes.get(
-     String(bairro.regiao_id)
-    );
-
-    if(regiao){
-
-     lista.push({
-      ...bairro,
-      valor:Number(regiao.valor)||0,
-      nomeRegiao:regiao.nome
+    if(r){
+     l.push({
+      ...b,
+      valor:Number(r.valor)||0,
+      nomeRegiao:r.nome
      });
-
     }
    }
 
-   return lista;
+   return l;
 
   },[]);
 
-  seletor.innerHTML='<option value="">Selecione seu bairro</option>';
+  ids.forEach(id=>{
+   const el=document.getElementById(id);
 
-  const bairrosCidade=fretes.filter(
-   f=>f.tipo==='cidade'
-  );
+   el.innerHTML='<option value="">Selecione seu bairro</option>';
 
-  const bairrosExternos=fretes.filter(
-   f=>f.tipo==='externo'
-  );
+   [
+    ['cidade','Ribeirão Grande'],
+    ['externo','Entrega externa']
+   ].forEach(([tipo,nome])=>{
+    const arr=fretes.filter(b=>b.tipo===tipo);
 
-  if(bairrosCidade.length){
+    if(arr.length){
+     const g=document.createElement('optgroup');
 
-   const grupo=document.createElement('optgroup');
-   grupo.label='Ribeirão Grande';
+     g.label=nome;
 
-   bairrosCidade.forEach(bairro=>{
+     arr.forEach(b=>{
+      const o=document.createElement('option');
 
-    const opcao=document.createElement('option');
+      o.value=String(b.id);
+      o.textContent=b.bairro;
 
-    opcao.value=String(bairro.id);
-    opcao.textContent=bairro.bairro;
+      g.appendChild(o);
+     });
 
-    grupo.appendChild(opcao);
-
+     el.appendChild(g);
+    }
    });
 
-   seletor.appendChild(grupo);
-  }
+   if(!fretes.length){
+    el.innerHTML='<option value="">Nenhum bairro disponível</option>';
+   }
+  });
 
-  if(bairrosExternos.length){
+  await restaurarSessao();
 
-   const grupo=document.createElement('optgroup');
-   grupo.label='Entrega externa';
-
-   bairrosExternos.forEach(bairro=>{
-
-    const opcao=document.createElement('option');
-
-    opcao.value=String(bairro.id);
-    opcao.textContent=bairro.bairro;
-
-    grupo.appendChild(opcao);
-
-   });
-
-   seletor.appendChild(grupo);
-  }
-
-  if(!fretes.length){
-
-   seletor.innerHTML=
-    '<option value="">Nenhum bairro com frete disponível</option>';
-
-  }
-
-  carregarPerfil();
   atualizar();
 
  }catch(e){
-
   console.error('Erro ao carregar bairros e regiões:',e);
 
-  seletor.innerHTML=
-   '<option value="">Erro ao carregar bairros e regiões</option>';
+  ids.forEach(id=>{
+   document.getElementById(id).innerHTML=
+    '<option value="">Erro ao carregar bairros</option>';
+  });
 
   fretes=[];
+
+  await restaurarSessao();
 
   atualizar();
  }
@@ -809,18 +1168,24 @@ async function carregarFretes(){
 async function carregarProdutos(){
 
  const vitrine=document.getElementById('vitrine');
+
  const filtro=document.getElementById('filtro-barracas');
 
  try{
-
-  const {data:listaBarracas,error:e1}=await banco
+  const {
+   data:listaBarracas,
+   error:e1
+  }=await banco
    .from('feirantes')
    .select('id,nome,responsavel')
    .eq('ativo',true);
 
   if(e1)throw e1;
 
-  const {data:lista,error:e2}=await banco
+  const {
+   data:lista,
+   error:e2
+  }=await banco
    .from('produtos')
    .select('id,feirante_id,nome,preco,descricao,imagem_url,estoque,estoque_minimo')
    .eq('ativo',true);
@@ -830,23 +1195,21 @@ async function carregarProdutos(){
   produtos=lista||[];
   barracas=listaBarracas||[];
 
-  filtro.innerHTML='<option value="todas">Todas as barracas</option>';
+  filtro.innerHTML=
+   '<option value="todas">Todas as barracas</option>';
 
   barracas.forEach(b=>{
-
    const opcao=document.createElement('option');
 
    opcao.value=String(b.id);
    opcao.textContent=b.nome;
 
    filtro.appendChild(opcao);
-
   });
 
   vitrine.innerHTML='';
 
   barracas.forEach(b=>{
-
    const listaBarraca=produtos.filter(
     p=>Number(p.feirante_id)===Number(b.id)
    );
@@ -865,15 +1228,15 @@ async function carregarProdutos(){
    sec.appendChild(titulo);
 
    listaBarraca.forEach(p=>{
-
     const item=document.createElement('div');
+
     item.className='produto';
 
     const conteudo=document.createElement('div');
+
     conteudo.className='produto-conteudo';
 
     if(p.imagem_url){
-
      const foto=document.createElement('img');
 
      foto.className='foto-produto';
@@ -885,36 +1248,38 @@ async function carregarProdutos(){
     }
 
     const info=document.createElement('div');
+
     info.className='info-produto';
 
     const nome=document.createElement('strong');
+
     nome.textContent=p.nome;
 
     const desc=document.createElement('p');
+
     desc.textContent=p.descricao||'';
 
     const preco=document.createElement('div');
+
     preco.className='preco';
     preco.textContent=moeda(p.preco);
 
     const estoque=document.createElement('div');
+
     estoque.className='estoque';
 
     const quantidadeEstoque=Number(p.estoque)||0;
     const minimo=Number(p.estoque_minimo)||0;
 
     if(quantidadeEstoque<=0){
-
      estoque.textContent='ESGOTADO';
      estoque.classList.add('esgotado');
 
     }else if(quantidadeEstoque<=minimo){
-
      estoque.textContent='ÚLTIMAS UNIDADES: '+quantidadeEstoque;
      estoque.classList.add('ultimas');
 
     }else{
-
      estoque.textContent='Disponível';
      estoque.classList.add('disponivel');
     }
@@ -926,12 +1291,10 @@ async function carregarProdutos(){
     const botao=document.createElement('button');
 
     if(quantidadeEstoque<=0){
-
      botao.textContent='Esgotado';
      botao.disabled=true;
 
     }else{
-
      botao.textContent='Adicionar';
      botao.onclick=()=>adicionar(p.id);
     }
@@ -939,11 +1302,9 @@ async function carregarProdutos(){
     item.append(conteudo,botao);
 
     sec.appendChild(item);
-
    });
 
    vitrine.appendChild(sec);
-
   });
 
   if(!vitrine.children.length){
@@ -953,7 +1314,6 @@ async function carregarProdutos(){
   aplicarFiltro();
 
  }catch(e){
-
   console.error(e);
 
   vitrine.textContent=
@@ -962,17 +1322,13 @@ async function carregarProdutos(){
 }
 
 function aplicarFiltro(){
+ const s=document.getElementById('filtro-barracas').value;
 
- const selecionada=
-  document.getElementById('filtro-barracas').value;
-
- document.querySelectorAll('#vitrine .barraca').forEach(sec=>{
-
-  sec.style.display=
-   selecionada==='todas'||sec.dataset.barraca===selecionada
+ document.querySelectorAll('#vitrine .barraca').forEach(x=>{
+  x.style.display=
+   s==='todas'||x.dataset.barraca===s
     ?'block'
     :'none';
-
  });
 }
 
@@ -980,249 +1336,148 @@ document.getElementById('filtro-barracas')
  .addEventListener('change',aplicarFiltro);
 
 function adicionar(id){
+ const p=produtos.find(x=>Number(x.id)===Number(id));
 
- const produto=produtos.find(
-  p=>Number(p.id)===Number(id)
- );
+ if(!p)return;
 
- if(!produto)return;
-
- const estoque=Number(produto.estoque)||0;
-
- if(estoque<=0){
-  alert('Este produto está esgotado.');
-  return;
- }
-
- const quantidadeNoCarrinho=carrinho.filter(
-  p=>Number(p.id)===Number(id)
+ const n=carrinho.filter(
+  x=>Number(x.id)===Number(id)
  ).length;
 
- if(quantidadeNoCarrinho>=estoque){
-  alert('Você já adicionou todas as unidades disponíveis deste produto.');
+ if(Number(p.estoque)<=n){
+  alert('Não há mais unidades disponíveis.');
   return;
  }
 
  carrinho.push({
-  id:produto.id,
-  nome:produto.nome,
-  preco:Number(produto.preco)
+  id:p.id,
+  nome:p.nome,
+  preco:Number(p.preco)
  });
 
  atualizar();
 }
 
 function remover(id){
-
- const indice=carrinho.findIndex(
-  p=>Number(p.id)===Number(id)
+ const i=carrinho.findIndex(
+  x=>Number(x.id)===Number(id)
  );
 
- if(indice>=0){
-  carrinho.splice(indice,1);
- }
+ if(i>=0)carrinho.splice(i,1);
 
  atualizar();
 }
 
 function atualizar(){
-
  document.getElementById('quantidade').textContent=
   carrinho.length;
 
- const lista=document.getElementById('itens');
+ const el=document.getElementById('itens');
 
- lista.innerHTML='';
+ el.innerHTML='';
 
  if(!carrinho.length){
-
-  lista.textContent='Nenhum produto adicionado.';
+  el.textContent='Nenhum produto adicionado.';
 
  }else{
-
-  const resumo={};
+  const r={};
 
   carrinho.forEach(p=>{
-
-   if(!resumo[p.id]){
-
-    resumo[p.id]={
+   if(!r[p.id]){
+    r[p.id]={
      nome:p.nome,
      preco:p.preco,
-     quantidade:0
+     q:0
     };
-
    }
 
-   resumo[p.id].quantidade++;
-
+   r[p.id].q++;
   });
 
-  Object.entries(resumo).forEach(([id,p])=>{
+  Object.entries(r).forEach(([id,p])=>{
+   const row=document.createElement('div');
 
-   const linha=document.createElement('div');
-   linha.className='item-carrinho';
+   row.className='item-carrinho';
 
-   const texto=document.createElement('span');
+   const t=document.createElement('span');
 
-   texto.textContent=
-    p.quantidade+'x '+p.nome+' - '+
-    moeda(p.preco*p.quantidade);
+   t.textContent=
+    p.q+'x '+p.nome+' - '+moeda(p.preco*p.q);
 
-   const botao=document.createElement('button');
+   const b=document.createElement('button');
 
-   botao.textContent='Remover';
-   botao.onclick=()=>remover(id);
+   b.textContent='Remover';
+   b.onclick=()=>remover(id);
 
-   linha.append(texto,botao);
+   row.append(t,b);
 
-   lista.appendChild(linha);
-
+   el.appendChild(row);
   });
-
  }
 
- const subtotal=valorProdutos();
- const frete=freteSelecionado();
- const total=subtotal+frete;
+ const s=valorProdutos();
+ const f=freteSelecionado();
 
- document.getElementById('subtotal').textContent=
-  moeda(subtotal);
-
- document.getElementById('frete').textContent=
-  moeda(frete);
-
- document.getElementById('total').textContent=
-  moeda(total);
+ document.getElementById('subtotal').textContent=moeda(s);
+ document.getElementById('frete').textContent=moeda(f);
+ document.getElementById('total').textContent=moeda(s+f);
 }
 
 function atualizarTipoEntrega(){
-
- const tipo=document.getElementById('tipoEntrega').value;
-
- const campos=document.getElementById('camposEntrega');
-
- campos.style.display=tipo==='entrega'?'block':'none';
+ document.getElementById('camposEntrega').style.display=
+  document.getElementById('tipoEntrega').value==='entrega'
+   ?'block'
+   :'none';
 
  atualizar();
- salvarPerfil();
 }
 
 document.getElementById('tipoEntrega')
  .addEventListener('change',atualizarTipoEntrega);
 
-document.getElementById('clienteBairro')
- .addEventListener('change',()=>{
-
-  atualizar();
-  salvarPerfil();
-
- });
-
-[
- 'clienteNome',
- 'clienteTelefone',
- 'clienteEndereco'
-].forEach(id=>{
-
- document.getElementById(id).addEventListener(
-  'change',
-  salvarPerfil
- );
-
- document.getElementById(id).addEventListener(
-  'blur',
-  salvarPerfil
- );
-
-});
-
 function validarDados(){
-
- const nome=
-  document.getElementById('clienteNome').value.trim();
-
- const telefone=
-  document.getElementById('clienteTelefone').value.replace(/\D/g,'');
-
- const tipo=
-  document.getElementById('tipoEntrega').value;
-
- const endereco=
-  document.getElementById('clienteEndereco').value.trim();
-
- const bairroId=
-  document.getElementById('clienteBairro').value;
-
- if(nome.length<2){
-
-  alert('Informe seu nome corretamente.');
-
-  document.getElementById('clienteNome').focus();
-
+ if(!clienteLogado){
+  alert('Entre na sua conta para continuar.');
   return null;
  }
 
- if(telefone.length<10||telefone.length>13){
+ const tipo=document.getElementById('tipoEntrega').value;
+ const b=bairroDoCliente();
 
-  alert('Informe um celular válido com DDD.');
-
-  document.getElementById('clienteTelefone').focus();
-
+ if(
+  tipo==='entrega'&&
+  (!clienteLogado.endereco||clienteLogado.endereco.trim().length<5)
+ ){
+  alert('Atualize seu endereço em “Editar meu cadastro”.');
   return null;
  }
 
- if(tipo==='entrega'){
-
-  if(endereco.length<5){
-
-   alert('Informe seu endereço completo.');
-
-   document.getElementById('clienteEndereco').focus();
-
-   return null;
-  }
-
-  if(!bairroId){
-
-   alert('Selecione seu bairro. O frete será calculado automaticamente.');
-
-   document.getElementById('clienteBairro').focus();
-
-   return null;
-  }
-
-  const bairro=fretes.find(
-   f=>String(f.id)===String(bairroId)
-  );
-
-  if(!bairro){
-
-   alert('O bairro selecionado não possui uma região de frete ativa. Atualize a página ou entre em contato com a Feira.');
-
-   document.getElementById('clienteBairro').focus();
-
-   return null;
-  }
+ if(tipo==='entrega'&&(!clienteLogado.bairro_id||!b)){
+  alert('Atualize seu bairro em “Editar meu cadastro”.');
+  return null;
  }
 
  return {
-  nome,
-  telefone,
+  nome:clienteLogado.nome,
+  telefone:clienteLogado.telefone,
   tipo,
-  endereco:tipo==='entrega'?endereco:'',
-  bairroId:tipo==='entrega'?Number(bairroId):null
+  endereco:tipo==='entrega'?clienteLogado.endereco:'',
+  bairroId:tipo==='entrega'
+   ?Number(clienteLogado.bairro_id)
+   :null
  };
 }
 
 async function finalizar(){
-
  if(enviandoPedido)return;
 
+ if(!clienteLogado){
+  alert('Entre na sua conta para continuar.');
+  return;
+ }
+
  if(!carrinho.length){
-
   alert('Adicione produtos ao carrinho.');
-
   return;
  }
 
@@ -1233,31 +1488,24 @@ async function finalizar(){
  const resumo={};
 
  carrinho.forEach(p=>{
-
   if(!resumo[p.id]){
-
    resumo[p.id]={
     produto_id:p.id,
     quantidade:0,
     nome:p.nome,
     preco:p.preco
    };
-
   }
 
   resumo[p.id].quantidade++;
-
  });
 
  const itensPedido=Object.values(resumo).map(p=>({
-
   produto_id:p.produto_id,
   quantidade:p.quantidade
-
  }));
 
  const botao=document.getElementById('botaoFinalizar');
-
  const mensagem=document.getElementById('mensagem');
 
  enviandoPedido=true;
@@ -1268,10 +1516,7 @@ async function finalizar(){
  mensagem.textContent=
   'Aguarde, estamos registrando seu pedido.';
 
- salvarPerfil();
-
  try{
-
   const {data,error}=await banco.rpc(
    'criar_pedido_com_frete',
    {
@@ -1287,61 +1532,35 @@ async function finalizar(){
   if(error)throw error;
 
   if(!data||!data.pedido_id){
-
-   throw new Error(
-    'O pedido não retornou um número válido.'
-   );
+   throw new Error('O pedido não retornou um número válido.');
   }
 
   const pedidoId=data.pedido_id;
-
   const subtotal=Number(data.subtotal);
   const frete=Number(data.frete);
   const total=Number(data.total);
-
-  const bairroSelecionado=cliente.tipo==='entrega'
-   ?fretes.find(
-     f=>String(f.id)===String(cliente.bairroId)
-    )
-   :null;
+  const b=bairroDoCliente();
 
   const linhas=Object.values(resumo).map(p=>
-   p.quantidade+'x '+p.nome+' - '+
-   moeda(p.preco*p.quantidade)
+   p.quantidade+'x '+p.nome+' - '+moeda(p.preco*p.quantidade)
   );
 
-  const mensagemPedido=[
-
+  const texto=[
    'Olá! Quero fazer um pedido pela Feira da Lua Delivery.',
    '',
    'Pedido número: '+pedidoId,
    'Nome: '+cliente.nome,
    'Telefone: '+cliente.telefone,
-
    'Recebimento: '+(
     cliente.tipo==='retirada'
      ?'Retirada na Feira da Lua'
      :'Entrega em casa'
    ),
-
    ...(cliente.tipo==='entrega'?[
-
     'Endereço: '+cliente.endereco,
-
-    'Bairro: '+(
-     bairroSelecionado
-      ?bairroSelecionado.bairro
-      :''
-    ),
-
-    'Região: '+(
-     bairroSelecionado
-      ?bairroSelecionado.nomeRegiao
-      :''
-    )
-
+    'Bairro: '+(b?b.bairro:''),
+    'Região: '+(b?b.nomeRegiao:'')
    ]:[]),
-
    '',
    'Pedido:',
    ...linhas,
@@ -1351,13 +1570,7 @@ async function finalizar(){
    'TOTAL: '+moeda(total),
    '',
    'Aguardo a confirmação. Obrigado!'
-
   ].join('\n');
-
-  const telefoneFeira='5515997549326';
-
-  const url='https://wa.me/'+telefoneFeira+
-   '?text='+encodeURIComponent(mensagemPedido);
 
   mensagem.textContent=
    'Pedido nº '+pedidoId+' recebido com sucesso!';
@@ -1371,24 +1584,23 @@ async function finalizar(){
 
   atualizar();
 
-  window.location.href=url;
+  window.location.href=
+   'https://wa.me/5515997549326?text='+encodeURIComponent(texto);
 
  }catch(e){
-
   console.error(e);
 
-  const texto=e.message||
+  const erro=e.message||
    'Não foi possível registrar o pedido. Tente novamente.';
 
-  mensagem.textContent=texto;
+  mensagem.textContent=erro;
 
-  alert(texto);
+  alert(erro);
 
  }finally{
-
   enviandoPedido=false;
 
-  botao.disabled=false;
+  botao.disabled=!clienteLogado;
 
   botao.textContent='Confirmar pedido';
  }
@@ -1396,10 +1608,12 @@ async function finalizar(){
 
 atualizarTipoEntrega();
 
+document.getElementById('botaoFinalizar').disabled=true;
+
 carregarFretes();
 
 carregarProdutos();
 </script>
 
 </body>
-</html>
+                                           </html>
