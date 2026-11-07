@@ -38,6 +38,7 @@ footer{text-align:center;padding:20px}
 .regiao-card{border:1px solid #ccd5e5;padding:13px;border-radius:10px;margin:12px 0}
 .bairro-card{background:#f2f5fa;padding:10px;border-radius:8px;margin:9px 0}
 .botao-pequeno{padding:9px;font-size:14px}
+.aviso-recuperacao{background:#e8edf7;color:#10265a;padding:12px;border-radius:8px;margin:12px 0;font-size:14px}
 @media(max-width:380px){.menu-admin{grid-template-columns:1fr}}
 </style>
 </head>
@@ -53,9 +54,29 @@ footer{text-align:center;padding:20px}
 
 <section class="card" id="login">
 <h2>Entrar na administração</h2>
-<input id="email" type="email" placeholder="E-mail">
-<input id="senha" type="password" placeholder="Senha">
+<input id="email" type="email" placeholder="E-mail" autocomplete="username">
+<input id="senha" type="password" placeholder="Senha" autocomplete="current-password">
 <button onclick="entrar()">Entrar</button>
+<button class="cancelar" onclick="mostrarEsqueciSenha()">Esqueci minha senha</button>
+<p id="mensagemLogin"></p>
+</section>
+
+<section class="card oculto" id="recuperarSenha">
+<h2>Recuperar senha</h2>
+<p>Informe o e-mail cadastrado na administração. Você receberá um link para criar uma nova senha.</p>
+<input id="emailRecuperacao" type="email" placeholder="Seu e-mail" autocomplete="email">
+<button class="verde" id="botaoEnviarRecuperacao" onclick="enviarRecuperacao()">Enviar link de recuperação</button>
+<button class="cancelar" onclick="voltarLogin()">Voltar ao login</button>
+<p id="mensagemRecuperacao"></p>
+</section>
+
+<section class="card oculto" id="novaSenha">
+<h2>Cadastrar nova senha</h2>
+<p class="aviso-recuperacao">Digite sua nova senha e confirme para concluir a recuperação.</p>
+<input id="novaSenhaCampo" type="password" placeholder="Nova senha" autocomplete="new-password">
+<input id="confirmarNovaSenha" type="password" placeholder="Confirme a nova senha" autocomplete="new-password">
+<button class="verde" id="botaoSalvarNovaSenha" onclick="salvarNovaSenha()">Salvar nova senha</button>
+<p id="mensagemNovaSenha"></p>
 </section>
 
 <section id="painel" class="oculto">
@@ -214,7 +235,14 @@ footer{text-align:center;padding:20px}
 <script>
 const SUPABASE_URL='https://bnnfplpccsxaaztgbxkr.supabase.co';
 const SUPABASE_KEY='sb_publishable_dws08TQirwdC5MI3UITfog_AWVc8eL5';
-const banco=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const banco=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{
+ auth:{
+  flowType:'pkce',
+  detectSessionInUrl:true,
+  persistSession:true,
+  autoRefreshToken:true
+ }
+});
 const BUCKET='Produto';
 
 let feirantes=[];
@@ -226,6 +254,114 @@ let fretes=[];
 let regioes=[];
 let regiaoEditando=null;
 let bairroEditando=null;
+
+/* RECUPERAÇÃO DE SENHA */
+
+function ocultarTelasAcesso(){
+ document.getElementById('login').classList.add('oculto');
+ document.getElementById('recuperarSenha').classList.add('oculto');
+ document.getElementById('novaSenha').classList.add('oculto');
+ document.getElementById('painel').classList.add('oculto');
+}
+
+function mostrarEsqueciSenha(){
+ ocultarTelasAcesso();
+ document.getElementById('recuperarSenha').classList.remove('oculto');
+ document.getElementById('emailRecuperacao').value=
+  document.getElementById('email').value.trim();
+ document.getElementById('mensagemRecuperacao').textContent='';
+}
+
+function voltarLogin(){
+ ocultarTelasAcesso();
+ document.getElementById('login').classList.remove('oculto');
+ document.getElementById('mensagemLogin').textContent='';
+}
+
+function mostrarTelaNovaSenha(){
+ ocultarTelasAcesso();
+ document.getElementById('novaSenha').classList.remove('oculto');
+ document.getElementById('mensagemNovaSenha').textContent='';
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+
+async function enviarRecuperacao(){
+ const email=document.getElementById('emailRecuperacao').value.trim();
+ const botao=document.getElementById('botaoEnviarRecuperacao');
+ const mensagem=document.getElementById('mensagemRecuperacao');
+
+ if(!email){
+  mensagem.textContent='Informe seu e-mail.';
+  return;
+ }
+
+ botao.disabled=true;
+ botao.textContent='Enviando...';
+ mensagem.textContent='';
+
+ try{
+  const redirectTo=window.location.origin+window.location.pathname;
+  const {error}=await banco.auth.resetPasswordForEmail(email,{
+   redirectTo
+  });
+
+  if(error)throw error;
+
+  mensagem.textContent='Se o e-mail estiver cadastrado, você receberá um link para criar uma nova senha. Confira também a caixa de spam.';
+ }catch(e){
+  mensagem.textContent='Não foi possível enviar o e-mail: '+e.message;
+ }finally{
+  botao.disabled=false;
+  botao.textContent='Enviar link de recuperação';
+ }
+}
+
+async function salvarNovaSenha(){
+ const senha=document.getElementById('novaSenhaCampo').value;
+ const confirmar=document.getElementById('confirmarNovaSenha').value;
+ const botao=document.getElementById('botaoSalvarNovaSenha');
+ const mensagem=document.getElementById('mensagemNovaSenha');
+
+ if(senha.length<6){
+  mensagem.textContent='A senha precisa ter pelo menos 6 caracteres.';
+  return;
+ }
+
+ if(senha!==confirmar){
+  mensagem.textContent='As senhas não são iguais. Confira e tente novamente.';
+  return;
+ }
+
+ botao.disabled=true;
+ botao.textContent='Salvando...';
+ mensagem.textContent='';
+
+ try{
+  const {error}=await banco.auth.updateUser({password:senha});
+  if(error)throw error;
+
+  mensagem.textContent='Senha alterada com sucesso! Você já pode entrar com a nova senha.';
+  document.getElementById('novaSenhaCampo').value='';
+  document.getElementById('confirmarNovaSenha').value='';
+
+  await banco.auth.signOut();
+  setTimeout(voltarLogin,1800);
+
+ }catch(e){
+  mensagem.textContent='Não foi possível alterar a senha: '+e.message;
+ }finally{
+  botao.disabled=false;
+  botao.textContent='Salvar nova senha';
+ }
+}
+
+/* O SUPABASE AVISA QUANDO O LINK DE RECUPERAÇÃO É ABERTO */
+
+banco.auth.onAuthStateChange((evento,session)=>{
+ if(evento==='PASSWORD_RECOVERY'){
+  mostrarTelaNovaSenha();
+ }
+});
 
 /* NAVEGAÇÃO */
 
@@ -513,8 +649,7 @@ function mostrarFreteExterno(){
 }
 
 /* CADASTRAR E EDITAR REGIÃO */
-
-async function salvarRegiao(){
+ async function salvarRegiao(){
  const nome=document.getElementById('nomeRegiao').value.trim();
  const valorTexto=document.getElementById('valorRegiao').value;
  const valor=Number(valorTexto);
@@ -1024,8 +1159,7 @@ function mostrarProdutos(){
   lista.appendChild(card);
  });
 }
-
-/* CARREGAR PEDIDOS */
+ /* CARREGAR PEDIDOS */
 
 async function carregarPedidos(){
  const lista=document.getElementById('listaPedidos');
