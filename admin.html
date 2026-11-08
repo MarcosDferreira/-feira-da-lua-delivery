@@ -466,9 +466,7 @@ async function salvarNovaSenha(){
 
   if(error)throw error;
 
-  const {error:erroSaida}=await banco.auth.signOut();
-
-  if(erroSaida)throw erroSaida;
+  await banco.auth.signOut();
 
   document.getElementById('novaSenha').value='';
   document.getElementById('confirmarNovaSenha').value='';
@@ -493,7 +491,43 @@ banco.auth.onAuthStateChange((evento,session)=>{
   abrirTelaNovaSenha();
  }
 });
+async function verificarSessaoAdmin(){
+ try{
+  const {data,error}=await banco.auth.getSession();
 
+  if(error)throw error;
+
+  if(!data.session)return;
+
+  const {data:admin,error:erroAdmin}=await banco
+   .from('admins')
+   .select('user_id')
+   .eq('user_id',data.session.user.id)
+   .maybeSingle();
+
+  if(erroAdmin)throw erroAdmin;
+
+  if(!admin){
+   await banco.auth.signOut();
+   mostrarSomente('login');
+   return;
+  }
+
+  mostrarSomente('painel');
+
+  document.getElementById('usuario').textContent=
+   'Acesso liberado: '+data.session.user.email;
+
+  voltarInicio();
+
+ }catch(e){
+  console.error('Erro ao verificar sessão:',e);
+  mostrarSomente('login');
+ }
+}
+
+verificarSessaoAdmin();
+ 
 (async function verificarRetornoRecuperacao(){
  try{
   const hash=window.location.hash||'';
