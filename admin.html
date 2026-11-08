@@ -362,11 +362,16 @@ console.log('Erro do login:', error);
 
   if(erroAdmin)throw erroAdmin;
 
-  if(!admin){
+if(!admin){
+   const uuid=data.user.id;
+
    await banco.auth.signOut();
-   aviso.textContent='Usuário não autorizado para acessar a administração.';
+
+   aviso.textContent=
+    'Usuário não autorizado. UUID encontrado: '+uuid;
+
    return;
-  }
+}
 
   mostrarSomente('painel');
 
