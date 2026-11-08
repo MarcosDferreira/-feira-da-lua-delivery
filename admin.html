@@ -91,27 +91,9 @@ footer{text-align:center;padding:20px}
 <button class="verde" onclick="abrirArea('pedidos')">PEDIDOS</button>
 <button class="azul" onclick="abrirArea('loja')">GERENCIAR LOJA</button>
 <button class="amarelo" onclick="abrirArea('fretes')">FRETE POR REGIÃO</button>
-<button style="background:#6842a5" onclick="abrirArea('atendimento')">ATENDIMENTO AO CLIENTE</button>
 </div>
 </div>
 </div>
-
-<section id="areaAtendimento" class="area-admin">
-<div class="card">
-<h2>Atendimento ao cliente</h2>
-<p class="pequeno">Use esta área quando um cliente solicitar a redefinição da senha pelo WhatsApp.</p>
-<button class="voltar" onclick="voltarInicio()">Voltar ao início</button>
-<label><strong>Celular cadastrado com DDD</strong></label>
-<input id="telefoneCliente" type="tel" inputmode="numeric" autocomplete="tel" placeholder="Ex.: 15997564211">
-<label><strong>Nova senha</strong></label>
-<input id="novaSenhaCliente" type="password" autocomplete="new-password" placeholder="Mínimo de 8 caracteres">
-<label><strong>Confirmar nova senha</strong></label>
-<input id="confirmarSenhaCliente" type="password" autocomplete="new-password" placeholder="Digite novamente a nova senha">
-<button class="verde" id="botaoRedefinirCliente" onclick="redefinirSenhaCliente()">Redefinir senha do cliente</button>
-<p id="mensagemAtendimento" role="status" aria-live="polite"></p>
-<p class="pequeno">A senha antiga não pode ser consultada. Esta função cria uma nova senha e encerra as sessões anteriores do cliente.</p>
-</div>
-</section>
 
 <section id="areaPedidos" class="area-admin">
 <div class="card">
@@ -239,7 +221,6 @@ function abrirArea(area){
  if(area==='pedidos'){document.getElementById('areaPedidos').classList.add('ativa');carregarPedidos();}
  if(area==='loja'){document.getElementById('areaLoja').classList.add('ativa');carregarDados();}
  if(area==='fretes'){document.getElementById('areaFretes').classList.add('ativa');carregarFretes();}
- if(area==='atendimento'){document.getElementById('areaAtendimento').classList.add('ativa');}
  window.scrollTo({top:0,behavior:'smooth'});
 }
 function voltarInicio(){
@@ -441,58 +422,6 @@ banco.auth.onAuthStateChange((evento, session)=>{
  }
 })();
 
-
-/* ATENDIMENTO AO CLIENTE: REDEFINIR SENHA */
-async function redefinirSenhaCliente(){
- const telefone=document.getElementById('telefoneCliente').value.trim();
- const novaSenha=document.getElementById('novaSenhaCliente').value;
- const confirmar=document.getElementById('confirmarSenhaCliente').value;
- const aviso=document.getElementById('mensagemAtendimento');
- const botao=document.getElementById('botaoRedefinirCliente');
-
- if(!telefone){aviso.textContent='Informe o celular cadastrado pelo cliente.';return;}
- if(novaSenha.length<8){aviso.textContent='A nova senha precisa ter pelo menos 8 caracteres.';return;}
- if(novaSenha.length>128){aviso.textContent='A senha é muito longa.';return;}
- if(novaSenha!==confirmar){aviso.textContent='As senhas não são iguais.';return;}
- if(!confirm('Confirma a redefinição da senha deste cliente?'))return;
-
- botao.disabled=true;botao.textContent='Atualizando senha...';aviso.textContent='';
- try{
-  const {data:sessaoData,error:sessaoError}=await banco.auth.getSession();
-  if(sessaoError)throw sessaoError;
-  const session=sessaoData.session;
-  if(!session?.access_token)throw new Error('Sua sessão administrativa expirou. Entre novamente.');
-
-  const resposta=await fetch(SUPABASE_URL+'/functions/v1/cliente-auth',{
-   method:'POST',
-   headers:{
-    'Content-Type':'application/json',
-    'Authorization':'Bearer '+session.access_token,
-    'apikey':SUPABASE_KEY
-   },
-   body:JSON.stringify({
-    acao:'admin_reset_password',
-    telefone:telefone,
-    nova_senha:novaSenha
-   })
-  });
-
-  let resultado={};
-  try{resultado=await resposta.json();}catch(_){throw new Error('O servidor retornou uma resposta inválida.');}
-  if(!resposta.ok)throw new Error(resultado.erro||resultado.mensagem||'Não foi possível redefinir a senha.');
-  if(!resultado.cliente)throw new Error(resultado.erro||'A senha não foi confirmada pelo servidor.');
-
-  document.getElementById('telefoneCliente').value='';
-  document.getElementById('novaSenhaCliente').value='';
-  document.getElementById('confirmarSenhaCliente').value='';
-  aviso.textContent='Senha redefinida com sucesso para '+resultado.cliente.nome+'. Avise o cliente pelo WhatsApp usando um canal seguro.';
- }catch(e){
-  console.error('Erro ao redefinir senha do cliente:',e);
-  aviso.textContent='Erro: '+(e.message||'Não foi possível concluir a operação.');
- }finally{
-  botao.disabled=false;botao.textContent='Redefinir senha do cliente';
- }
-}
 
 /* FOTO */
 document.getElementById('fotoProduto').addEventListener('change',function(){
@@ -786,17 +715,39 @@ function mostrarPedido(p,lista){
  card.appendChild(criarElemento('h3','Total: '+moeda(p.total)));
  if(p.status==='novo'){const confirmar=criarElemento('button','Confirmar pedido','verde');confirmar.onclick=()=>confirmarPedido(p.id);card.appendChild(confirmar);}
  if(['confirmado','em_preparo','saiu_entrega'].includes(p.status)){
+  const avisar=criarElemento('button','Avisar cliente pelo WhatsApp','verde');
+  avisar.onclick=()=>avisarClienteWhatsApp(p);
+  card.appendChild(avisar);
   const etapas={confirmado:{proximo:'em_preparo',texto:'Iniciar preparo'},em_preparo:{proximo:'saiu_entrega',texto:'Saiu para entrega'},saiu_entrega:{proximo:'concluido',texto:'Concluir pedido'}};
   const etapa=etapas[p.status],avancar=criarElemento('button',etapa.texto,'azul');avancar.onclick=()=>atualizarStatus(p.id,etapa.proximo);card.appendChild(avancar);
  }
  if(['novo','confirmado','em_preparo','saiu_entrega'].includes(p.status)){const cancelar=criarElemento('button','Cancelar pedido','excluir');cancelar.onclick=()=>cancelarPedido(p.id);card.appendChild(cancelar);}
  lista.appendChild(card);
 }
+function avisarClienteWhatsApp(p){
+ let telefone=String(p.cliente_telefone||'').replace(/\D/g,'');
+ if(telefone.startsWith('0'))telefone=telefone.replace(/^0+/, '');
+ if(telefone.length===10||telefone.length===11)telefone='55'+telefone;
+ if(!telefone||telefone.length<12||telefone.length>13){
+  alert('O telefone deste cliente está incompleto ou inválido. Confira o cadastro antes de enviar a mensagem.');
+  return;
+ }
+ const nome=(p.cliente_nome||'cliente').trim().split(' ')[0];
+ const entrega=p.tipo_entrega==='retirada'
+  ? 'Seu pedido ficará disponível para retirada na Feira da Lua.'
+  : 'Seu pedido foi confirmado e seguirá para preparação e entrega no endereço informado.';
+ const mensagem='Olá, '+nome+'! Seu pedido #'+p.id+' na Feira da Lua foi confirmado. '+entrega+' Total do pedido: '+moeda(p.total)+'. Obrigado por comprar na Feira da Lua e valorizar nossos feirantes de Ribeirão Grande!';
+ const url='https://wa.me/'+telefone+'?text='+encodeURIComponent(mensagem);
+ window.open(url,'_blank','noopener,noreferrer');
+}
+
 async function confirmarPedido(id){
  if(!confirm('Confirmar este pedido e dar baixa no estoque?'))return;
  const {error}=await banco.rpc('confirmar_pedido',{p_pedido_id:id});
  if(error){alert('Não foi possível confirmar: '+error.message);return;}
- alert('Pedido confirmado e estoque atualizado!');await carregarPedidos();await carregarDados();
+ alert('Pedido confirmado e estoque atualizado! Agora você pode avisar o cliente pelo WhatsApp.');
+ await carregarPedidos();
+ await carregarDados();
 }
 async function cancelarPedido(id){
  if(!confirm('Deseja cancelar este pedido? Se já foi confirmado, o estoque será devolvido.'))return;
