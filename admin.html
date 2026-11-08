@@ -360,14 +360,19 @@ async function entrar(){
    throw new Error('O Supabase não retornou os dados do usuário.');
   }
 
-  // 2. Confirma a sessão
+  // 2. Verifica a sessão retornada pelo login
+if(!data.session){
+  throw new Error(
+    'O Supabase autenticou o usuário, mas retornou a sessão vazia.'
+  );
+}
+
 const {data:sessaoData,error:erroSessao}=await banco.auth.getSession();
 
 if(erroSessao)throw erroSessao;
 
 if(!sessaoData.session){
-  throw new Error('O login não criou uma sessão persistida. Verifique a autenticação.');
-}
+  let diagnostico='não foi possível testar o armazenamento';
 
   // 3. Confirma o usuário autenticado
   const {data:usuarioData,error:erroUsuario}=await banco.auth.getUser();
