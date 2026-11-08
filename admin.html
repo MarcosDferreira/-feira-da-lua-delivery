@@ -334,6 +334,7 @@ function voltarInicio(){
 
 
 
+
 async function entrar(){
  const email=document.getElementById('email').value.trim();
  const senha=document.getElementById('senha').value;
@@ -350,49 +351,42 @@ async function entrar(){
 
  try{
   const {data,error}=await banco.auth.signInWithPassword({
-   email,
+   email:email,
    password:senha
   });
 
   if(error)throw error;
 
-  if(!data.user){
-   throw new Error('O Supabase não retornou os dados do usuário.');
+  if(!data.user||!data.session){
+   throw new Error('O Supabase não retornou os dados completos do login.');
   }
 
-  if(!data.session){
-   throw new Error('O Supabase autenticou, mas não retornou uma sessão.');
-  }
-
-  const {data:sessaoData,error:erroSessao}=await banco.auth.getSession();
+  // Salva explicitamente a sessão recebida
+  const {data:confirmacao,error:erroSessao}=await banco.auth.setSession({
+   access_token:data.session.access_token,
+   refresh_token:data.session.refresh_token
+  });
 
   if(erroSessao)throw erroSessao;
 
-  if(!sessaoData.session){
-   let diagnostico='Armazenamento não confirmado';
-
-   try{
-    const chave='__teste_feira_lua__';
-    localStorage.setItem(chave,'ok');
-    localStorage.removeItem(chave);
-    diagnostico='Armazenamento funcionando';
-   }catch(e){
-    diagnostico='Armazenamento bloqueado: '+e.message;
-   }
-
-   throw new Error('Sessão não persistida. '+diagnostico);
+  if(!confirmacao.session){
+   throw new Error('Não foi possível salvar a sessão no Supabase.');
   }
 
-  const {data:usuarioData,error:erroUsuario}=await banco.auth.getUser();
+  // Confirma o usuário usando o token recebido
+  const {data:usuarioData,error:erroUsuario}=await banco.auth.getUser(
+   confirmacao.session.access_token
+  );
 
   if(erroUsuario)throw erroUsuario;
 
   if(!usuarioData.user){
-   throw new Error('Usuário autenticado não foi confirmado.');
+   throw new Error('Não foi possível confirmar o usuário.');
   }
 
   const uuid=usuarioData.user.id;
 
+  // Verifica autorização administrativa
   const {data:admin,error:erroAdmin}=await banco
    .from('admins')
    .select('user_id')
@@ -420,15 +414,13 @@ async function entrar(){
   voltarInicio();
 
  }catch(e){
-  console.error('Diagnóstico do login:',e);
-
+  console.error('Erro no login:',e);
   aviso.textContent='Erro no acesso: '+(e.message||'Erro desconhecido');
 
  }finally{
   botao.disabled=false;
  }
 }
-
 
 async function sair(){
  try{
