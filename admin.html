@@ -314,7 +314,6 @@ async function salvarNovaSenha(){
  }
 }
 /* LOGIN */
-/* LOGIN */
 async function entrar(){
  const email=document.getElementById('email').value.trim();
  const senha=document.getElementById('senha').value;
@@ -327,16 +326,47 @@ async function entrar(){
 
  aviso.textContent='Verificando acesso...';
 
- const {data,error}=await banco.auth.signInWithPassword({
-  email,
-  password:senha
- });
+ try{
+  const {data,error}=await banco.auth.signInWithPassword({
+   email,
+   password:senha
+  });
 
- if(error){
-  aviso.textContent='Não foi possível entrar. Confira o e-mail e a senha.';
-  console.error('ERRO LOGIN:',error);
-  return;
+  if(error){
+   aviso.textContent='Erro no login: '+error.message;
+   return;
+  }
+
+  console.log('USUÁRIO AUTENTICADO:',data.user.id);
+
+  const {data:admin,error:erroAdmin}=await banco
+   .from('admins')
+   .select('user_id')
+   .eq('user_id',data.user.id)
+   .maybeSingle();
+
+  console.log('RESULTADO ADMIN:',admin);
+  console.log('ERRO ADMIN:',erroAdmin);
+
+  if(erroAdmin){
+   aviso.textContent='Erro ao consultar administrador: '+erroAdmin.message;
+   return;
+  }
+
+  if(!admin){
+   aviso.textContent='Usuário autenticado, mas não encontrado na tabela admins.';
+   return;
+  }
+
+  mostrarSomente('painel');
+  document.getElementById('usuario').textContent='Acesso liberado: '+email;
+  voltarInicio();
+
+ }catch(e){
+  console.error('ERRO NO LOGIN:',e);
+  aviso.textContent='Erro inesperado: '+e.message;
  }
+}
 
  const {data:admin,error:erroAdmin}=await banco
   .from('admins')
