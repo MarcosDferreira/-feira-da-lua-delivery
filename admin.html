@@ -330,19 +330,39 @@ async function entrar(){
 }
 async function sair(){await banco.auth.signOut();location.reload();}
 
-/* Detecta quando o usuário abre o link de recuperação enviado pelo Supabase */
-banco.auth.onAuthStateChange((evento, session)=>{
- if(evento==='PASSWORD_RECOVERY'){
-  if(session && session.access_token){
-   document.getElementById('mensagemNovaSenha').textContent='';
-   mostrarSomente('areaNovaSenha');
-  }else{
-   mostrarSomente('login');
-   document.getElementById('mensagemLogin').textContent=
-    'O link de recuperação não gerou uma sessão válida. Solicite um novo link.';
-  }
+/* RECUPERAÇÃO DE SENHA: RETORNO DO LINK DO SUPABASE */
+
+function abrirTelaNovaSenha(){
+ document.getElementById('mensagemNovaSenha').textContent='';
+ document.getElementById('novaSenha').value='';
+ document.getElementById('confirmarNovaSenha').value='';
+ mostrarSomente('areaNovaSenha');
+}
+
+banco.auth.onAuthStateChange(async (evento, session)=>{
+ if(evento==='PASSWORD_RECOVERY' && session?.access_token){
+  abrirTelaNovaSenha();
  }
 });
+
+/* Verifica se o usuário voltou pelo link de recuperação */
+(async function verificarRetornoRecuperacao(){
+ const hash=window.location.hash || '';
+ const parametros=new URLSearchParams(hash.replace(/^#/,''));
+ const tipoRecuperacao=parametros.get('type')==='recovery';
+
+ if(!tipoRecuperacao) return;
+
+ const {data,error}=await banco.auth.getSession();
+
+ if(!error && data.session?.access_token){
+  abrirTelaNovaSenha();
+ }else{
+  mostrarSomente('login');
+  document.getElementById('mensagemLogin').textContent=
+   'Não foi possível validar o link. Solicite um novo e-mail de recuperação e abra o link novamente.';
+ }
+})();
 
 /* FOTO */
 document.getElementById('fotoProduto').addEventListener('change',function(){
