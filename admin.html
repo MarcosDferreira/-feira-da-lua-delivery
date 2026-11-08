@@ -39,10 +39,18 @@ footer{text-align:center;padding:20px}
 .regiao-card{border:1px solid #ccd5e5;padding:13px;border-radius:10px;margin:12px 0}
 .bairro-card{background:#f2f5fa;padding:10px;border-radius:8px;margin:9px 0}
 .botao-pequeno{padding:9px;font-size:14px}
+
+@media(max-width:480px){
+ main{padding:8px}
+ .card{padding:13px}
+ .menu-admin{grid-template-columns:1fr 1fr;gap:8px}
+ .menu-admin button{font-size:14px;min-height:85px}
+}
 </style>
 </head>
 
 <body>
+
 <header>
 <h1>Feira da Lua</h1>
 <p>Painel administrativo</p>
@@ -89,6 +97,7 @@ footer{text-align:center;padding:20px}
 <div class="card">
 <h2 style="text-align:center">Painel de controle</h2>
 <p style="text-align:center">Escolha o que deseja acessar:</p>
+
 <div class="menu-admin">
 <button class="verde" onclick="abrirArea('pedidos')">PEDIDOS</button>
 <button class="azul" onclick="abrirArea('loja')">GERENCIAR LOJA</button>
@@ -220,9 +229,18 @@ footer{text-align:center;padding:20px}
 <footer>Feira da Lua de Ribeirão Grande</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
+'use strict';
+
 const SUPABASE_URL='https://bnnfplpccsxaaztgbxkr.supabase.co';
 const SUPABASE_KEY='sb_publishable_dws08TQirwdC5MI3UITfog_AWVc8eL5';
+const BUCKET='Produto';
+
+if(!window.supabase){
+ alert('Não foi possível carregar o sistema. Verifique sua conexão com a internet.');
+ throw new Error('Biblioteca Supabase não carregada.');
+}
 
 const banco=window.supabase.createClient(
  SUPABASE_URL,
@@ -236,8 +254,6 @@ const banco=window.supabase.createClient(
   }
  }
 );
-
-const BUCKET='Produto';
 
 let feirantes=[];
 let produtos=[];
@@ -319,6 +335,7 @@ async function entrar(){
  const email=document.getElementById('email').value.trim();
  const senha=document.getElementById('senha').value;
  const aviso=document.getElementById('mensagemLogin');
+ const botao=document.querySelector('#login button');
 
  if(!email||!senha){
   aviso.textContent='Informe seu e-mail e senha.';
@@ -326,6 +343,7 @@ async function entrar(){
  }
 
  aviso.textContent='Verificando acesso...';
+ botao.disabled=true;
 
  try{
   const {data,error}=await banco.auth.signInWithPassword({
@@ -358,13 +376,26 @@ async function entrar(){
 
  }catch(e){
   console.error('Erro no login:',e);
+
+  try{
+   await banco.auth.signOut();
+  }catch(erroLogout){
+   console.error('Erro ao encerrar sessão:',erroLogout);
+  }
+
   aviso.textContent='Erro no acesso: '+(e.message||'Erro desconhecido');
+
+ }finally{
+  botao.disabled=false;
  }
 }
 
 async function sair(){
  try{
-  await banco.auth.signOut();
+  const {error}=await banco.auth.signOut();
+  if(error)throw error;
+ }catch(e){
+  alert('Não foi possível sair: '+e.message);
  }finally{
   location.reload();
  }
@@ -383,7 +414,6 @@ function esqueciSenha(){
   document.getElementById('email').value.trim();
 
  document.getElementById('mensagemRecuperacao').textContent='';
-
  mostrarSomente('areaRecuperacao');
 }
 
@@ -426,14 +456,12 @@ function abrirTelaNovaSenha(){
  document.getElementById('mensagemNovaSenha').textContent='';
  document.getElementById('novaSenha').value='';
  document.getElementById('confirmarNovaSenha').value='';
-
  mostrarSomente('areaNovaSenha');
 }
 
 async function salvarNovaSenha(){
  const senha=document.getElementById('novaSenha').value;
  const confirmacao=document.getElementById('confirmarNovaSenha').value;
-
  const aviso=document.getElementById('mensagemNovaSenha');
  const botao=document.getElementById('botaoSalvarNovaSenha');
 
@@ -460,17 +488,19 @@ async function salvarNovaSenha(){
    throw new Error('Sessão de recuperação não encontrada. Solicite um novo link.');
   }
 
-  const {error}=await banco.auth.updateUser({
-   password:senha
-  });
+  const {error}=await banco.auth.updateUser({password:senha});
 
   if(error)throw error;
-
-  await banco.auth.signOut();
 
   document.getElementById('novaSenha').value='';
   document.getElementById('confirmarNovaSenha').value='';
   document.getElementById('senha').value='';
+
+  try{
+   await banco.auth.signOut();
+  }catch(erroLogout){
+   console.warn('Senha alterada, mas não foi possível encerrar a sessão:',erroLogout);
+  }
 
   mostrarSomente('login');
 
@@ -486,18 +516,24 @@ async function salvarNovaSenha(){
  }
 }
 
+/* AUTENTICAÇÃO E RESTAURAÇÃO DA SESSÃO */
+
 banco.auth.onAuthStateChange((evento,session)=>{
  if(evento==='PASSWORD_RECOVERY'&&session?.access_token){
   abrirTelaNovaSenha();
  }
 });
+
 async function verificarSessaoAdmin(){
  try{
   const {data,error}=await banco.auth.getSession();
 
   if(error)throw error;
 
-  if(!data.session)return;
+  if(!data.session){
+   mostrarSomente('login');
+   return;
+  }
 
   const {data:admin,error:erroAdmin}=await banco
    .from('admins')
@@ -526,43 +562,39 @@ async function verificarSessaoAdmin(){
  }
 }
 
-verificarSessaoAdmin();
- 
-(async function verificarRetornoRecuperacao(){
- try{
-  const hash=window.location.hash||'';
-  const parametros=new URLSearchParams(hash.replace(/^#/,''));
+async function iniciarAutenticacao(){
+ const parametros=new URLSearchParams(
+  (window.location.hash||'').replace(/^#/,'')
+ );
 
-  const tipo=parametros.get('type');
-  const erro=parametros.get('error_description')||parametros.get('error');
+ if(parametros.get('type')==='recovery'){
+  try{
+   const {data,error}=await banco.auth.getSession();
 
-  if(erro){
+   if(error)throw error;
+
+   if(data.session?.access_token){
+    abrirTelaNovaSenha();
+   }else{
+    mostrarSomente('login');
+    document.getElementById('mensagemLogin').textContent=
+     'Não foi possível validar o link. Solicite um novo e-mail.';
+   }
+
+  }catch(e){
+   console.error('Erro na recuperação:',e);
    mostrarSomente('login');
    document.getElementById('mensagemLogin').textContent=
-    'O link de recuperação apresentou um erro ou expirou. Solicite outro.';
-   return;
+    'Erro ao validar recuperação: '+e.message;
   }
 
-  if(tipo!=='recovery')return;
-
-  const {data,error}=await banco.auth.getSession();
-
-  if(error)throw error;
-
-  if(data.session?.access_token){
-   abrirTelaNovaSenha();
-  }else{
-   mostrarSomente('login');
-   document.getElementById('mensagemLogin').textContent=
-    'Não foi possível validar o link. Solicite um novo e-mail.';
-  }
-
- }catch(e){
-  mostrarSomente('login');
-  document.getElementById('mensagemLogin').textContent=
-   'Erro ao validar recuperação: '+e.message;
+  return;
  }
-})();
+
+ await verificarSessaoAdmin();
+}
+
+iniciarAutenticacao();
 
 /* FRETES E REGIÕES */
 
@@ -610,7 +642,6 @@ function atualizarSelectRegioes(){
   const op=document.createElement('option');
   op.value=r.id;
   op.textContent=r.nome+' - '+moeda(r.valor);
-
   select.appendChild(op);
  });
 
@@ -756,7 +787,6 @@ function mostrarFreteExterno(){
  );
 
  alternar.onclick=()=>alternarBairro(externo.id,externo.ativo);
-
  lista.appendChild(card);
 }
 
@@ -885,11 +915,15 @@ async function salvarBairro(){
  botao.textContent='Salvando...';
 
  try{
+  const bairroAtual=estavaEditando
+   ?fretes.find(f=>String(f.id)===String(bairroEditando))
+   :null;
+
   const dados={
    bairro,
    tipo:'cidade',
    valor:Number(regiao.valor),
-   ativo:true,
+   ativo:bairroAtual?bairroAtual.ativo:true,
    regiao_id:regiaoId
   };
 
@@ -1026,7 +1060,8 @@ async function alternarBairro(id,ativo){
   alert('Erro ao atualizar: '+e.message);
  }
 }
- /* FOTO */
+
+/* FOTO */
 
 document.getElementById('fotoProduto').addEventListener('change',function(){
  const arquivo=this.files[0];
@@ -1198,7 +1233,6 @@ async function salvarProduto(){
     .single();
 
    if(error)throw error;
-
    dados.id=data.id;
   }
 
@@ -1261,12 +1295,18 @@ async function enviarFoto(id,arquivo,fotoAntiga){
 }
 
 function obterCaminhoFoto(url){
+ if(!url)return null;
+
  const marcador='/storage/v1/object/public/'+BUCKET+'/';
  const pos=url.indexOf(marcador);
 
  if(pos<0)return null;
 
- return decodeURIComponent(url.substring(pos+marcador.length));
+ try{
+  return decodeURIComponent(url.substring(pos+marcador.length));
+ }catch(e){
+  return url.substring(pos+marcador.length);
+ }
 }
 
 function editarProduto(id){
@@ -1472,6 +1512,8 @@ function mostrarPedido(p,lista){
     qtd+' x '+nome+' | '+moeda(preco*qtd)
    ));
   });
+ }else{
+  card.appendChild(criarElemento('p','Não foi possível identificar os itens deste pedido.'));
  }
 
  card.appendChild(criarElemento('h3','Total: '+moeda(p.total)));
@@ -1614,5 +1656,6 @@ async function excluirProduto(id,nome){
  }
 }
 </script>
+
 </body>
 </html>
