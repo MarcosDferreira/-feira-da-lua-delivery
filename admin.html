@@ -314,20 +314,52 @@ async function salvarNovaSenha(){
  }
 }
 /* LOGIN */
+/* LOGIN */
 async function entrar(){
  const email=document.getElementById('email').value.trim();
  const senha=document.getElementById('senha').value;
  const aviso=document.getElementById('mensagemLogin');
- if(!email||!senha){aviso.textContent='Informe seu e-mail e senha.';return;}
+
+ if(!email||!senha){
+  aviso.textContent='Informe seu e-mail e senha.';
+  return;
+ }
+
  aviso.textContent='Verificando acesso...';
- const {data,error}=await banco.auth.signInWithPassword({email,password:senha});
- if(error){aviso.textContent='Não foi possível entrar. Confira o e-mail e a senha.';return;}
- const {data:admin,error:erroAdmin}=await banco.from('admins').select('user_id').eq('user_id',data.user.id).maybeSingle();
- if(erroAdmin||!admin){await banco.auth.signOut();aviso.textContent='Este usuário não tem permissão de administrador.';return;}
+
+ const {data,error}=await banco.auth.signInWithPassword({
+  email,
+  password:senha
+ });
+
+ if(error){
+  aviso.textContent='Não foi possível entrar. Confira o e-mail e a senha.';
+  console.error('ERRO LOGIN:',error);
+  return;
+ }
+
+ const {data:admin,error:erroAdmin}=await banco
+  .from('admins')
+  .select('user_id')
+  .eq('user_id',data.user.id)
+  .maybeSingle();
+
+ console.log('USUÁRIO LOGADO:',data.user.id);
+ console.log('RESULTADO ADMIN:',admin);
+ console.log('ERRO ADMIN:',erroAdmin);
+
+ if(erroAdmin || !admin){
+  aviso.textContent=erroAdmin
+   ? 'Erro ao consultar administrador: '+erroAdmin.message
+   : 'Usuário não encontrado na tabela admins.';
+  return;
+ }
+
  mostrarSomente('painel');
  document.getElementById('usuario').textContent='Acesso liberado: '+email;
  voltarInicio();
 }
+
 async function sair(){await banco.auth.signOut();location.reload();}
 
 
