@@ -3,1750 +3,395 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#07152f">
 <title>Feira da Lua Delivery</title>
-
 <style>
 *{box-sizing:border-box}
-
-:root{
---fundo:#000000;
- --fundo-claro:#111111;
- --azul:#153b70;
- --azul-claro:#2464a5;
- --Preto-Ônix: #353839;
- --branco:#ffffff;
- --papel:#f8fbff;
- --dourado:#f4c95d;
- --dourado-escuro:#dba936;
- --texto:#172b49;
- --suave:#64758c;
- --linha:#dce7f3;
- --sombra:0 8px 24px rgba(0,0,0,.18);
-}
-
-body{
- margin:0;
- font-family:Arial,sans-serif;
- background:#f1f5fa;
- color:#172b49;
-}
-
-header{
- text-align:center;
- padding:30px 16px 34px;
- background:linear-gradient(145deg,#07152f 0%,#123967 62%,#1d4d7b 100%);
- border-bottom:5px solid var(--dourado);
- position:relative;
- overflow:hidden;
-}
-
-header:before{
- content:"";
- position:absolute;
- width:180px;
- height:180px;
- border-radius:50%;
- background:#f4c95d18;
- top:-95px;
- right:-55px;
-}
-
-header:after{
- content:"";
- position:absolute;
- width:120px;
- height:120px;
- border-radius:50%;
- background:#ffffff0d;
- bottom:-75px;
- left:-35px;
-}
-
-.logo-recorte{
- width:230px;
- height:122px;
- overflow:hidden;
- margin:0 auto 15px;
- border:3px solid #fff;
- border-radius:20px;
- background:#fff;
- box-shadow:0 10px 28px #0005;
- position:relative;
- z-index:1;
-}
-
-.logo-feira{
- display:block;
- width:100%;
- height:100%;
- object-fit:cover;
- object-position:center;
-}
-
-header h1{
- font-family:Georgia,serif;
- font-size:clamp(28px,6vw,40px);
- margin:12px 0 7px;
- color:var(--dourado);
- text-shadow:0 2px 8px #0005;
-}
-
-header p{
- font-size:16px;
- color:#fff;
- margin:8px 0;
- line-height:1.5;
-}
-
-header span{
- display:inline-block;
- padding:8px 14px;
- margin-top:12px;
- border:1px solid #f4c95d77;
- border-radius:30px;
- background:#ffffff12;
- color:#ffe7a2;
- font-size:13px;
- font-weight:bold;
-}
-
-main{
- max-width:980px;
- margin:auto;
- padding:24px 20px 38px;
-}
-
+:root{--azul:#153b70;--azul2:#2464a5;--dourado:#f4c95d;--texto:#172b49;--suave:#64758c;--linha:#dce7f3;--fundo:#f1f5fa;--verde:#28764c}
+body{margin:0;font-family:Arial,sans-serif;background:var(--fundo);color:var(--texto)}
+header{text-align:center;padding:25px 15px 29px;background:linear-gradient(145deg,#07152f,#123967 65%,#1d4d7b);border-bottom:4px solid var(--dourado);color:#fff}
+.logo-recorte{width:205px;height:108px;overflow:hidden;margin:0 auto 12px;border:3px solid white;border-radius:18px;background:#fff;box-shadow:0 8px 22px #0004}
+.logo-feira{width:100%;height:100%;object-fit:cover}
+header h1{font: bold clamp(27px,6vw,38px) Georgia,serif;color:var(--dourado);margin:10px 0 6px}
+header p{margin:7px 0;line-height:1.45}
+header span{display:inline-block;margin-top:9px;padding:7px 13px;border:1px solid #f4c95d77;border-radius:30px;background:#ffffff12;color:#ffe7a2;font-size:13px;font-weight:bold}
+main{max-width:980px;margin:auto;padding:20px 15px 32px}
 h2,h3{color:var(--azul)}
-
-main>h2{
- font-family:Georgia,serif;
- font-size:27px;
- margin:8px 0 15px;
- color:#173d6b;
-}
-
-#filtro-barracas{
- width:100%;
- appearance:auto;
- border:1px solid #cbd8e8;
- border-radius:14px;
- padding:15px 16px;
- margin:4px 0 18px;
- background:#fff;
- color:var(--texto);
- box-shadow:0 4px 14px #18385b0d;
- font-size:16px;
- font-weight:600;
-}
-
-button{
- background:var(--azul-claro);
- color:#fff;
- border:0;
- padding:13px;
- border-radius:10px;
- font-weight:bold;
- font-size:15px;
- cursor:pointer;
- transition:background .2s,transform .2s;
-}
-
-button:active{transform:scale(.98)}
-
-button:disabled{
- background:#aeb9c8;
- color:#fff;
- cursor:not-allowed;
-}
-
-.barraca{
- padding:20px;
- margin:18px 0 22px;
- background:#fff;
- border:1px solid #e1e9f2;
- border-radius:20px;
- box-shadow:0 8px 24px #18385b10;
- display:grid;
- grid-template-columns:repeat(2,minmax(0,1fr));
- gap:0 16px;
-}
-
-.barraca h3{
- grid-column:1/-1;
- font-family:Arial,sans-serif;
- font-size:20px;
- letter-spacing:.2px;
- color:#153b70;
- margin:0 0 4px;
- padding:0 0 14px;
- border-bottom:2px solid #edf1f6;
-}
-
-.produto{
- min-width:0;
- display:flex;
- flex-direction:column;
- gap:12px;
- padding:16px 0;
- border-top:0;
- border-bottom:1px solid #edf1f6;
-}
-
-.produto-conteudo{
- display:flex;
- flex-direction:column;
- align-items:stretch;
- gap:10px;
- flex:1;
-}
-
-.foto-produto{
- width:100%;
- height:180px;
- object-fit:cover;
- border-radius:14px;
- background:#edf2f8;
-}
-
-.info-produto{
- width:100%;
- padding:0 2px;
-}
-
-.info-produto strong{
- display:block;
- font-size:16px;
- line-height:1.35;
- color:#17375e;
-}
-
-.info-produto p{
- font-size:13px;
- min-height:17px;
- margin:6px 0;
- color:#718096;
-}
-
-.preco{
- font-size:20px;
- color:#a8730b;
- font-weight:bold;
- margin-top:8px;
-}
-
-.estoque{
- font-size:13px;
- font-weight:bold;
- margin-top:7px;
-}
-
-.esgotado{color:#c62828}
-.ultimas{color:#c47b18}
-.disponivel{color:#28764c}
-
-.produto button{
- width:100%;
- margin-top:auto;
- padding:13px;
- border-radius:12px;
- background:#174779;
- box-shadow:0 4px 10px #17477920;
-}
-
-.produto button:not(:disabled):hover{
- background:#2464a5;
-}
-
-.produto button:disabled{
- background:#e9edf2;
- color:#7c8796;
-}
-
-.carrinho{
- background:#fff;
- border:1px solid #e1e9f2;
- border-top:5px solid var(--dourado);
- border-radius:20px;
- padding:22px;
- margin:18px 0;
- box-shadow:0 8px 24px #18385b12;
- color:var(--texto);
-}
-
-.carrinho h2{
- font-size:22px;
- color:#173d6b;
- margin-top:0;
-}
-
-.item-carrinho{
- display:flex;
- justify-content:space-between;
- align-items:center;
- gap:10px;
- padding:12px 0;
- border-bottom:1px solid var(--linha);
- color:var(--texto);
- font-size:14px;
-}
-
-.item-carrinho button{
- padding:6px 10px;
- background:#b8323a;
- border-radius:9px;
- flex-shrink:0;
-}
-
-.checkout{
- margin-top:24px;
- padding-top:22px;
- border-top:2px solid var(--linha);
-}
-
-.checkout h3{
- font-family:Arial,sans-serif;
- font-size:19px;
- margin:0 0 15px;
- color:#173d6b;
-}
-
-#acessoCliente{
- padding:18px;
- border:1px solid #dce7f3;
- background:#f5f8fc;
- border-radius:16px;
- color:var(--texto);
- margin-bottom:18px;
-}
-
-#acessoCliente button{margin:4px}
-
-#painelConta{
- padding:12px 14px;
- background:#fff;
- border:1px solid #dce7f3;
- border-radius:12px;
-}
-
-#painelConta .aviso-perfil{
- font-size:14px;
- font-weight:bold;
- margin:4px 0 12px;
-}
-
-.acoes-conta{
- display:flex;
- flex-wrap:wrap;
- gap:8px;
-}
-
-.acoes-conta button{
- margin:0;
-}
-
-.ajuda{
- font-size:12px;
- color:var(--suave);
- margin-top:5px;
- line-height:1.5;
-}
-
-.campo{
- margin:15px 0;
-}
-
-.campo label{
- display:block;
- font-size:13px;
- font-weight:bold;
- color:#334b68;
- margin-bottom:7px;
-}
-
-.campo input,
-.campo select{
- width:100%;
- border:1px solid #cbd8e8;
- border-radius:12px;
- padding:14px;
- background:#fff;
- color:var(--texto);
- font-size:16px;
- outline:none;
- transition:border .2s,box-shadow .2s;
-}
-
-.campo input:focus,
-.campo select:focus{
- border-color:#2464a5;
- box-shadow:0 0 0 3px #2464a51a;
-}
-
-#camposEntrega{
- padding:16px;
- background:#f1f6fc;
- border:1px solid #e0eaf5;
- border-radius:12px;
- margin-top:12px;
-}
-
-#areaCheckout input[readonly]{
- background:#f0f3f7;
- color:#40536d;
-}
-
-.resumo-valores{
- margin-top:18px;
- padding:17px;
- border-radius:12px;
- background:#f1f6fc;
- border:1px solid #e0eaf5;
- color:var(--texto);
-}
-
-.linha-valor{
- display:flex;
- justify-content:space-between;
- gap:10px;
- padding:9px 0;
- font-size:14px;
-}
-
-.linha-total{
- border-top:1px solid #cbd9e8;
- margin-top:8px;
- padding-top:13px;
- font-size:20px;
- font-weight:bold;
- color:#153b70;
-}
-
-.finalizar{
- width:100%;
- background:var(--azul);
- color:white;
- margin-top:10px;
- padding:15px;
- font-size:16px;
- border:2px solid var(--dourado);
- border-radius:13px;
- box-shadow:0 5px 14px #153b7025;
-}
-
-.finalizar:hover{background:var(--azul-claro)}
-
-#mensagem{
- text-align:center;
- font-weight:bold;
- margin:12px 0;
- overflow-wrap:anywhere;
- color:#28764c;
- line-height:1.5;
-}
-
-.aviso-perfil{
- color:#28764c;
- font-size:12px;
- margin:8px 0;
-}
-
-footer{
- text-align:center;
- padding:30px 15px;
- color:#fff;
- background:#07152f;
- border-top:4px solid var(--dourado);
-}
-
-.patrocinio{
- margin-top:20px;
- display:flex;
- flex-direction:column;
- align-items:center;
- gap:10px;
-}
-
-.patrocinio p{
- color:var(--dourado);
- font-size:13px;
- font-weight:bold;
- margin:0;
-}
-
-.logo-legadu{
- width:100%;
- max-width:230px;
- height:auto;
- object-fit:contain;
-}
-
-.link-admin{
- margin-top:18px;
- font-size:12px;
-}
-
-.link-admin a{
- color:#dceaff;
- text-decoration:none;
- opacity:.9;
-}
-
-.link-admin a:hover{color:var(--dourado)}
-
-@media(max-width:620px){
- main{padding:17px 12px 28px}
- header{padding:24px 14px 28px}
- .logo-recorte{width:205px;height:108px}
- main>h2{font-size:23px}
- .barraca{
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  padding:14px;
-  gap:0 11px;
-  border-radius:17px;
- }
- .barraca h3{font-size:18px}
- .foto-produto{height:135px}
- .produto{padding:13px 0;gap:10px}
- .info-produto strong{font-size:14px}
- .info-produto p{font-size:12px}
- .preco{font-size:18px}
- .produto button{font-size:13px;padding:12px 7px}
- .carrinho{padding:17px}
-}
-
-@media(max-width:370px){
- .barraca{grid-template-columns:1fr}
- .foto-produto{height:190px}
- .info-produto strong{font-size:16px}
- .produto button{font-size:14px}
-}
+.titulo-secao{font: bold 25px Georgia,serif;margin:5px 0 13px}
+#filtro-barracas{width:100%;padding:14px;border:1px solid #cbd8e8;border-radius:12px;background:#fff;color:var(--texto);font-size:16px;font-weight:bold;margin-bottom:12px}
+.barraca{padding:17px;margin:15px 0 20px;background:#fff;border:1px solid #e1e9f2;border-radius:17px;box-shadow:0 5px 18px #18385b0c;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px}
+.barraca h3{grid-column:1/-1;font-size:19px;margin:0;padding:0 0 12px;border-bottom:2px solid #edf1f6}
+.produto{min-width:0;display:flex;flex-direction:column;gap:9px;padding:14px 0;border-bottom:1px solid #edf1f6}
+.produto-conteudo{display:flex;flex-direction:column;gap:9px;flex:1}
+.foto-produto{width:100%;height:160px;object-fit:cover;border-radius:12px;background:#edf2f8}
+.info-produto strong{display:block;font-size:15px;line-height:1.35;color:#17375e}
+.info-produto p{font-size:12px;min-height:15px;margin:5px 0;color:#718096}
+.preco{font-size:19px;color:#a8730b;font-weight:bold;margin-top:6px}
+.estoque{font-size:12px;font-weight:bold;margin-top:6px}
+.esgotado{color:#c62828}.ultimas{color:#c47b18}.disponivel{color:#28764c}
+.acao-produto{margin-top:auto;min-height:43px;display:flex;align-items:center;justify-content:center;gap:9px}
+.botao-adicionar{width:100%;background:var(--azul);padding:12px;border-radius:11px}
+.controle-qtd{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;padding:5px;background:#edf5ff;border:1px solid #cfe0f3;border-radius:12px}
+.controle-qtd button{width:40px;height:36px;padding:0;border-radius:9px;font-size:22px;line-height:1;background:var(--azul2)}
+.controle-qtd button.menos{background:#64758c}
+.controle-qtd button:disabled{opacity:.4}
+.qtd-numero{min-width:28px;text-align:center;font-size:18px;font-weight:bold;color:var(--azul)}
+.adicionado{font-size:11px;font-weight:bold;color:var(--verde);text-align:center;margin-top:1px}
+.carrinho{background:#fff;border:1px solid #e1e9f2;border-top:4px solid var(--dourado);border-radius:17px;padding:17px;margin:20px 0;box-shadow:0 5px 18px #18385b0c}
+.carrinho-topo{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.carrinho h2{font-size:20px;margin:0;color:var(--azul)}
+.contador{background:#edf5ff;color:var(--azul);padding:5px 10px;border-radius:20px;font-weight:bold;font-size:13px}
+#itens{margin-top:10px}
+.vazio{padding:12px;background:#f6f8fb;border-radius:10px;color:#718096;font-size:13px;text-align:center}
+.item-carrinho{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--linha);font-size:14px}
+.item-carrinho button{padding:7px 9px;background:#b8323a;font-size:12px;flex-shrink:0}
+.checkout{margin-top:19px;padding-top:17px;border-top:1px solid var(--linha)}
+.checkout h3{font-size:18px;margin:0 0 12px}
+#acessoCliente{padding:15px;background:#f5f8fc;border:1px solid var(--linha);border-radius:13px;color:var(--texto)}
+.ajuda{font-size:12px;color:var(--suave);line-height:1.5;margin:7px 0}
+.campo{margin:12px 0}
+.campo label{display:block;font-size:13px;font-weight:bold;color:#334b68;margin-bottom:6px}
+.campo input,.campo select{width:100%;padding:13px;border:1px solid #cbd8e8;border-radius:10px;background:#fff;color:var(--texto);font-size:16px;min-width:0}
+.campo input:focus,.campo select:focus{outline:2px solid #2464a533;border-color:var(--azul2)}
+button{background:var(--azul2);color:#fff;border:0;padding:11px 13px;border-radius:9px;font-weight:bold;font-size:14px;cursor:pointer}
+button:disabled{background:#aeb9c8;color:#fff;cursor:not-allowed}
+#painelConta{padding:12px;background:#fff;border:1px solid var(--linha);border-radius:11px}
+.aviso-perfil{font-size:13px;font-weight:bold;color:var(--verde);margin:3px 0 11px}
+.acoes-conta{display:flex;flex-wrap:wrap;gap:8px}
+.acoes-conta button{flex:1}
+#camposEntrega{padding:13px;background:#f1f6fc;border:1px solid #e0eaf5;border-radius:11px;margin-top:10px}
+.resumo-valores{margin-top:14px;padding:13px;border-radius:11px;background:#f1f6fc;border:1px solid #e0eaf5}
+.linha-valor{display:flex;justify-content:space-between;gap:10px;padding:7px 0;font-size:14px}
+.linha-total{border-top:1px solid #cbd9e8;margin-top:6px;padding-top:12px;font-size:19px;font-weight:bold;color:var(--azul)}
+.finalizar{width:100%;background:var(--azul);margin-top:12px;padding:15px;font-size:16px;border:2px solid var(--dourado);border-radius:12px}
+#mensagem,#mensagemAcesso{text-align:center;font-weight:bold;margin:10px 0;overflow-wrap:anywhere;line-height:1.5}
+#mensagem{color:var(--verde);font-size:14px}
+#mensagemAcesso{color:var(--verde);font-size:13px}
+footer{text-align:center;padding:26px 15px;color:#fff;background:#07152f;border-top:4px solid var(--dourado)}
+.patrocinio{margin-top:17px;display:flex;flex-direction:column;align-items:center;gap:9px}
+.patrocinio p{color:var(--dourado);font-size:13px;font-weight:bold;margin:0}
+.logo-legadu{width:100%;max-width:210px;height:auto;object-fit:contain}
+.link-admin{margin-top:17px;font-size:12px}
+.link-admin a{color:#dceaff;text-decoration:none;opacity:.9}
+@media(max-width:620px){main{padding:15px 11px 25px}.barraca{padding:13px;gap:0 10px}.foto-produto{height:130px}.produto{padding:12px 0}.info-produto strong{font-size:14px}.preco{font-size:18px}.carrinho{padding:15px}}
+@media(max-width:370px){.barraca{grid-template-columns:1fr}.foto-produto{height:185px}}
 </style>
 </head>
-
 <body>
-
 <header>
- <div class="logo-recorte">
-  <img
-   src="logo-feira-da-lua.jpg"
-   class="logo-feira"
-   alt="Logo Feira da Lua">
- </div>
-
+ <div class="logo-recorte"><img src="logo-feira-da-lua.jpg" class="logo-feira" alt="Logo Feira da Lua"></div>
  <h1>Feira da Lua Delivery</h1>
  <p>Os sabores da nossa feira pertinho de você!</p>
  <span>Valorize os feirantes de Ribeirão Grande</span>
 </header>
-
 <main>
-
- <h2>Escolha uma barraca</h2>
-
- <select id="filtro-barracas">
-  <option value="todas">Todas as barracas</option>
- </select>
-
+ <h2 class="titulo-secao">Escolha uma barraca</h2>
+ <select id="filtro-barracas"><option value="todas">Todas as barracas</option></select>
  <div id="vitrine">Carregando produtos...</div>
 
  <section class="carrinho">
-
-  <h2>Meu carrinho (<span id="quantidade">0</span>)</h2>
-
-  <div id="itens">
-   Nenhum produto adicionado.
+  <div class="carrinho-topo">
+   <h2>Meu carrinho</h2>
+   <span class="contador"><span id="quantidade">0</span> itens</span>
   </div>
+  <div id="itens"><div class="vazio">Seu carrinho está vazio. Escolha seus produtos acima.</div></div>
 
   <div id="acessoCliente" class="checkout">
-   <h3>Entre para fazer seu pedido</h3>
-   <p class="ajuda">Use seu celular e sua senha. Se ainda não tem conta, crie seu cadastro.</p>
-
+   <h3 id="tituloAcesso">Entre para fazer seu pedido</h3>
+   <p class="ajuda" id="ajudaAcesso">Use seu celular e sua senha. Se ainda não tem conta, crie seu cadastro.</p>
    <div id="painelLogin">
-    <div class="campo">
-     <label for="loginTelefone">Celular com DDD</label>
-     <input id="loginTelefone" type="tel" inputmode="tel" autocomplete="tel" placeholder="(15) 99999-9999">
-    </div>
-
-    
-<div class="campo">
-  <label for="loginSenha">Senha</label>
-  <div style="display:flex;align-items:center;gap:8px;">
-    <input
-      id="loginSenha"
-      type="password"
-      autocomplete="current-password"
-      placeholder="Sua senha"
-      style="flex:1;min-width:0;"
-    >
-    <button
-      type="button"
-      onclick="const campo=document.getElementById('loginSenha');campo.type=campo.type==='password'?'text':'password';this.textContent=campo.type==='password'?'👁️':'🙈';"
-      style="padding:12px;border:1px solid #ccc;border-radius:8px;background:#fff;cursor:pointer;"
-    >👁️</button>
-  </div>
-</div>
-
-
-    <button
-     type="button"
-     onclick="solicitarAjudaSenha()"
-     style="background:transparent;color:#2464a5;text-decoration:underline;padding:8px 0">
-     Esqueci minha senha
-    </button>
-
+    <div class="campo"><label for="loginTelefone">Celular com DDD</label><input id="loginTelefone" type="tel" inputmode="tel" autocomplete="tel" placeholder="(15) 99999-9999"></div>
+    <div class="campo"><label for="loginSenha">Senha</label><div style="display:flex;align-items:center;gap:8px"><input id="loginSenha" type="password" autocomplete="current-password" placeholder="Sua senha" style="flex:1;min-width:0"><button type="button" onclick="const c=document.getElementById('loginSenha');c.type=c.type==='password'?'text':'password';this.textContent=c.type==='password'?'Mostrar':'Ocultar';" style="white-space:nowrap">Mostrar</button></div></div>
+    <button type="button" onclick="solicitarAjudaSenha()" style="background:transparent;color:#2464a5;text-decoration:underline;padding:7px 0">Esqueci minha senha</button>
     <button type="button" class="finalizar" onclick="entrarCliente()">Entrar</button>
-
-    <p class="ajuda">
-     Ainda não tem conta?
-     <button type="button" onclick="mostrarCadastro()">Criar cadastro</button>
-    </p>
+    <p class="ajuda">Ainda não tem conta? <button type="button" onclick="mostrarCadastro()">Criar cadastro</button></p>
    </div>
-
    <div id="painelCadastro" style="display:none">
     <h3>Criar minha conta</h3>
-
-    <div class="campo">
-     <label for="cadastroNome">Nome completo</label>
-     <input id="cadastroNome" autocomplete="name">
-    </div>
-
-    <div class="campo">
-     <label for="cadastroTelefone">Celular com DDD</label>
-     <input id="cadastroTelefone" type="tel" inputmode="tel" autocomplete="tel">
-    </div>
-
-    <div class="campo">
-     <label for="cadastroSenha">Crie uma senha</label>
-     <input id="cadastroSenha" type="password" autocomplete="new-password" minlength="6" placeholder="Mínimo de 6 caracteres">
-    </div>
-
-    <div class="campo">
-     <label for="cadastroEndereco">Endereço completo</label>
-     <input id="cadastroEndereco" autocomplete="street-address">
-    </div>
-
-    <div class="campo">
-     <label for="cadastroBairro">Bairro</label>
-     <select id="cadastroBairro">
-      <option value="">Carregando bairros...</option>
-     </select>
-    </div>
-
+    <div class="campo"><label for="cadastroNome">Nome completo</label><input id="cadastroNome" autocomplete="name"></div>
+    <div class="campo"><label for="cadastroTelefone">Celular com DDD</label><input id="cadastroTelefone" type="tel" inputmode="tel" autocomplete="tel"></div>
+    <div class="campo"><label for="cadastroSenha">Crie uma senha</label><input id="cadastroSenha" type="password" autocomplete="new-password" minlength="6" placeholder="Mínimo de 6 caracteres"></div>
+    <div class="campo"><label for="cadastroEndereco">Endereço completo</label><input id="cadastroEndereco" autocomplete="street-address"></div>
+    <div class="campo"><label for="cadastroBairro">Bairro</label><select id="cadastroBairro"><option value="">Carregando bairros...</option></select></div>
     <button type="button" class="finalizar" onclick="cadastrarCliente()">Criar minha conta</button>
-
-    <p class="ajuda">
-     <button type="button" onclick="mostrarLogin()">Voltar para entrar</button>
-    </p>
+    <p class="ajuda"><button type="button" onclick="mostrarLogin()">Voltar para entrar</button></p>
    </div>
-
    <div id="painelConta" style="display:none">
     <p class="aviso-perfil" id="boasVindas"></p>
-
-    <div class="acoes-conta">
-     <button type="button" onclick="mostrarEdicao()">Atualizar meu cadastro</button>
-     <button type="button" onclick="sairCliente()">Sair da conta</button>
-    </div>
+    <div class="acoes-conta"><button type="button" onclick="mostrarEdicao()">Atualizar meu cadastro</button><button type="button" onclick="sairCliente()">Sair da conta</button></div>
    </div>
-
    <div id="painelEdicao" style="display:none">
     <h3>Atualizar meu cadastro</h3>
-
-    <div class="campo">
-     <label for="edicaoNome">Nome completo</label>
-     <input id="edicaoNome" autocomplete="name">
-    </div>
-
-    <div class="campo">
-     <label for="edicaoEndereco">Endereço completo</label>
-     <input id="edicaoEndereco" autocomplete="street-address">
-    </div>
-
-    <div class="campo">
-     <label for="edicaoBairro">Bairro</label>
-     <select id="edicaoBairro">
-      <option value="">Selecione seu bairro</option>
-     </select>
-    </div>
-
+    <div class="campo"><label for="edicaoNome">Nome completo</label><input id="edicaoNome" autocomplete="name"></div>
+    <div class="campo"><label for="edicaoEndereco">Endereço completo</label><input id="edicaoEndereco" autocomplete="street-address"></div>
+    <div class="campo"><label for="edicaoBairro">Bairro</label><select id="edicaoBairro"><option value="">Selecione seu bairro</option></select></div>
     <button type="button" onclick="salvarEdicao()">Salvar alterações</button>
     <button type="button" onclick="cancelarEdicao()">Cancelar</button>
    </div>
-
-   <p id="mensagemAcesso" class="aviso-perfil"></p>
+   <p id="mensagemAcesso"></p>
   </div>
 
   <div id="areaCheckout" class="checkout" style="display:none">
    <h3>Como deseja receber?</h3>
-
-   <div class="campo">
-    <label for="tipoEntrega">Forma de recebimento</label>
-    <select id="tipoEntrega">
-     <option value="entrega">Receber em casa</option>
-     <option value="retirada">Retirar na Feira da Lua</option>
-    </select>
-   </div>
-
+   <div class="campo"><label for="tipoEntrega">Forma de recebimento</label><select id="tipoEntrega"><option value="entrega">Receber em casa</option><option value="retirada">Retirar na Feira da Lua</option></select></div>
    <div id="camposEntrega">
-    <div class="campo">
-     <label>Endereço de entrega</label>
-     <input id="clienteEndereco" readonly>
-    </div>
-
-    <div class="campo">
-     <label>Bairro</label>
-     <input id="clienteBairroNome" readonly>
-    </div>
-
-    <div class="ajuda">
-     Para mudar seu endereço ou bairro, use “Atualizar meu cadastro”.
-    </div>
+    <div class="campo"><label for="clienteEndereco">Endereço de entrega</label><input id="clienteEndereco" readonly></div>
+    <div class="campo"><label for="clienteBairroNome">Bairro</label><input id="clienteBairroNome" readonly></div>
+    <div class="ajuda">Para mudar seu endereço ou bairro, use “Atualizar meu cadastro”.</div>
    </div>
-
    <div class="resumo-valores">
-    <div class="linha-valor">
-     <span>Produtos</span>
-     <strong id="subtotal">R$ 0,00</strong>
-    </div>
-
-    <div class="linha-valor">
-     <span>Frete</span>
-     <strong id="frete">R$ 0,00</strong>
-    </div>
-
-    <div class="linha-valor linha-total">
-     <span>Total do pedido</span>
-     <strong id="total">R$ 0,00</strong>
-    </div>
+    <div class="linha-valor"><span>Produtos</span><strong id="subtotal">R$ 0,00</strong></div>
+    <div class="linha-valor"><span>Frete</span><strong id="frete">R$ 0,00</strong></div>
+    <div class="linha-valor linha-total"><span>Total do pedido</span><strong id="total">R$ 0,00</strong></div>
    </div>
   </div>
-
   <div id="mensagem"></div>
-
-  <button
-   class="finalizar"
-   id="botaoFinalizar"
-   onclick="finalizar()"
-   disabled>
-   Confirmar pedido
-  </button>
-
+  <button class="finalizar" id="botaoFinalizar" onclick="finalizar()" disabled>Confirmar pedido</button>
  </section>
-
 </main>
-
 <footer>
  Feira da Lua de Ribeirão Grande
-
- <div class="patrocinio">
-  <p>Patrocínio e Criador </p>
-
-  <img
-   src="logo-legadu.jpg"
-   class="logo-legadu"
-   alt="Logo LEGADU Festas e Eventos">
- </div>
-
- <div class="link-admin">
-  <a href="admin.html">Área administrativa</a>
- </div>
+ <div class="patrocinio"><p>Patrocínio e Criador</p><img src="logo-legadu.jpg" class="logo-legadu" alt="Logo LEGADU Festas e Eventos"></div>
+ <div class="link-admin"><a href="admin.html">Área administrativa</a></div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script>
 const SUPABASE_URL='https://bnnfplpccsxaaztgbxkr.supabase.co';
 const SUPABASE_KEY='sb_publishable_dws08TQirwdC5MI3UITfog_AWVc8eL5';
-
-const banco=window.supabase.createClient(
- SUPABASE_URL,
- SUPABASE_KEY
-);
-
+const banco=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 const AUTH_URL=SUPABASE_URL+'/functions/v1/cliente-auth';
 const CHAVE_SESSAO='feiraLuaSessao';
-
 let tokenCliente=localStorage.getItem(CHAVE_SESSAO)||'';
-let clienteLogado=null;
+let clienteLogado=null,carrinho=[],produtos=[],barracas=[],fretes=[],regioes=[];
+let enviandoPedido=false,pedidoConcluido=false;
 
-let carrinho=[];
-let produtos=[];
-let barracas=[];
-let fretes=[];
-let regioes=[];
-let enviandoPedido=false;
-let pedidoConcluido=false;
-
-function moeda(v){
- return Number(v||0).toLocaleString('pt-BR',{
-  style:'currency',
-  currency:'BRL'
- });
-}
-
-function valorProdutos(){
- return carrinho.reduce((s,p)=>s+Number(p.preco),0);
-}
-
-function normalizarTelefone(v){
- return String(v||'').replace(/\D/g,'');
-}
-
-function bairroDoCliente(){
- return clienteLogado
-  ?fretes.find(f=>String(f.id)===String(clienteLogado.bairro_id))
-  :null;
-}
-
-function freteSelecionado(){
- /* Carrinho vazio nunca cobra frete */
- if(!carrinho.length)return 0;
-
- if(document.getElementById('tipoEntrega').value!=='entrega'){
-  return 0;
- }
-
- const b=bairroDoCliente();
-
- return b?Number(b.valor)||0:0;
-}
+function moeda(v){return Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});}
+function valorProdutos(){return carrinho.reduce((s,p)=>s+Number(p.preco),0);}
+function normalizarTelefone(v){return String(v||'').replace(/\D/g,'');}
+function bairroDoCliente(){return clienteLogado?fretes.find(f=>String(f.id)===String(clienteLogado.bairro_id)):null;}
+function freteSelecionado(){if(!carrinho.length||document.getElementById('tipoEntrega').value!=='entrega')return 0;const b=bairroDoCliente();return b?Number(b.valor)||0:0;}
 
 async function chamarAuth(dados,token=''){
- const headers={
-  'Content-Type':'application/json',
-  'apikey':SUPABASE_KEY
- };
-
- if(token){
-  headers.Authorization='Bearer '+token;
- }
-
- const resp=await fetch(AUTH_URL,{
-  method:'POST',
-  headers,
-  body:JSON.stringify(dados)
- });
-
- let r={};
-
- try{
-  r=await resp.json();
- }catch(e){}
-
- if(!resp.ok){
-  throw new Error(
-   r.erro||
-   r.mensagem||
-   'Não foi possível concluir. Confira os dados e tente novamente.'
-  );
- }
-
+ const headers={'Content-Type':'application/json','apikey':SUPABASE_KEY};
+ if(token)headers.Authorization='Bearer '+token;
+ const resp=await fetch(AUTH_URL,{method:'POST',headers,body:JSON.stringify(dados)});
+ let r={};try{r=await resp.json();}catch(e){}
+ if(!resp.ok)throw new Error(r.erro||r.mensagem||'Não foi possível concluir. Confira os dados e tente novamente.');
  return r;
 }
-
-function mensagemAcesso(t,erro=false){
- const e=document.getElementById('mensagemAcesso');
-
- if(e){
-  e.textContent=t||'';
-  e.style.color=erro?'#b8323a':'#28764c';
- }
-}
-
-function exibirPainel(id){
- [
-  'painelLogin',
-  'painelCadastro',
-  'painelConta',
-  'painelEdicao'
- ].forEach(x=>{
-  document.getElementById(x).style.display=
-   x===id?'block':'none';
- });
-}
-
-function mostrarLogin(){
- exibirPainel('painelLogin');
- mensagemAcesso('');
-}
-
-function mostrarCadastro(){
- exibirPainel('painelCadastro');
- mensagemAcesso('');
-}
-
-function solicitarAjudaSenha(){
- const telefone=document
-  .getElementById('loginTelefone')
-  .value.trim();
-
- let texto='Olá! Esqueci minha senha da Feira da Lua Delivery e preciso de ajuda para recuperar meu acesso.';
-
- if(telefone){
-  texto+=' Meu celular cadastrado é: '+telefone+'.';
- }
-
- const link='https://wa.me/5515997549326?text='+encodeURIComponent(texto);
-
- window.open(link,'_blank');
-}
-
+function mensagemAcesso(t,erro=false){const e=document.getElementById('mensagemAcesso');if(e){e.textContent=t||'';e.style.color=erro?'#b8323a':'#28764c';}}
+function exibirPainel(id){['painelLogin','painelCadastro','painelConta','painelEdicao'].forEach(x=>document.getElementById(x).style.display=x===id?'block':'none');}
+function mostrarLogin(){exibirPainel('painelLogin');document.getElementById('tituloAcesso').textContent='Entre para fazer seu pedido';document.getElementById('ajudaAcesso').style.display='';mensagemAcesso('');}
+function mostrarCadastro(){exibirPainel('painelCadastro');document.getElementById('tituloAcesso').textContent='Criar minha conta';document.getElementById('ajudaAcesso').style.display='none';mensagemAcesso('');}
+function solicitarAjudaSenha(){const telefone=document.getElementById('loginTelefone').value.trim();let texto='Olá! Esqueci minha senha da Feira da Lua Delivery e preciso de ajuda para recuperar meu acesso.';if(telefone)texto+=' Meu celular cadastrado é: '+telefone+'.';window.open('https://wa.me/5515997549326?text='+encodeURIComponent(texto),'_blank');}
 function aplicarCliente(c){
- clienteLogado=c;
-
- exibirPainel('painelConta');
-
+ clienteLogado=c;exibirPainel('painelConta');
+ document.getElementById('tituloAcesso').textContent='Minha conta';
+ document.getElementById('ajudaAcesso').style.display='none';
  document.getElementById('areaCheckout').style.display='block';
-
  document.getElementById('clienteEndereco').value=c.endereco||'';
-
- const b=bairroDoCliente();
-
- document.getElementById('clienteBairroNome').value=
-  b?b.bairro:'Bairro não informado';
-
- document.getElementById('boasVindas').textContent=
-  'Olá, '+(c.nome||'cliente')+'! Sua conta está conectada.';
-
- atualizar();
+ const b=bairroDoCliente();document.getElementById('clienteBairroNome').value=b?b.bairro:'Bairro não informado';
+ document.getElementById('boasVindas').textContent='Olá, '+(c.nome||'cliente')+'! Sua conta está conectada.';
+ atualizarTipoEntrega();atualizar();
 }
-
-function limparCliente(){
- clienteLogado=null;
-
- document.getElementById('areaCheckout').style.display='none';
-
- exibirPainel('painelLogin');
-
- document.getElementById('botaoFinalizar').disabled=true;
-
- [
-  'clienteEndereco',
-  'clienteBairroNome'
- ].forEach(id=>{
-  document.getElementById(id).value='';
- });
-}
-
+function limparCliente(){clienteLogado=null;document.getElementById('areaCheckout').style.display='none';document.getElementById('tituloAcesso').textContent='Entre para fazer seu pedido';document.getElementById('ajudaAcesso').style.display='';exibirPainel('painelLogin');document.getElementById('botaoFinalizar').disabled=true;['clienteEndereco','clienteBairroNome'].forEach(id=>document.getElementById(id).value='');}
 async function entrarCliente(){
- const telefone=normalizarTelefone(
-  document.getElementById('loginTelefone').value
- );
-
- const senha=document.getElementById('loginSenha').value;
-
- if(telefone.length<10||telefone.length>13){
-  mensagemAcesso('Informe um celular válido com DDD.',true);
-  return;
- }
-
- if(!senha){
-  mensagemAcesso('Digite sua senha.',true);
-  return;
- }
-
+ const telefone=normalizarTelefone(document.getElementById('loginTelefone').value),senha=document.getElementById('loginSenha').value;
+ if(telefone.length<10||telefone.length>13){mensagemAcesso('Informe um celular válido com DDD.',true);return;}
+ if(!senha){mensagemAcesso('Digite sua senha.',true);return;}
  mensagemAcesso('Entrando...');
-
- try{
-  const r=await chamarAuth({
-   acao:'login',
-   telefone,
-   senha
-  });
-
-  tokenCliente=r.token;
-
-  localStorage.setItem(CHAVE_SESSAO,tokenCliente);
-
-  const p=await chamarAuth(
-   {acao:'me'},
-   tokenCliente
-  );
-
-  aplicarCliente(p.cliente);
-
-  mensagemAcesso('Login realizado com sucesso!');
-
- }catch(e){
-  mensagemAcesso(e.message,true);
- }
+ try{const r=await chamarAuth({acao:'login',telefone,senha});tokenCliente=r.token;localStorage.setItem(CHAVE_SESSAO,tokenCliente);const p=await chamarAuth({acao:'me'},tokenCliente);aplicarCliente(p.cliente);mensagemAcesso('Login realizado com sucesso!');}
+ catch(e){mensagemAcesso(e.message,true);}
 }
-
 async function cadastrarCliente(){
- const nome=document.getElementById('cadastroNome').value.trim();
-
- const telefone=normalizarTelefone(
-  document.getElementById('cadastroTelefone').value
- );
-
- const senha=document.getElementById('cadastroSenha').value;
-
- const endereco=document.getElementById('cadastroEndereco').value.trim();
-
- const bairro_id=document.getElementById('cadastroBairro').value;
-
- if(nome.length<2){
-  mensagemAcesso('Informe seu nome completo.',true);
-  return;
- }
-
- if(telefone.length<10||telefone.length>13){
-  mensagemAcesso('Informe um celular válido com DDD.',true);
-  return;
- }
-
- if(senha.length<6){
-  mensagemAcesso('A senha precisa ter pelo menos 6 caracteres.',true);
-  return;
- }
-
- if(endereco.length<5){
-  mensagemAcesso('Informe seu endereço completo.',true);
-  return;
- }
-
- if(!bairro_id){
-  mensagemAcesso('Selecione seu bairro.',true);
-  return;
- }
-
+ const nome=document.getElementById('cadastroNome').value.trim(),telefone=normalizarTelefone(document.getElementById('cadastroTelefone').value),senha=document.getElementById('cadastroSenha').value,endereco=document.getElementById('cadastroEndereco').value.trim(),bairro_id=document.getElementById('cadastroBairro').value;
+ if(nome.length<2){mensagemAcesso('Informe seu nome completo.',true);return;}
+ if(telefone.length<10||telefone.length>13){mensagemAcesso('Informe um celular válido com DDD.',true);return;}
+ if(senha.length<6){mensagemAcesso('A senha precisa ter pelo menos 6 caracteres.',true);return;}
+ if(endereco.length<5){mensagemAcesso('Informe seu endereço completo.',true);return;}
+ if(!bairro_id){mensagemAcesso('Selecione seu bairro.',true);return;}
  mensagemAcesso('Criando sua conta...');
-
  try{
-  const r=await chamarAuth({
-   acao:'register',
-   nome,
-   telefone,
-   senha
-  });
-
-  tokenCliente=r.token;
-
-  localStorage.setItem(CHAVE_SESSAO,tokenCliente);
-
-  const u=await chamarAuth({
-   acao:'update_profile',
-   nome,
-   endereco,
-   bairro_id:Number(bairro_id)
-  },tokenCliente);
-
-  const c=u.cliente||{
-   id:r.cliente.id,
-   nome,
-   telefone:r.cliente.telefone||telefone,
-   endereco,
-   bairro_id:Number(bairro_id)
-  };
-
-  aplicarCliente(c);
-
-  mensagemAcesso('Cadastro realizado com sucesso!');
-
- }catch(e){
-  mensagemAcesso(e.message,true);
- }
+  const r=await chamarAuth({acao:'register',nome,telefone,senha});tokenCliente=r.token;localStorage.setItem(CHAVE_SESSAO,tokenCliente);
+  const u=await chamarAuth({acao:'update_profile',nome,endereco,bairro_id:Number(bairro_id)},tokenCliente);
+  const c=u.cliente||{id:r.cliente.id,nome,telefone:r.cliente.telefone||telefone,endereco,bairro_id:Number(bairro_id)};
+  aplicarCliente(c);mensagemAcesso('Cadastro realizado com sucesso!');
+ }catch(e){mensagemAcesso(e.message,true);}
 }
-
 async function restaurarSessao(){
- if(!tokenCliente){
-  limparCliente();
-  return;
- }
-
- try{
-  const r=await chamarAuth(
-   {acao:'me'},
-   tokenCliente
-  );
-
-  aplicarCliente(r.cliente);
-
- }catch(e){
-  tokenCliente='';
-
-  localStorage.removeItem(CHAVE_SESSAO);
-
-  limparCliente();
-
-  mensagemAcesso('Sua sessão expirou. Entre novamente.');
- }
+ if(!tokenCliente){limparCliente();return;}
+ try{const r=await chamarAuth({acao:'me'},tokenCliente);aplicarCliente(r.cliente);}
+ catch(e){tokenCliente='';localStorage.removeItem(CHAVE_SESSAO);limparCliente();mensagemAcesso('Sua sessão expirou. Entre novamente.');}
 }
-
 async function sairCliente(){
- try{
-  if(tokenCliente){
-   await chamarAuth(
-    {acao:'logout'},
-    tokenCliente
-   );
-  }
- }catch(e){
-  console.warn(e);
- }
-
- tokenCliente='';
-
- localStorage.removeItem(CHAVE_SESSAO);
-
- limparCliente();
-
- mensagemAcesso('Você saiu da sua conta.');
+ try{if(tokenCliente)await chamarAuth({acao:'logout'},tokenCliente);}catch(e){console.warn(e);}
+ tokenCliente='';localStorage.removeItem(CHAVE_SESSAO);limparCliente();mensagemAcesso('Você saiu da sua conta.');
 }
-
 function mostrarEdicao(){
  if(!clienteLogado)return;
-
- document.getElementById('painelConta').style.display='none';
- document.getElementById('painelEdicao').style.display='block';
-
- document.getElementById('edicaoNome').value=
-  clienteLogado.nome||'';
-
- document.getElementById('edicaoEndereco').value=
-  clienteLogado.endereco||'';
-
- document.getElementById('edicaoBairro').value=
-  clienteLogado.bairro_id
-   ?String(clienteLogado.bairro_id)
-   :'';
-
+ document.getElementById('painelConta').style.display='none';document.getElementById('painelEdicao').style.display='block';
+ document.getElementById('edicaoNome').value=clienteLogado.nome||'';
+ document.getElementById('edicaoEndereco').value=clienteLogado.endereco||'';
+ document.getElementById('edicaoBairro').value=clienteLogado.bairro_id?String(clienteLogado.bairro_id):'';
  mensagemAcesso('');
 }
-
-function cancelarEdicao(){
- document.getElementById('painelEdicao').style.display='none';
- document.getElementById('painelConta').style.display='block';
-}
-
+function cancelarEdicao(){document.getElementById('painelEdicao').style.display='none';document.getElementById('painelConta').style.display='block';}
 async function salvarEdicao(){
- const nome=document.getElementById('edicaoNome').value.trim();
-
- const endereco=document.getElementById('edicaoEndereco').value.trim();
-
- const bairro_id=document.getElementById('edicaoBairro').value;
-
- if(nome.length<2||endereco.length<5||!bairro_id){
-  mensagemAcesso('Preencha nome, endereço e bairro.',true);
-  return;
- }
-
+ const nome=document.getElementById('edicaoNome').value.trim(),endereco=document.getElementById('edicaoEndereco').value.trim(),bairro_id=document.getElementById('edicaoBairro').value;
+ if(nome.length<2||endereco.length<5||!bairro_id){mensagemAcesso('Preencha nome, endereço e bairro.',true);return;}
  mensagemAcesso('Salvando alterações...');
-
- try{
-  const r=await chamarAuth({
-   acao:'update_profile',
-   nome,
-   endereco,
-   bairro_id:Number(bairro_id)
-  },tokenCliente);
-
-  aplicarCliente(
-   r.cliente||{
-    ...clienteLogado,
-    nome,
-    endereco,
-    bairro_id:Number(bairro_id)
-   }
-  );
-
-  mensagemAcesso('Cadastro atualizado com sucesso!');
-
- }catch(e){
-  mensagemAcesso(e.message,true);
- }
+ try{const r=await chamarAuth({acao:'update_profile',nome,endereco,bairro_id:Number(bairro_id)},tokenCliente);aplicarCliente(r.cliente||{...clienteLogado,nome,endereco,bairro_id:Number(bairro_id)});mensagemAcesso('Cadastro atualizado com sucesso!');}
+ catch(e){mensagemAcesso(e.message,true);}
 }
-
 async function carregarFretes(){
  const ids=['cadastroBairro','edicaoBairro'];
-
  try{
   const [rb,rr]=await Promise.all([
-   banco
-    .from('frete_bairros')
-    .select('id,bairro,tipo,valor,ativo,regiao_id')
-    .eq('ativo',true)
-    .order('bairro'),
-
-   banco
-    .from('frete_regioes')
-    .select('id,nome,valor,ativo')
-    .eq('ativo',true)
-    .order('nome')
+   banco.from('frete_bairros').select('id,bairro,tipo,valor,ativo,regiao_id').eq('ativo',true).order('bairro'),
+   banco.from('frete_regioes').select('id,nome,valor,ativo').eq('ativo',true).order('nome')
   ]);
-
-  if(rb.error)throw rb.error;
-  if(rr.error)throw rr.error;
-
-  regioes=rr.data||[];
-
-  const mapa=new Map(
-   regioes.map(r=>[String(r.id),r])
-  );
-
+  if(rb.error)throw rb.error;if(rr.error)throw rr.error;
+  regioes=rr.data||[];const mapa=new Map(regioes.map(r=>[String(r.id),r]));
   fretes=(rb.data||[]).reduce((l,b)=>{
-   if(b.tipo==='externo'){
-    l.push({
-     ...b,
-     valor:Number(b.valor)||0,
-     nomeRegiao:'Entrega externa'
-    });
-
-    return l;
-   }
-
-   if(b.tipo==='cidade'&&b.regiao_id){
-    const r=mapa.get(String(b.regiao_id));
-
-    if(r){
-     l.push({
-      ...b,
-      valor:Number(r.valor)||0,
-      nomeRegiao:r.nome
-     });
-    }
-   }
-
+   if(b.tipo==='externo'){l.push({...b,valor:Number(b.valor)||0,nomeRegiao:'Entrega externa'});return l;}
+   if(b.tipo==='cidade'&&b.regiao_id){const r=mapa.get(String(b.regiao_id));if(r)l.push({...b,valor:Number(r.valor)||0,nomeRegiao:r.nome});}
    return l;
-
   },[]);
-
   ids.forEach(id=>{
-   const el=document.getElementById(id);
-
-   el.innerHTML='<option value="">Selecione seu bairro</option>';
-
-   [
-    ['cidade','Ribeirão Grande'],
-    ['externo','Entrega externa']
-   ].forEach(([tipo,nome])=>{
-    const arr=fretes.filter(b=>b.tipo===tipo);
-
-    if(arr.length){
-     const g=document.createElement('optgroup');
-
-     g.label=nome;
-
-     arr.forEach(b=>{
-      const o=document.createElement('option');
-
-      o.value=String(b.id);
-      o.textContent=b.bairro;
-
-      g.appendChild(o);
-     });
-
-     el.appendChild(g);
-    }
+   const el=document.getElementById(id);el.innerHTML='<option value="">Selecione seu bairro</option>';
+   [['cidade','Ribeirão Grande'],['externo','Entrega externa']].forEach(([tipo,nome])=>{
+    const arr=fretes.filter(b=>b.tipo===tipo);if(arr.length){const g=document.createElement('optgroup');g.label=nome;arr.forEach(b=>{const o=document.createElement('option');o.value=String(b.id);o.textContent=b.bairro;g.appendChild(o);});el.appendChild(g);}
    });
-
-   if(!fretes.length){
-    el.innerHTML='<option value="">Nenhum bairro disponível</option>';
-   }
+   if(!fretes.length)el.innerHTML='<option value="">Nenhum bairro disponível</option>';
   });
-
-  await restaurarSessao();
-
-  atualizar();
-
- }catch(e){
-  console.error('Erro ao carregar bairros e regiões:',e);
-
-  ids.forEach(id=>{
-   document.getElementById(id).innerHTML=
-    '<option value="">Erro ao carregar bairros</option>';
-  });
-
-  fretes=[];
-
-  await restaurarSessao();
-
-  atualizar();
- }
+  await restaurarSessao();atualizar();
+ }catch(e){console.error('Erro ao carregar bairros e regiões:',e);ids.forEach(id=>document.getElementById(id).innerHTML='<option value="">Erro ao carregar bairros</option>');fretes=[];await restaurarSessao();atualizar();}
 }
 
+function quantidadeNoCarrinho(id){return carrinho.filter(x=>Number(x.id)===Number(id)).length;}
+function renderizarVitrine(){
+ const vitrine=document.getElementById('vitrine'),filtro=document.getElementById('filtro-barracas').value;
+ vitrine.innerHTML='';
+ barracas.forEach(b=>{
+  const listaBarraca=produtos.filter(p=>Number(p.feirante_id)===Number(b.id));
+  if(!listaBarraca.length)return;
+  const sec=document.createElement('section');sec.className='barraca';sec.dataset.barraca=String(b.id);if(filtro!=='todas'&&String(b.id)!==filtro)sec.style.display='none';
+  const titulo=document.createElement('h3');titulo.textContent=b.nome;sec.appendChild(titulo);
+  listaBarraca.forEach(p=>{
+   const item=document.createElement('article');item.className='produto';
+   const conteudo=document.createElement('div');conteudo.className='produto-conteudo';
+   if(p.imagem_url){const foto=document.createElement('img');foto.className='foto-produto';foto.src=p.imagem_url;foto.alt=p.nome;foto.loading='lazy';conteudo.appendChild(foto);}
+   const info=document.createElement('div');info.className='info-produto';
+   const nome=document.createElement('strong');nome.textContent=p.nome;
+   const desc=document.createElement('p');desc.textContent=p.descricao||'';
+   const preco=document.createElement('div');preco.className='preco';preco.textContent=moeda(p.preco);
+   const estoque=document.createElement('div');estoque.className='estoque';
+   const disponivel=Math.max(0,Number(p.estoque)||0),minimo=Number(p.estoque_minimo)||0,qtd=quantidadeNoCarrinho(p.id);
+   if(disponivel<=0){estoque.textContent='ESGOTADO';estoque.classList.add('esgotado');}
+   else if(disponivel<=minimo){estoque.textContent='ÚLTIMAS UNIDADES: '+disponivel;estoque.classList.add('ultimas');}
+   else{estoque.textContent='Disponível';estoque.classList.add('disponivel');}
+   info.append(nome,desc,preco,estoque);conteudo.appendChild(info);
+   const acao=document.createElement('div');acao.className='acao-produto';
+   if(disponivel<=0){const btn=document.createElement('button');btn.className='botao-adicionar';btn.disabled=true;btn.textContent='Esgotado';acao.appendChild(btn);}
+   else if(qtd===0){const btn=document.createElement('button');btn.className='botao-adicionar';btn.textContent='Adicionar';btn.onclick=()=>adicionar(p.id);acao.appendChild(btn);}
+   else{
+    const controle=document.createElement('div');controle.className='controle-qtd';
+    const menos=document.createElement('button');menos.className='menos';menos.type='button';menos.textContent='−';menos.setAttribute('aria-label','Diminuir quantidade de '+p.nome);menos.onclick=()=>remover(p.id);
+    const numero=document.createElement('span');numero.className='qtd-numero';numero.textContent=qtd;
+    const mais=document.createElement('button');mais.type='button';mais.textContent='+';mais.setAttribute('aria-label','Aumentar quantidade de '+p.nome);mais.disabled=qtd>=disponivel;mais.onclick=()=>adicionar(p.id);
+    controle.append(menos,numero,mais);acao.appendChild(controle);
+    const aviso=document.createElement('div');aviso.className='adicionado';aviso.textContent='✓ Adicionado ao carrinho';acao.appendChild(aviso);
+   }
+   item.append(conteudo,acao);sec.appendChild(item);
+  });
+  vitrine.appendChild(sec);
+ });
+ if(!vitrine.children.length)vitrine.textContent='Nenhum produto disponível.';
+}
 async function carregarProdutos(){
-
- const vitrine=document.getElementById('vitrine');
-
- const filtro=document.getElementById('filtro-barracas');
-
+ const vitrine=document.getElementById('vitrine'),filtro=document.getElementById('filtro-barracas');
  try{
-  const {
-   data:listaBarracas,
-   error:e1
-  }=await banco
-   .from('feirantes')
-   .select('id,nome,responsavel')
-   .eq('ativo',true);
-
+  const {data:listaBarracas,error:e1}=await banco.from('feirantes').select('id,nome,responsavel').eq('ativo',true);
   if(e1)throw e1;
-
-  const {
-   data:lista,
-   error:e2
-  }=await banco
-   .from('produtos')
-   .select('id,feirante_id,nome,preco,descricao,imagem_url,estoque,estoque_minimo')
-   .eq('ativo',true);
-
+  const {data:lista,error:e2}=await banco.from('produtos').select('id,feirante_id,nome,preco,descricao,imagem_url,estoque,estoque_minimo').eq('ativo',true);
   if(e2)throw e2;
-
-  produtos=lista||[];
-  barracas=listaBarracas||[];
-
-  filtro.innerHTML=
-   '<option value="todas">Todas as barracas</option>';
-
-  barracas.forEach(b=>{
-   const opcao=document.createElement('option');
-
-   opcao.value=String(b.id);
-   opcao.textContent=b.nome;
-
-   filtro.appendChild(opcao);
-  });
-
-  vitrine.innerHTML='';
-
-  barracas.forEach(b=>{
-   const listaBarraca=produtos.filter(
-    p=>Number(p.feirante_id)===Number(b.id)
-   );
-
-   if(!listaBarraca.length)return;
-
-   const sec=document.createElement('section');
-
-   sec.className='barraca';
-   sec.dataset.barraca=String(b.id);
-
-   const titulo=document.createElement('h3');
-
-   titulo.textContent=b.nome;
-
-   sec.appendChild(titulo);
-
-   listaBarraca.forEach(p=>{
-    const item=document.createElement('div');
-
-    item.className='produto';
-
-    const conteudo=document.createElement('div');
-
-    conteudo.className='produto-conteudo';
-
-    if(p.imagem_url){
-     const foto=document.createElement('img');
-
-     foto.className='foto-produto';
-     foto.src=p.imagem_url;
-     foto.alt=p.nome;
-     foto.loading='lazy';
-
-     conteudo.appendChild(foto);
-    }
-
-    const info=document.createElement('div');
-
-    info.className='info-produto';
-
-    const nome=document.createElement('strong');
-
-    nome.textContent=p.nome;
-
-    const desc=document.createElement('p');
-
-    desc.textContent=p.descricao||'';
-
-    const preco=document.createElement('div');
-
-    preco.className='preco';
-    preco.textContent=moeda(p.preco);
-
-    const estoque=document.createElement('div');
-
-    estoque.className='estoque';
-
-    const quantidadeEstoque=Number(p.estoque)||0;
-    const minimo=Number(p.estoque_minimo)||0;
-
-    if(quantidadeEstoque<=0){
-     estoque.textContent='ESGOTADO';
-     estoque.classList.add('esgotado');
-
-    }else if(quantidadeEstoque<=minimo){
-     estoque.textContent='ÚLTIMAS UNIDADES: '+quantidadeEstoque;
-     estoque.classList.add('ultimas');
-
-    }else{
-     estoque.textContent='Disponível';
-     estoque.classList.add('disponivel');
-    }
-
-    info.append(nome,desc,preco,estoque);
-
-    conteudo.appendChild(info);
-
-    const botao=document.createElement('button');
-
-    if(quantidadeEstoque<=0){
-     botao.textContent='Esgotado';
-     botao.disabled=true;
-
-    }else{
-     botao.textContent='Adicionar';
-     botao.onclick=()=>adicionar(p.id);
-    }
-
-    item.append(conteudo,botao);
-
-    sec.appendChild(item);
-   });
-
-   vitrine.appendChild(sec);
-  });
-
-  if(!vitrine.children.length){
-   vitrine.textContent='Nenhum produto disponível.';
-  }
-
-  aplicarFiltro();
-
- }catch(e){
-  console.error(e);
-
-  vitrine.textContent=
-   'Erro ao carregar produtos. Atualize a página.';
- }
+  produtos=lista||[];barracas=listaBarracas||[];
+  filtro.innerHTML='<option value="todas">Todas as barracas</option>';
+  barracas.forEach(b=>{const o=document.createElement('option');o.value=String(b.id);o.textContent=b.nome;filtro.appendChild(o);});
+  renderizarVitrine();
+ }catch(e){console.error(e);vitrine.textContent='Erro ao carregar produtos. Atualize a página.';}
 }
-
-function aplicarFiltro(){
- const s=document.getElementById('filtro-barracas').value;
-
- document.querySelectorAll('#vitrine .barraca').forEach(x=>{
-  x.style.display=
-   s==='todas'||x.dataset.barraca===s
-    ?'grid'
-    :'none';
- });
-}
-
-document.getElementById('filtro-barracas')
- .addEventListener('change',aplicarFiltro);
-
+function aplicarFiltro(){renderizarVitrine();}
+document.getElementById('filtro-barracas').addEventListener('change',aplicarFiltro);
 function adicionar(id){
- const p=produtos.find(x=>Number(x.id)===Number(id));
-
- if(!p)return;
-
- const n=carrinho.filter(
-  x=>Number(x.id)===Number(id)
- ).length;
-
- if(Number(p.estoque)<=n){
-  alert('Não há mais unidades disponíveis.');
-  return;
- }
-
- if(pedidoConcluido){
-  pedidoConcluido=false;
-
-  const botao=document.getElementById('botaoFinalizar');
-
-  botao.textContent='Confirmar pedido';
-
-  document.getElementById('mensagem').textContent='';
- }
-
- carrinho.push({
-  id:p.id,
-  nome:p.nome,
-  preco:Number(p.preco)
- });
-
- atualizar();
+ const p=produtos.find(x=>Number(x.id)===Number(id));if(!p)return;
+ const n=quantidadeNoCarrinho(id);
+ if(Number(p.estoque)<=n){alert('Não há mais unidades disponíveis.');return;}
+ if(pedidoConcluido){pedidoConcluido=false;document.getElementById('botaoFinalizar').textContent='Confirmar pedido';document.getElementById('mensagem').textContent='';}
+ carrinho.push({id:p.id,nome:p.nome,preco:Number(p.preco)});
+ renderizarVitrine();atualizar();
 }
-
-function remover(id){
- const i=carrinho.findIndex(
-  x=>Number(x.id)===Number(id)
- );
-
- if(i>=0)carrinho.splice(i,1);
-
- atualizar();
-}
-
+function remover(id){const i=carrinho.findIndex(x=>Number(x.id)===Number(id));if(i>=0)carrinho.splice(i,1);renderizarVitrine();atualizar();}
 function atualizar(){
- document.getElementById('quantidade').textContent=
-  carrinho.length;
-
- const el=document.getElementById('itens');
-
- el.innerHTML='';
-
- if(!carrinho.length){
-  el.textContent='Nenhum produto adicionado.';
-
- }else{
-  const r={};
-
-  carrinho.forEach(p=>{
-   if(!r[p.id]){
-    r[p.id]={
-     nome:p.nome,
-     preco:p.preco,
-     q:0
-    };
-   }
-
-   r[p.id].q++;
-  });
-
+ document.getElementById('quantidade').textContent=carrinho.length;
+ const el=document.getElementById('itens');el.innerHTML='';
+ if(!carrinho.length){el.innerHTML='<div class="vazio">Seu carrinho está vazio. Escolha seus produtos acima.</div>';}
+ else{
+  const r={};carrinho.forEach(p=>{if(!r[p.id])r[p.id]={nome:p.nome,preco:p.preco,q:0};r[p.id].q++;});
   Object.entries(r).forEach(([id,p])=>{
-   const row=document.createElement('div');
-
-   row.className='item-carrinho';
-
-   const t=document.createElement('span');
-
-   t.textContent=
-    p.q+'x '+p.nome+' - '+moeda(p.preco*p.q);
-
-   const b=document.createElement('button');
-
-   b.textContent='Remover';
-   b.onclick=()=>remover(id);
-
-   row.append(t,b);
-
-   el.appendChild(row);
+   const row=document.createElement('div');row.className='item-carrinho';
+   const t=document.createElement('span');t.textContent=p.q+'x '+p.nome+' · '+moeda(p.preco*p.q);
+   const b=document.createElement('button');b.textContent='Remover 1';b.onclick=()=>remover(id);
+   row.append(t,b);el.appendChild(row);
   });
  }
-
- const s=valorProdutos();
- const f=freteSelecionado();
-
- document.getElementById('subtotal').textContent=moeda(s);
- document.getElementById('frete').textContent=moeda(f);
- document.getElementById('total').textContent=moeda(s+f);
-
+ const s=valorProdutos(),f=freteSelecionado();
+ document.getElementById('subtotal').textContent=moeda(s);document.getElementById('frete').textContent=moeda(f);document.getElementById('total').textContent=moeda(s+f);
  const botao=document.getElementById('botaoFinalizar');
-
- botao.disabled=
-  !clienteLogado||
-  !carrinho.length||
-  pedidoConcluido||
-  enviandoPedido;
-
- if(!pedidoConcluido&&!enviandoPedido){
-  botao.textContent='Confirmar pedido';
- }
+ botao.disabled=!clienteLogado||!carrinho.length||pedidoConcluido||enviandoPedido;
+ if(!pedidoConcluido&&!enviandoPedido)botao.textContent='Confirmar pedido';
 }
-
 function atualizarTipoEntrega(){
- document.getElementById('camposEntrega').style.display=
-  document.getElementById('tipoEntrega').value==='entrega'
-   ?'block'
-   :'none';
-
+ const entrega=document.getElementById('tipoEntrega').value==='entrega';
+ document.getElementById('camposEntrega').style.display=entrega?'block':'none';
  atualizar();
 }
-
-document.getElementById('tipoEntrega')
- .addEventListener('change',atualizarTipoEntrega);
-
+document.getElementById('tipoEntrega').addEventListener('change',atualizarTipoEntrega);
 function validarDados(){
- if(!clienteLogado){
-  alert('Entre na sua conta para continuar.');
-  return null;
- }
-
- const tipo=document.getElementById('tipoEntrega').value;
- const b=bairroDoCliente();
-
- if(
-  tipo==='entrega'&&
-  (!clienteLogado.endereco||clienteLogado.endereco.trim().length<5)
- ){
-  alert('Atualize seu endereço em “Atualizar meu cadastro”.');
-  return null;
- }
-
- if(tipo==='entrega'&&(!clienteLogado.bairro_id||!b)){
-  alert('Atualize seu bairro em “Atualizar meu cadastro”.');
-  return null;
- }
-
- return {
-  nome:clienteLogado.nome,
-  telefone:clienteLogado.telefone,
-  tipo,
-  endereco:tipo==='entrega'?clienteLogado.endereco:'',
-  bairroId:tipo==='entrega'
-   ?Number(clienteLogado.bairro_id)
-   :null
- };
+ if(!clienteLogado){alert('Entre na sua conta para continuar.');return null;}
+ const tipo=document.getElementById('tipoEntrega').value,b=bairroDoCliente();
+ if(tipo==='entrega'&&(!clienteLogado.endereco||clienteLogado.endereco.trim().length<5)){alert('Atualize seu endereço em “Atualizar meu cadastro”.');return null;}
+ if(tipo==='entrega'&&(!clienteLogado.bairro_id||!b)){alert('Atualize seu bairro em “Atualizar meu cadastro”.');return null;}
+ return {nome:clienteLogado.nome,telefone:clienteLogado.telefone,tipo,endereco:tipo==='entrega'?clienteLogado.endereco:'',bairroId:tipo==='entrega'?Number(clienteLogado.bairro_id):null};
 }
-
 async function finalizar(){
- if(enviandoPedido)return;
-
- if(pedidoConcluido){
-  return;
- }
-
- if(!clienteLogado){
-  alert('Entre na sua conta para continuar.');
-  return;
- }
-
- if(!carrinho.length){
-  alert('Adicione produtos ao carrinho.');
-  return;
- }
-
- const cliente=validarDados();
-
- if(!cliente)return;
-
- const resumo={};
-
- carrinho.forEach(p=>{
-  if(!resumo[p.id]){
-   resumo[p.id]={
-    produto_id:p.id,
-    quantidade:0,
-    nome:p.nome,
-    preco:p.preco
-   };
-  }
-
-  resumo[p.id].quantidade++;
- });
-
- const itensPedido=Object.values(resumo).map(p=>({
-  produto_id:p.produto_id,
-  quantidade:p.quantidade
- }));
-
- const botao=document.getElementById('botaoFinalizar');
- const mensagem=document.getElementById('mensagem');
-
- enviandoPedido=true;
-
- botao.disabled=true;
- botao.textContent='Registrando pedido...';
-
- mensagem.textContent=
-  'Aguarde, estamos registrando seu pedido.';
-
+ if(enviandoPedido||pedidoConcluido)return;
+ if(!clienteLogado){alert('Entre na sua conta para continuar.');return;}
+ if(!carrinho.length){alert('Adicione produtos ao carrinho.');return;}
+ const cliente=validarDados();if(!cliente)return;
+ const resumo={};carrinho.forEach(p=>{if(!resumo[p.id])resumo[p.id]={produto_id:p.id,quantidade:0,nome:p.nome,preco:p.preco};resumo[p.id].quantidade++;});
+ const itensPedido=Object.values(resumo).map(p=>({produto_id:p.produto_id,quantidade:p.quantidade}));
+ const botao=document.getElementById('botaoFinalizar'),mensagem=document.getElementById('mensagem');
+ enviandoPedido=true;botao.disabled=true;botao.textContent='Registrando pedido...';mensagem.textContent='Aguarde, estamos registrando seu pedido.';
  try{
-  const {data,error}=await banco.rpc(
-   'criar_pedido_com_frete',
-   {
-    p_cliente_nome:cliente.nome,
-    p_cliente_telefone:cliente.telefone,
-    p_tipo_entrega:cliente.tipo,
-    p_endereco:cliente.endereco,
-    p_bairro_id:cliente.bairroId,
-    p_itens:itensPedido
-   }
-  );
-
-  if(error)throw error;
-
-  if(!data||!data.pedido_id){
-   throw new Error('O pedido não retornou um número válido.');
-  }
-
-  const pedidoId=data.pedido_id;
-
-  pedidoConcluido=true;
-
-  const subtotal=Number(data.subtotal);
-  const frete=Number(data.frete);
-  const total=Number(data.total);
-  const b=bairroDoCliente();
-
-  const linhas=Object.values(resumo).map(p=>
-   p.quantidade+'x '+p.nome+' - '+moeda(p.preco*p.quantidade)
-  );
-
-  const texto=[
-   'Olá! Quero fazer um pedido pela Feira da Lua Delivery.',
-   '',
-   'Pedido número: '+pedidoId,
-   'Nome: '+cliente.nome,
-   'Telefone: '+cliente.telefone,
-   'Recebimento: '+(
-    cliente.tipo==='retirada'
-     ?'Retirada na Feira da Lua'
-     :'Entrega em casa'
-   ),
-   ...(cliente.tipo==='entrega'?[
-    'Endereço: '+cliente.endereco,
-    'Bairro: '+(b?b.bairro:''),
-    'Região: '+(b?b.nomeRegiao:'')
-   ]:[]),
-   '',
-   'Pedido:',
-   ...linhas,
-   '',
-   'Subtotal: '+moeda(subtotal),
-   'Frete: '+moeda(frete),
-   'TOTAL: '+moeda(total),
-   '',
-   'Aguardo a confirmação. Obrigado!'
-  ].join('\n');
-
-  mensagem.textContent=
-   'Pedido nº '+pedidoId+' recebido com sucesso!';
-
-  alert(
-   'Pedido nº '+pedidoId+
-   ' registrado com sucesso! Você será direcionado ao WhatsApp.'
-  );
-
-  carrinho=[];
-
-  atualizar();
-
-  window.location.href=
-   'https://wa.me/5515997549326?text='+encodeURIComponent(texto);
-
- }catch(e){
-  console.error(e);
-
-  const erro=e.message||
-   'Não foi possível registrar o pedido. Tente novamente.';
-
-  mensagem.textContent=erro;
-
-  alert(erro);
-
- }finally{
-  enviandoPedido=false;
-
-  const botaoFinal=document.getElementById('botaoFinalizar');
-
-  if(pedidoConcluido){
-   botaoFinal.disabled=true;
-   botaoFinal.textContent='Pedido enviado!';
-  }else{
-   botaoFinal.disabled=!clienteLogado||!carrinho.length;
-   botaoFinal.textContent='Confirmar pedido';
-  }
- }
+  const {data,error}=await banco.rpc('criar_pedido_com_frete',{p_cliente_nome:cliente.nome,p_cliente_telefone:cliente.telefone,p_tipo_entrega:cliente.tipo,p_endereco:cliente.endereco,p_bairro_id:cliente.bairroId,p_itens:itensPedido});
+  if(error)throw error;if(!data||!data.pedido_id)throw new Error('O pedido não retornou um número válido.');
+  const pedidoId=data.pedido_id;pedidoConcluido=true;
+  const subtotal=Number(data.subtotal),frete=Number(data.frete),total=Number(data.total),b=bairroDoCliente();
+  const linhas=Object.values(resumo).map(p=>p.quantidade+'x '+p.nome+' - '+moeda(p.preco*p.quantidade));
+  const texto=['Olá! Quero fazer um pedido pela Feira da Lua Delivery.','','Pedido número: '+pedidoId,'Nome: '+cliente.nome,'Telefone: '+cliente.telefone,'Recebimento: '+(cliente.tipo==='retirada'?'Retirada na Feira da Lua':'Entrega em casa'),...(cliente.tipo==='entrega'?['Endereço: '+cliente.endereco,'Bairro: '+(b?b.bairro:''),'Região: '+(b?b.nomeRegiao:'')]:[]),'','Pedido:',...linhas,'','Subtotal: '+moeda(subtotal),'Frete: '+moeda(frete),'TOTAL: '+moeda(total),'','Aguardo a confirmação. Obrigado!'].join('\n');
+  mensagem.textContent='Pedido nº '+pedidoId+' recebido com sucesso!';
+  alert('Pedido nº '+pedidoId+' registrado com sucesso! Você será direcionado ao WhatsApp.');
+  carrinho=[];renderizarVitrine();atualizar();
+  window.location.href='https://wa.me/5515997549326?text='+encodeURIComponent(texto);
+ }catch(e){console.error(e);const erro=e.message||'Não foi possível registrar o pedido. Tente novamente.';mensagem.textContent=erro;alert(erro);}
+ finally{enviandoPedido=false;const bf=document.getElementById('botaoFinalizar');if(pedidoConcluido){bf.disabled=true;bf.textContent='Pedido enviado!';}else{bf.disabled=!clienteLogado||!carrinho.length;bf.textContent='Confirmar pedido';}}
 }
-
 atualizarTipoEntrega();
-
 document.getElementById('botaoFinalizar').disabled=true;
-
 carregarFretes();
-
 carregarProdutos();
 </script>
-
 </body>
 </html>
