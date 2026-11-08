@@ -331,6 +331,7 @@ function voltarInicio(){
 
 /* LOGIN */
 
+
 async function entrar(){
  const email=document.getElementById('email').value.trim();
  const senha=document.getElementById('senha').value;
@@ -346,42 +347,77 @@ async function entrar(){
  botao.disabled=true;
 
  try{
+  // 1. Realiza o login
   const {data,error}=await banco.auth.signInWithPassword({
    email,
    password:senha
   });
-console.log('UUID autenticado:', data?.user?.id);
-console.log('Erro do login:', error);
+
   if(error)throw error;
 
+  if(!data.user){
+   throw new Error('O Supabase não retornou os dados do usuário.');
+  }
+
+  // 2. Confirma a sessão
+  const {data:sessaoData,error:erroSessao}=await banco.auth.getSession();
+
+  if(erroSessao)throw erroSessao;
+
+  if(!sessaoData.session){
+   throw new Error('Login realizado, mas nenhuma sessão foi encontrada.');
+  }
+
+  // 3. Confirma o usuário autenticado
+  const {data:usuarioData,error:erroUsuario}=await banco.auth.getUser();
+
+  if(erroUsuario)throw erroUsuario;
+
+  if(!usuarioData.user){
+   throw new Error('O Supabase não confirmou o usuário autenticado.');
+  }
+
+  const uuid=usuarioData.user.id;
+
+  if(uuid!==data.user.id){
+   throw new Error('O UUID da sessão é diferente do UUID do login.');
+  }
+
+  // 4. Consulta o cadastro de administrador
   const {data:admin,error:erroAdmin}=await banco
    .from('admins')
    .select('user_id')
-   .eq('user_id',data.user.id)
+   .eq('user_id',uuid)
    .maybeSingle();
 
-  if(erroAdmin)throw erroAdmin;
+  if(erroAdmin){
+   console.error('Erro na consulta admins:',erroAdmin);
 
-if(!admin){
-   const uuid=data.user.id;
+   throw new Error(
+    'Consulta admins: '+
+    (erroAdmin.message||'Erro desconhecido')+
+    ' | Código: '+(erroAdmin.code||'não informado')+
+    ' | Detalhes: '+(erroAdmin.details||'nenhum')+
+    ' | Dica: '+(erroAdmin.hint||'nenhuma')
+   );
+  }
 
+  if(!admin){
    await banco.auth.signOut();
-
-   aviso.textContent=
-    'Usuário não autorizado. UUID encontrado: '+uuid;
-
+   aviso.textContent='Usuário autenticado, mas não encontrado na tabela admins. UUID: '+uuid;
    return;
-}
+  }
 
+  // 5. Libera o painel
   mostrarSomente('painel');
 
   document.getElementById('usuario').textContent=
-   'Acesso liberado: '+email;
+   'Acesso liberado: '+usuarioData.user.email;
 
   voltarInicio();
 
  }catch(e){
-  console.error('Erro no login:',e);
+  console.error('Diagnóstico do login:',e);
 
   try{
    await banco.auth.signOut();
@@ -395,6 +431,7 @@ if(!admin){
   botao.disabled=false;
  }
 }
+
 
 async function sair(){
  try{
@@ -490,9 +527,6 @@ async function salvarNovaSenha(){
 
   if(erroSessao)throw erroSessao;
 
-  if(!data.session){
-   throw new Error('Sessão de recuperação não encontrada. Solicite um novo link.');
-  }
 
   const {error}=await banco.auth.updateUser({password:senha});
 
