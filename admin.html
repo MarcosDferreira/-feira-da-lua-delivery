@@ -368,28 +368,6 @@ async function entrar(){
  }
 }
 
- const {data:admin,error:erroAdmin}=await banco
-  .from('admins')
-  .select('user_id')
-  .eq('user_id',data.user.id)
-  .maybeSingle();
-
- console.log('USUÁRIO LOGADO:',data.user.id);
- console.log('RESULTADO ADMIN:',admin);
- console.log('ERRO ADMIN:',erroAdmin);
-
- if(erroAdmin || !admin){
-  aviso.textContent=erroAdmin
-   ? 'Erro ao consultar administrador: '+erroAdmin.message
-   : 'Usuário não encontrado na tabela admins.';
-  return;
- }
-
- mostrarSomente('painel');
- document.getElementById('usuario').textContent='Acesso liberado: '+email;
- voltarInicio();
-}
-
 async function sair(){await banco.auth.signOut();location.reload();}
 
 
