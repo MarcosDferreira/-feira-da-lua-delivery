@@ -502,6 +502,7 @@ function abrirTelaNovaSenha(){
  mostrarSomente('areaNovaSenha');
 }
 
+
 async function salvarNovaSenha(){
  const senha=document.getElementById('novaSenha').value;
  const confirmacao=document.getElementById('confirmarNovaSenha').value;
@@ -523,26 +524,17 @@ async function salvarNovaSenha(){
  aviso.textContent='';
 
  try{
-  const {data,error:erroSessao}=await banco.auth.getSession();
+  const {data:sessaoData,error:erroSessao}=await banco.auth.getSession();
 
   if(erroSessao)throw erroSessao;
 
+  if(!sessaoData.session){
+   throw new Error('Sua sessão de recuperação expirou. Solicite um novo link pelo e-mail.');
+  }
 
-  const {data:sessaoData,error:erroSessao}=await banco.auth.getSession();
-
-if(erroSessao) throw erroSessao;
-
-if(!sessaoData.session){
-  throw new Error(
-    'Sua sessão de recuperação expirou. Solicite um novo link pelo e-mail.'
-  );
-}
-
-const {data,error}=await banco.auth.updateUser({
-  password:senha
-});
-
-if(error) throw error;
+  const {error}=await banco.auth.updateUser({
+   password:senha
+  });
 
   if(error)throw error;
 
@@ -553,11 +545,10 @@ if(error) throw error;
   try{
    await banco.auth.signOut();
   }catch(erroLogout){
-   console.warn('Senha alterada, mas não foi possível encerrar a sessão:',erroLogout);
+   console.warn('Erro ao encerrar sessão:',erroLogout);
   }
 
   mostrarSomente('login');
-
   document.getElementById('mensagemLogin').textContent=
    'Senha alterada com sucesso! Entre com sua nova senha.';
 
@@ -569,6 +560,7 @@ if(error) throw error;
   botao.textContent='Salvar nova senha';
  }
 }
+
 
 /* AUTENTICAÇÃO E RESTAURAÇÃO DA SESSÃO */
 
