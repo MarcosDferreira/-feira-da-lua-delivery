@@ -566,10 +566,25 @@ footer{
      <input id="loginTelefone" type="tel" inputmode="tel" autocomplete="tel" placeholder="(15) 99999-9999">
     </div>
 
-    <div class="campo">
-     <label for="loginSenha">Senha</label>
-     <input id="loginSenha" type="password" autocomplete="current-password" placeholder="Sua senha">
-    </div>
+    
+<div class="campo">
+  <label for="loginSenha">Senha</label>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <input
+      id="loginSenha"
+      type="password"
+      autocomplete="current-password"
+      placeholder="Sua senha"
+      style="flex:1;min-width:0;"
+    >
+    <button
+      type="button"
+      onclick="const campo=document.getElementById('loginSenha');campo.type=campo.type==='password'?'text':'password';this.textContent=campo.type==='password'?'👁️':'🙈';"
+      style="padding:12px;border:1px solid #ccc;border-radius:8px;background:#fff;cursor:pointer;"
+    >👁️</button>
+  </div>
+</div>
+
 
     <button
      type="button"
