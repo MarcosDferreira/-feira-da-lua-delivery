@@ -333,6 +333,7 @@ function voltarInicio(){
 /* LOGIN */
 
 
+
 async function entrar(){
  const email=document.getElementById('email').value.trim();
  const senha=document.getElementById('senha').value;
@@ -348,7 +349,6 @@ async function entrar(){
  botao.disabled=true;
 
  try{
-  // 1. Realiza o login
   const {data,error}=await banco.auth.signInWithPassword({
    email,
    password:senha
@@ -360,36 +360,39 @@ async function entrar(){
    throw new Error('O Supabase não retornou os dados do usuário.');
   }
 
-  // 2. Verifica a sessão retornada pelo login
-if(!data.session){
-  throw new Error(
-    'O Supabase autenticou o usuário, mas retornou a sessão vazia.'
-  );
-}
+  if(!data.session){
+   throw new Error('O Supabase autenticou, mas não retornou uma sessão.');
+  }
 
-const {data:sessaoData,error:erroSessao}=await banco.auth.getSession();
+  const {data:sessaoData,error:erroSessao}=await banco.auth.getSession();
 
-if(erroSessao)throw erroSessao;
+  if(erroSessao)throw erroSessao;
 
-if(!sessaoData.session){
-  let diagnostico='não foi possível testar o armazenamento';
+  if(!sessaoData.session){
+   let diagnostico='Armazenamento não confirmado';
 
-  // 3. Confirma o usuário autenticado
+   try{
+    const chave='__teste_feira_lua__';
+    localStorage.setItem(chave,'ok');
+    localStorage.removeItem(chave);
+    diagnostico='Armazenamento funcionando';
+   }catch(e){
+    diagnostico='Armazenamento bloqueado: '+e.message;
+   }
+
+   throw new Error('Sessão não persistida. '+diagnostico);
+  }
+
   const {data:usuarioData,error:erroUsuario}=await banco.auth.getUser();
 
   if(erroUsuario)throw erroUsuario;
 
   if(!usuarioData.user){
-   throw new Error('O Supabase não confirmou o usuário autenticado.');
+   throw new Error('Usuário autenticado não foi confirmado.');
   }
 
   const uuid=usuarioData.user.id;
 
-  if(uuid!==data.user.id){
-   throw new Error('O UUID da sessão é diferente do UUID do login.');
-  }
-
-  // 4. Consulta o cadastro de administrador
   const {data:admin,error:erroAdmin}=await banco
    .from('admins')
    .select('user_id')
@@ -397,24 +400,18 @@ if(!sessaoData.session){
    .maybeSingle();
 
   if(erroAdmin){
-   console.error('Erro na consulta admins:',erroAdmin);
-
    throw new Error(
-    'Consulta admins: '+
-    (erroAdmin.message||'Erro desconhecido')+
-    ' | Código: '+(erroAdmin.code||'não informado')+
-    ' | Detalhes: '+(erroAdmin.details||'nenhum')+
-    ' | Dica: '+(erroAdmin.hint||'nenhuma')
+    'Erro na tabela admins: '+erroAdmin.message+
+    ' | Código: '+(erroAdmin.code||'não informado')
    );
   }
 
   if(!admin){
    await banco.auth.signOut();
-   aviso.textContent='Usuário autenticado, mas não encontrado na tabela admins. UUID: '+uuid;
+   aviso.textContent='Usuário não encontrado na tabela admins. UUID: '+uuid;
    return;
   }
 
-  // 5. Libera o painel
   mostrarSomente('painel');
 
   document.getElementById('usuario').textContent=
@@ -424,12 +421,6 @@ if(!sessaoData.session){
 
  }catch(e){
   console.error('Diagnóstico do login:',e);
-
-  try{
-   await banco.auth.signOut();
-  }catch(erroLogout){
-   console.error('Erro ao encerrar sessão:',erroLogout);
-  }
 
   aviso.textContent='Erro no acesso: '+(e.message||'Erro desconhecido');
 
