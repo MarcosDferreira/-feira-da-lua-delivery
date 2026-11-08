@@ -350,7 +350,8 @@ async function entrar(){
    email,
    password:senha
   });
-
+console.log('UUID autenticado:', data?.user?.id);
+console.log('Erro do login:', error);
   if(error)throw error;
 
   const {data:admin,error:erroAdmin}=await banco
