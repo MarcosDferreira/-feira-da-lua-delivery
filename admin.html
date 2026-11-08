@@ -247,11 +247,12 @@ const banco=window.supabase.createClient(
  SUPABASE_KEY,
  {
   auth:{
-   flowType:'implicit',
-   detectSessionInUrl:true,
-   persistSession:true,
-   autoRefreshToken:true
-  }
+  flowType:'pkce',
+  detectSessionInUrl:true,
+  persistSession:true,
+  autoRefreshToken:true,
+  storage:window.localStorage
+}
  }
 );
 
@@ -360,13 +361,13 @@ async function entrar(){
   }
 
   // 2. Confirma a sessão
-  const {data:sessaoData,error:erroSessao}=await banco.auth.getSession();
+const {data:sessaoData,error:erroSessao}=await banco.auth.getSession();
 
-  if(erroSessao)throw erroSessao;
+if(erroSessao)throw erroSessao;
 
-  if(!sessaoData.session){
-   throw new Error('Login realizado, mas nenhuma sessão foi encontrada.');
-  }
+if(!sessaoData.session){
+  throw new Error('O login não criou uma sessão persistida. Verifique a autenticação.');
+}
 
   // 3. Confirma o usuário autenticado
   const {data:usuarioData,error:erroUsuario}=await banco.auth.getUser();
