@@ -330,6 +330,7 @@ async function entrar(){
 }
 async function sair(){await banco.auth.signOut();location.reload();}
 
+
 /* RECUPERAÇÃO DE SENHA: RETORNO DO LINK DO SUPABASE */
 
 function abrirTelaNovaSenha(){
@@ -339,30 +340,47 @@ function abrirTelaNovaSenha(){
  mostrarSomente('areaNovaSenha');
 }
 
-banco.auth.onAuthStateChange(async (evento, session)=>{
+banco.auth.onAuthStateChange((evento, session)=>{
  if(evento==='PASSWORD_RECOVERY' && session?.access_token){
   abrirTelaNovaSenha();
  }
 });
 
-/* Verifica se o usuário voltou pelo link de recuperação */
+/* Verifica o retorno do link de recuperação */
 (async function verificarRetornoRecuperacao(){
  const hash=window.location.hash || '';
  const parametros=new URLSearchParams(hash.replace(/^#/,''));
- const tipoRecuperacao=parametros.get('type')==='recovery';
 
- if(!tipoRecuperacao) return;
+ const tipo=parametros.get('type');
+ const erro=parametros.get('error_description') || parametros.get('error');
+
+ if(erro){
+  mostrarSomente('login');
+  document.getElementById('mensagemLogin').textContent=
+   'O link de recuperação apresentou um erro ou expirou. Solicite um novo e-mail.';
+  return;
+ }
+
+ if(tipo!=='recovery') return;
 
  const {data,error}=await banco.auth.getSession();
 
- if(!error && data.session?.access_token){
+ if(error){
+  mostrarSomente('login');
+  document.getElementById('mensagemLogin').textContent=
+   'Erro ao validar o link: '+error.message;
+  return;
+ }
+
+ if(data.session?.access_token){
   abrirTelaNovaSenha();
  }else{
   mostrarSomente('login');
   document.getElementById('mensagemLogin').textContent=
-   'Não foi possível validar o link. Solicite um novo e-mail de recuperação e abra o link novamente.';
+   'Não foi possível validar o link. Solicite um novo e-mail de recuperação.';
  }
 })();
+
 
 /* FOTO */
 document.getElementById('fotoProduto').addEventListener('change',function(){
