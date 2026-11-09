@@ -12,12 +12,12 @@ body{margin:0;font-family:Arial,sans-serif;background:var(--fundo);color:var(--t
 header{text-align:center;padding:25px 15px 29px;background:linear-gradient(145deg,#07152f,#123967 65%,#1d4d7b);border-bottom:4px solid var(--dourado);color:#fff}
 .logo-recorte{width:205px;height:108px;overflow:hidden;margin:0 auto 12px;border:3px solid white;border-radius:18px;background:#fff;box-shadow:0 8px 22px #0004}
 .logo-feira{width:100%;height:100%;object-fit:cover}
-header h1{font: bold clamp(27px,6vw,38px) Georgia,serif;color:var(--dourado);margin:10px 0 6px}
+header h1{font:bold clamp(27px,6vw,38px) Georgia,serif;color:var(--dourado);margin:10px 0 6px}
 header p{margin:7px 0;line-height:1.45}
 header span{display:inline-block;margin-top:9px;padding:7px 13px;border:1px solid #f4c95d77;border-radius:30px;background:#ffffff12;color:#ffe7a2;font-size:13px;font-weight:bold}
 main{max-width:980px;margin:auto;padding:20px 15px 32px}
 h2,h3{color:var(--azul)}
-.titulo-secao{font: bold 25px Georgia,serif;margin:5px 0 13px}
+.titulo-secao{font:bold 25px Georgia,serif;margin:5px 0 13px}
 #filtro-barracas{width:100%;padding:14px;border:1px solid #cbd8e8;border-radius:12px;background:#fff;color:var(--texto);font-size:16px;font-weight:bold;margin-bottom:12px}
 .barraca{padding:17px;margin:15px 0 20px;background:#fff;border:1px solid #e1e9f2;border-radius:17px;box-shadow:0 5px 18px #18385b0c;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px}
 .barraca h3{grid-column:1/-1;font-size:19px;margin:0;padding:0 0 12px;border-bottom:2px solid #edf1f6}
@@ -47,7 +47,8 @@ h2,h3{color:var(--azul)}
 .item-carrinho button{padding:7px 9px;background:#b8323a;font-size:12px;flex-shrink:0}
 .checkout{margin-top:19px;padding-top:17px;border-top:1px solid var(--linha)}
 .checkout h3{font-size:18px;margin:0 0 12px}
-#acessoCliente{padding:15px;background:#f5f8fc;border:1px solid var(--linha);border-radius:13px;color:var(--texto)}
+.conta-topo{background:#fff;border:1px solid #e1e9f2;border-top:4px solid var(--dourado);border-radius:17px;padding:16px;margin:0 0 22px;box-shadow:0 5px 18px #18385b0c}
+.conta-topo #acessoCliente{margin:0;padding:15px;background:#f5f8fc;border:1px solid var(--linha);border-radius:13px}
 .ajuda{font-size:12px;color:var(--suave);line-height:1.5;margin:7px 0}
 .campo{margin:12px 0}
 .campo label{display:block;font-size:13px;font-weight:bold;color:#334b68;margin-bottom:6px}
@@ -64,6 +65,13 @@ button:disabled{background:#aeb9c8;color:#fff;cursor:not-allowed}
 .linha-valor{display:flex;justify-content:space-between;gap:10px;padding:7px 0;font-size:14px}
 .linha-total{border-top:1px solid #cbd9e8;margin-top:6px;padding-top:12px;font-size:19px;font-weight:bold;color:var(--azul)}
 .finalizar{width:100%;background:var(--azul);margin-top:12px;padding:15px;font-size:16px;border:2px solid var(--dourado);border-radius:12px}
+.revisao-pedido{margin-top:16px;padding:16px;background:#f5f8fc;border:1px solid #cbd9e8;border-radius:13px}
+.revisao-pedido h3{margin:0 0 12px}
+.revisao-linha{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--linha);font-size:14px}
+.revisao-total{font-size:19px;font-weight:bold;color:var(--azul);border-top:2px solid #cbd9e8;margin-top:8px;padding-top:12px}
+.acoes-revisao{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}
+.acoes-revisao button{flex:1;min-width:130px}
+.botao-voltar{background:#64758c}
 #mensagem,#mensagemAcesso{text-align:center;font-weight:bold;margin:10px 0;overflow-wrap:anywhere;line-height:1.5}
 #mensagem{color:var(--verde);font-size:14px}
 #mensagemAcesso{color:var(--verde);font-size:13px}
@@ -71,9 +79,8 @@ footer{text-align:center;padding:26px 15px;color:#fff;background:#07152f;border-
 .patrocinio{margin-top:17px;display:flex;flex-direction:column;align-items:center;gap:9px}
 .patrocinio p{color:var(--dourado);font-size:13px;font-weight:bold;margin:0}
 .logo-legadu{width:100%;max-width:210px;height:auto;object-fit:contain}
-.link-admin{margin-top:17px;font-size:12px}
-.link-admin a{color:#dceaff;text-decoration:none;opacity:.9}
-@media(max-width:620px){main{padding:15px 11px 25px}.barraca{padding:13px;gap:0 10px}.foto-produto{height:130px}.produto{padding:12px 0}.info-produto strong{font-size:14px}.preco{font-size:18px}.carrinho{padding:15px}}
+.link-admin{margin-top:17px;font-size:12px}.link-admin a{color:#dceaff;text-decoration:none;opacity:.9}
+@media(max-width:620px){main{padding:15px 11px 25px}.barraca{padding:13px;gap:0 10px}.foto-produto{height:130px}.produto{padding:12px 0}.info-produto strong{font-size:14px}.preco{font-size:18px}.carrinho,.conta-topo{padding:15px}}
 @media(max-width:370px){.barraca{grid-template-columns:1fr}.foto-produto{height:185px}}
 </style>
 </head>
@@ -85,18 +92,9 @@ footer{text-align:center;padding:26px 15px;color:#fff;background:#07152f;border-
  <span>Valorize os feirantes de Ribeirão Grande</span>
 </header>
 <main>
- <h2 class="titulo-secao">Escolha uma barraca</h2>
- <select id="filtro-barracas"><option value="todas">Todas as barracas</option></select>
- <div id="vitrine">Carregando produtos...</div>
-
- <section class="carrinho">
-  <div class="carrinho-topo">
-   <h2>Meu carrinho</h2>
-   <span class="contador"><span id="quantidade">0</span> itens</span>
-  </div>
-  <div id="itens"><div class="vazio">Seu carrinho está vazio. Escolha seus produtos acima.</div></div>
-
-  <div id="acessoCliente" class="checkout">
+ <section class="conta-topo">
+  <h2 class="titulo-secao">Minha conta</h2>
+  <div id="acessoCliente">
    <h3 id="tituloAcesso">Entre para fazer seu pedido</h3>
    <p class="ajuda" id="ajudaAcesso">Use seu celular e sua senha. Se ainda não tem conta, crie seu cadastro.</p>
    <div id="painelLogin">
@@ -130,6 +128,15 @@ footer{text-align:center;padding:26px 15px;color:#fff;background:#07152f;border-
    </div>
    <p id="mensagemAcesso"></p>
   </div>
+ </section>
+
+ <h2 class="titulo-secao">Escolha uma barraca</h2>
+ <select id="filtro-barracas"><option value="todas">Todas as barracas</option></select>
+ <div id="vitrine">Carregando produtos...</div>
+
+ <section class="carrinho">
+  <div class="carrinho-topo"><h2>Meu carrinho</h2><span class="contador"><span id="quantidade">0</span> itens</span></div>
+  <div id="itens"><div class="vazio">Seu carrinho está vazio. Escolha seus produtos acima.</div></div>
 
   <div id="areaCheckout" class="checkout" style="display:none">
    <h3>Como deseja receber?</h3>
@@ -145,8 +152,17 @@ footer{text-align:center;padding:26px 15px;color:#fff;background:#07152f;border-
     <div class="linha-valor linha-total"><span>Total do pedido</span><strong id="total">R$ 0,00</strong></div>
    </div>
   </div>
+
+  <div id="areaRevisao" class="revisao-pedido" style="display:none">
+   <h3>Confira seu pedido</h3>
+   <div id="resumoRevisao"></div>
+   <div class="acoes-revisao">
+    <button type="button" id="voltarEditar" class="botao-voltar">Voltar e alterar</button>
+    <button type="button" id="confirmarPedidoFinal" class="finalizar">Confirmar pedido</button>
+   </div>
+  </div>
   <div id="mensagem"></div>
-  <button class="finalizar" id="botaoFinalizar" onclick="finalizar()" disabled>Confirmar pedido</button>
+  <button class="finalizar" id="botaoFinalizar" onclick="abrirRevisao()" disabled>Conferir meu pedido</button>
  </section>
 </main>
 <footer>
@@ -201,7 +217,7 @@ async function entrarCliente(){
  if(telefone.length<10||telefone.length>13){mensagemAcesso('Informe um celular válido com DDD.',true);return;}
  if(!senha){mensagemAcesso('Digite sua senha.',true);return;}
  mensagemAcesso('Entrando...');
- try{const r=await chamarAuth({acao:'login',telefone,senha});tokenCliente=r.token;localStorage.setItem(CHAVE_SESSAO,tokenCliente);const p=await chamarAuth({acao:'me'},tokenCliente);aplicarCliente(p.cliente);mensagemAcesso('Login realizado com sucesso!');}
+ try{const r=await chamarAuth({acao:'login',telefone,senha});tokenCliente=r.token;localStorage.setItem(CHAVE_SESSAO,tokenCliente);const p=await chamarAuth({acao:'me'},tokenCliente);aplicarCliente(p.cliente);mensagemAcesso('');}
  catch(e){mensagemAcesso(e.message,true);}
 }
 async function cadastrarCliente(){
@@ -320,19 +336,55 @@ async function carregarProdutos(){
   filtro.innerHTML='<option value="todas">Todas as barracas</option>';
   barracas.forEach(b=>{const o=document.createElement('option');o.value=String(b.id);o.textContent=b.nome;filtro.appendChild(o);});
   renderizarVitrine();
- }catch(e){console.error(e);vitrine.textContent='Erro ao carregar produtos. Atualize a página.';}
+ }catch(e){console.error(e);vitrine.textContent='Erro ao carregar produtos: '+(e.message||'verifique a conexão e as permissões do Supabase.');}
 }
 function aplicarFiltro(){renderizarVitrine();}
 document.getElementById('filtro-barracas').addEventListener('change',aplicarFiltro);
+
+function fecharRevisao(){
+ document.getElementById('areaRevisao').style.display='none';
+ document.getElementById('botaoFinalizar').style.display='block';
+}
+function abrirRevisao(){
+ if(!clienteLogado){alert('Entre na sua conta para continuar.');document.getElementById('secaoConta').scrollIntoView({behavior:'smooth'});return;}
+ if(!carrinho.length){alert('Adicione produtos ao carrinho.');return;}
+ const cliente=validarDados();if(!cliente)return;
+ const resumo=document.getElementById('resumoRevisao');resumo.innerHTML='';
+ const grupos={};carrinho.forEach(p=>{if(!grupos[p.id])grupos[p.id]={nome:p.nome,preco:Number(p.preco),q:0};grupos[p.id].q++;});
+ Object.values(grupos).forEach(p=>{
+  const linha=document.createElement('div');linha.className='revisao-linha';
+  const nome=document.createElement('span');nome.textContent=p.q+'x '+p.nome;
+  const valor=document.createElement('strong');valor.textContent=moeda(p.preco*p.q);
+  linha.append(nome,valor);resumo.appendChild(linha);
+ });
+ const tipo=document.createElement('div');tipo.className='revisao-linha';
+ tipo.textContent='Recebimento: '+(cliente.tipo==='retirada'?'Retirada na Feira da Lua':'Entrega em casa');resumo.appendChild(tipo);
+ if(cliente.tipo==='entrega'){
+  const b=bairroDoCliente();
+  [ 'Endereço: '+cliente.endereco,'Bairro: '+(b?b.bairro:'') ].forEach(t=>{const x=document.createElement('div');x.className='revisao-linha';x.textContent=t;resumo.appendChild(x);});
+ }
+ const s=valorProdutos(),f=freteSelecionado();
+ [['Produtos',moeda(s)],['Frete',moeda(f)],['TOTAL',moeda(s+f)]].forEach((v,i)=>{
+  const x=document.createElement('div');x.className='revisao-linha'+(i===2?' revisao-total':'');
+  const a=document.createElement('span');a.textContent=v[0];const b=document.createElement('strong');b.textContent=v[1];x.append(a,b);resumo.appendChild(x);
+ });
+ document.getElementById('botaoFinalizar').style.display='none';
+ document.getElementById('areaRevisao').style.display='block';
+ document.getElementById('areaRevisao').scrollIntoView({behavior:'smooth',block:'center'});
+}
+document.getElementById('voltarEditar').addEventListener('click',()=>{fecharRevisao();document.querySelector('.carrinho').scrollIntoView({behavior:'smooth'});});
+document.getElementById('confirmarPedidoFinal').addEventListener('click',finalizar);
+
 function adicionar(id){
  const p=produtos.find(x=>Number(x.id)===Number(id));if(!p)return;
  const n=quantidadeNoCarrinho(id);
  if(Number(p.estoque)<=n){alert('Não há mais unidades disponíveis.');return;}
- if(pedidoConcluido){pedidoConcluido=false;document.getElementById('botaoFinalizar').textContent='Confirmar pedido';document.getElementById('mensagem').textContent='';}
+ fecharRevisao();
+ if(pedidoConcluido){pedidoConcluido=false;document.getElementById('mensagem').textContent='';}
  carrinho.push({id:p.id,nome:p.nome,preco:Number(p.preco)});
  renderizarVitrine();atualizar();
 }
-function remover(id){const i=carrinho.findIndex(x=>Number(x.id)===Number(id));if(i>=0)carrinho.splice(i,1);renderizarVitrine();atualizar();}
+function remover(id){fecharRevisao();const i=carrinho.findIndex(x=>Number(x.id)===Number(id));if(i>=0)carrinho.splice(i,1);renderizarVitrine();atualizar();}
 function atualizar(){
  document.getElementById('quantidade').textContent=carrinho.length;
  const el=document.getElementById('itens');el.innerHTML='';
@@ -342,20 +394,24 @@ function atualizar(){
   Object.entries(r).forEach(([id,p])=>{
    const row=document.createElement('div');row.className='item-carrinho';
    const t=document.createElement('span');t.textContent=p.q+'x '+p.nome+' · '+moeda(p.preco*p.q);
-   const b=document.createElement('button');b.textContent='Remover 1';b.onclick=()=>remover(id);
-   row.append(t,b);el.appendChild(row);
+   const acoes=document.createElement('div');acoes.style.display='flex';acoes.style.gap='5px';
+   const menos=document.createElement('button');menos.textContent='−';menos.setAttribute('aria-label','Diminuir quantidade');menos.onclick=()=>remover(id);
+   const mais=document.createElement('button');mais.textContent='+';mais.onclick=()=>adicionar(id);
+   const produto=produtos.find(x=>String(x.id)===String(id));mais.disabled=!!produto&&p.q>=Number(produto.estoque);
+   const excluir=document.createElement('button');excluir.textContent='Excluir';excluir.style.background='#b8323a';excluir.onclick=()=>{fecharRevisao();carrinho=carrinho.filter(x=>String(x.id)!==String(id));renderizarVitrine();atualizar();};
+   acoes.append(menos,mais,excluir);row.append(t,acoes);el.appendChild(row);
   });
  }
  const s=valorProdutos(),f=freteSelecionado();
  document.getElementById('subtotal').textContent=moeda(s);document.getElementById('frete').textContent=moeda(f);document.getElementById('total').textContent=moeda(s+f);
  const botao=document.getElementById('botaoFinalizar');
  botao.disabled=!clienteLogado||!carrinho.length||pedidoConcluido||enviandoPedido;
- if(!pedidoConcluido&&!enviandoPedido)botao.textContent='Confirmar pedido';
+ if(!pedidoConcluido&&!enviandoPedido)botao.textContent='Conferir meu pedido';
 }
 function atualizarTipoEntrega(){
  const entrega=document.getElementById('tipoEntrega').value==='entrega';
  document.getElementById('camposEntrega').style.display=entrega?'block':'none';
- atualizar();
+ fecharRevisao();atualizar();
 }
 document.getElementById('tipoEntrega').addEventListener('change',atualizarTipoEntrega);
 function validarDados(){
@@ -372,7 +428,7 @@ async function finalizar(){
  const cliente=validarDados();if(!cliente)return;
  const resumo={};carrinho.forEach(p=>{if(!resumo[p.id])resumo[p.id]={produto_id:p.id,quantidade:0,nome:p.nome,preco:p.preco};resumo[p.id].quantidade++;});
  const itensPedido=Object.values(resumo).map(p=>({produto_id:p.produto_id,quantidade:p.quantidade}));
- const botao=document.getElementById('botaoFinalizar'),mensagem=document.getElementById('mensagem');
+ const botao=document.getElementById('confirmarPedidoFinal'),mensagem=document.getElementById('mensagem');
  enviandoPedido=true;botao.disabled=true;botao.textContent='Registrando pedido...';mensagem.textContent='Aguarde, estamos registrando seu pedido.';
  try{
   const {data,error}=await banco.rpc('criar_pedido_com_frete',{p_cliente_nome:cliente.nome,p_cliente_telefone:cliente.telefone,p_tipo_entrega:cliente.tipo,p_endereco:cliente.endereco,p_bairro_id:cliente.bairroId,p_itens:itensPedido});
@@ -383,10 +439,10 @@ async function finalizar(){
   const texto=['Olá! Quero fazer um pedido pela Feira da Lua Delivery.','','Pedido número: '+pedidoId,'Nome: '+cliente.nome,'Telefone: '+cliente.telefone,'Recebimento: '+(cliente.tipo==='retirada'?'Retirada na Feira da Lua':'Entrega em casa'),...(cliente.tipo==='entrega'?['Endereço: '+cliente.endereco,'Bairro: '+(b?b.bairro:''),'Região: '+(b?b.nomeRegiao:'')]:[]),'','Pedido:',...linhas,'','Subtotal: '+moeda(subtotal),'Frete: '+moeda(frete),'TOTAL: '+moeda(total),'','Aguardo a confirmação. Obrigado!'].join('\n');
   mensagem.textContent='Pedido nº '+pedidoId+' recebido com sucesso!';
   alert('Pedido nº '+pedidoId+' registrado com sucesso! Você será direcionado ao WhatsApp.');
-  carrinho=[];renderizarVitrine();atualizar();
+  carrinho=[];renderizarVitrine();atualizar();document.getElementById('areaRevisao').style.display='none';
   window.location.href='https://wa.me/5515997549326?text='+encodeURIComponent(texto);
  }catch(e){console.error(e);const erro=e.message||'Não foi possível registrar o pedido. Tente novamente.';mensagem.textContent=erro;alert(erro);}
- finally{enviandoPedido=false;const bf=document.getElementById('botaoFinalizar');if(pedidoConcluido){bf.disabled=true;bf.textContent='Pedido enviado!';}else{bf.disabled=!clienteLogado||!carrinho.length;bf.textContent='Confirmar pedido';}}
+ finally{enviandoPedido=false;const bf=document.getElementById('confirmarPedidoFinal');if(pedidoConcluido){bf.disabled=true;bf.textContent='Pedido enviado!';}else{bf.disabled=false;bf.textContent='Confirmar pedido';}}
 }
 atualizarTipoEntrega();
 document.getElementById('botaoFinalizar').disabled=true;
