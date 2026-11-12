@@ -107,7 +107,8 @@ footer{text-align:center;padding:26px 15px;color:#fff;background:#07152f;border-
    <div id="painelCadastro" style="display:none">
     <h3>Criar minha conta</h3>
     <div class="campo"><label for="cadastroNome">Nome completo</label><input id="cadastroNome" autocomplete="name"></div>
-    <div class="campo"><label for="cadastroTelefone">Celular com DDD</label><input id="cadastroTelefone" type="tel" inputmode="tel" autocomplete="tel"></div>
+    <div class="campo"><label for="cadastroTelefone">Celular para acessar a conta</label><input id="cadastroTelefone" type="tel" inputmode="tel" autocomplete="tel" placeholder="(15) 99999-9999"></div>
+    <div class="campo"><label for="cadastroWhatsApp">WhatsApp para receber informações dos pedidos *</label><input id="cadastroWhatsApp" type="tel" inputmode="tel" autocomplete="tel" placeholder="(15) 99999-9999" required><small class="ajuda">Informe um número com DDD que tenha WhatsApp.</small></div>
     <div class="campo"><label for="cadastroSenha">Crie uma senha</label><input id="cadastroSenha" type="password" autocomplete="new-password" minlength="8" placeholder="Mínimo de 8 caracteres"></div>
     <div class="campo"><label for="cadastroEndereco">Endereço completo</label><input id="cadastroEndereco" autocomplete="street-address"></div>
     <div class="campo"><label for="cadastroBairro">Bairro</label><select id="cadastroBairro"><option value="">Carregando bairros...</option></select></div>
@@ -130,6 +131,7 @@ footer{text-align:center;padding:26px 15px;color:#fff;background:#07152f;border-
    <div id="painelEdicao" style="display:none">
     <h3>Atualizar meu cadastro</h3>
     <div class="campo"><label for="edicaoNome">Nome completo</label><input id="edicaoNome" autocomplete="name"></div>
+    <div class="campo"><label for="edicaoWhatsApp">WhatsApp para contato *</label><input id="edicaoWhatsApp" type="tel" inputmode="tel" autocomplete="tel" placeholder="(15) 99999-9999" required></div>
     <div class="campo"><label for="edicaoEndereco">Endereço completo</label><input id="edicaoEndereco" autocomplete="street-address"></div>
     <div class="campo"><label for="edicaoBairro">Bairro</label><select id="edicaoBairro"><option value="">Selecione seu bairro</option></select></div>
     <button type="button" onclick="salvarEdicao()">Salvar alterações</button>
@@ -240,7 +242,7 @@ function aplicarCliente(c){
  document.getElementById('areaCheckout').style.display='block';
  document.getElementById('clienteEndereco').value=c.endereco||'';
  const b=bairroDoCliente();document.getElementById('clienteBairroNome').value=b?b.bairro:'Bairro não informado';
- document.getElementById('boasVindas').textContent='Olá, '+(c.nome||'cliente')+'! Sua conta está conectada.';
+ document.getElementById('boasVindas').textContent='Olá, '+(c.nome||'cliente')+'! Sua conta está conectada. WhatsApp: '+(c.whatsapp||'Ainda não informado')+'.';
  atualizarTipoEntrega();atualizar();
 }
 function limparCliente(){clienteLogado=null;document.getElementById('areaCheckout').style.display='none';document.getElementById('tituloAcesso').textContent='Entre para fazer seu pedido';document.getElementById('ajudaAcesso').style.display='';exibirPainel('painelLogin');document.getElementById('botaoFinalizar').disabled=true;['clienteEndereco','clienteBairroNome'].forEach(id=>document.getElementById(id).value='');}
@@ -253,15 +255,16 @@ async function entrarCliente(){
  catch(e){mensagemAcesso(e.message,true);}
 }
 async function cadastrarCliente(){
- const nome=document.getElementById('cadastroNome').value.trim(),telefone=normalizarTelefone(document.getElementById('cadastroTelefone').value),senha=document.getElementById('cadastroSenha').value,endereco=document.getElementById('cadastroEndereco').value.trim(),bairro_id=document.getElementById('cadastroBairro').value;
+ const nome=document.getElementById('cadastroNome').value.trim(),telefone=normalizarTelefone(document.getElementById('cadastroTelefone').value),whatsapp=normalizarTelefone(document.getElementById('cadastroWhatsApp').value),senha=document.getElementById('cadastroSenha').value,endereco=document.getElementById('cadastroEndereco').value.trim(),bairro_id=document.getElementById('cadastroBairro').value;
  if(nome.length<2){mensagemAcesso('Informe seu nome completo.',true);return;}
- if(telefone.length<10||telefone.length>13){mensagemAcesso('Informe um celular válido com DDD.',true);return;}
+ if(telefone.length!==10&&telefone.length!==11){mensagemAcesso('Informe um celular válido com DDD.',true);return;}
+ if(whatsapp.length!==10&&whatsapp.length!==11){mensagemAcesso('Informe um WhatsApp válido com DDD.',true);return;}
  if(senha.length<8){mensagemAcesso('A senha precisa ter pelo menos 8 caracteres.',true);return;}
  if(endereco.length<5){mensagemAcesso('Informe seu endereço completo.',true);return;}
  if(!bairro_id){mensagemAcesso('Selecione seu bairro.',true);return;}
  mensagemAcesso('Criando sua conta...');
  try{
-  const r=await chamarAuth({acao:'register',nome,telefone,senha,endereco,bairro_id:Number(bairro_id)});
+  const r=await chamarAuth({acao:'register',nome,telefone,whatsapp,senha,endereco,bairro_id:Number(bairro_id)});
   tokenCliente=r.token;
   localStorage.setItem(CHAVE_SESSAO,tokenCliente);
   aplicarCliente(r.cliente);
@@ -303,16 +306,18 @@ function mostrarEdicao(){
  if(!clienteLogado)return;
  document.getElementById('painelConta').style.display='none';document.getElementById('painelEdicao').style.display='block';
  document.getElementById('edicaoNome').value=clienteLogado.nome||'';
+ document.getElementById('edicaoWhatsApp').value=clienteLogado.whatsapp||'';
  document.getElementById('edicaoEndereco').value=clienteLogado.endereco||'';
  document.getElementById('edicaoBairro').value=clienteLogado.bairro_id?String(clienteLogado.bairro_id):'';
  mensagemAcesso('');
 }
 function cancelarEdicao(){document.getElementById('painelEdicao').style.display='none';document.getElementById('painelConta').style.display='block';}
 async function salvarEdicao(){
- const nome=document.getElementById('edicaoNome').value.trim(),endereco=document.getElementById('edicaoEndereco').value.trim(),bairro_id=document.getElementById('edicaoBairro').value;
+ const nome=document.getElementById('edicaoNome').value.trim(),whatsapp=normalizarTelefone(document.getElementById('edicaoWhatsApp').value),endereco=document.getElementById('edicaoEndereco').value.trim(),bairro_id=document.getElementById('edicaoBairro').value;
  if(nome.length<2||endereco.length<5||!bairro_id){mensagemAcesso('Preencha nome, endereço e bairro.',true);return;}
+ if(whatsapp.length!==10&&whatsapp.length!==11){mensagemAcesso('Informe um WhatsApp válido com DDD.',true);return;}
  mensagemAcesso('Salvando alterações...');
- try{const r=await chamarAuth({acao:'update_profile',nome,endereco,bairro_id:Number(bairro_id)},tokenCliente);aplicarCliente(r.cliente||{...clienteLogado,nome,endereco,bairro_id:Number(bairro_id)});mensagemAcesso('Cadastro atualizado com sucesso!');}
+ try{const r=await chamarAuth({acao:'update_profile',nome,whatsapp,endereco,bairro_id:Number(bairro_id)},tokenCliente);aplicarCliente(r.cliente||{...clienteLogado,nome,whatsapp,endereco,bairro_id:Number(bairro_id)});mensagemAcesso('Cadastro atualizado com sucesso!');}
  catch(e){mensagemAcesso(e.message,true);}
 }
 async function carregarFretes(){
@@ -473,6 +478,7 @@ function atualizarTipoEntrega(){
 document.getElementById('tipoEntrega').addEventListener('change',atualizarTipoEntrega);
 function validarDados(){
  if(!clienteLogado){alert('Entre na sua conta para continuar.');return null;}
+ if(!clienteLogado.whatsapp){alert('Antes de fazer o pedido, atualize seu cadastro e informe um WhatsApp válido.');mostrarEdicao();return null;}
  const tipo=document.getElementById('tipoEntrega').value,b=bairroDoCliente();
  if(tipo==='entrega'&&(!clienteLogado.endereco||clienteLogado.endereco.trim().length<5)){alert('Atualize seu endereço em “Atualizar meu cadastro”.');return null;}
  if(tipo==='entrega'&&(!clienteLogado.bairro_id||!b)){alert('Atualize seu bairro em “Atualizar meu cadastro”.');return null;}
@@ -494,7 +500,7 @@ async function finalizar(){
   const pedidoId=data.pedido_id;pedidoConcluido=true;
   const subtotal=Number(data.subtotal),frete=Number(data.frete),total=Number(data.total),b=bairroDoCliente();
   const linhas=Object.values(resumo).map(p=>p.quantidade+'x '+p.nome+' - '+moeda(p.preco*p.quantidade));
-  const texto=['Olá! Quero fazer um pedido pela Feira da Lua Delivery.','','Pedido número: '+pedidoId,'Nome: '+cliente.nome,'Telefone: '+cliente.telefone,'Recebimento: '+(cliente.tipo==='retirada'?'Retirada na Feira da Lua':'Entrega em casa'),...(cliente.tipo==='entrega'?['Endereço: '+cliente.endereco,'Bairro: '+(b?b.bairro:''),'Região: '+(b?b.nomeRegiao:'')]:[]),'','Pedido:',...linhas,'','Subtotal: '+moeda(subtotal),'Frete: '+moeda(frete),'TOTAL: '+moeda(total),'','Aguardo a confirmação. Obrigado!'].join('\n');
+  const texto=['Olá! Quero fazer um pedido pela Feira da Lua Delivery.','','Pedido número: '+pedidoId,'Nome: '+cliente.nome,'Celular da conta: '+cliente.telefone,'WhatsApp: '+(clienteLogado.whatsapp||''),'Recebimento: '+(cliente.tipo==='retirada'?'Retirada na Feira da Lua':'Entrega em casa'),...(cliente.tipo==='entrega'?['Endereço: '+cliente.endereco,'Bairro: '+(b?b.bairro:''),'Região: '+(b?b.nomeRegiao:'')]:[]),'','Pedido:',...linhas,'','Subtotal: '+moeda(subtotal),'Frete: '+moeda(frete),'TOTAL: '+moeda(total),'','Aguardo a confirmação. Obrigado!'].join('\n');
   mensagem.textContent='Pedido nº '+pedidoId+' recebido com sucesso!';
   alert('Pedido nº '+pedidoId+' registrado com sucesso! Você será direcionado ao WhatsApp.');
   carrinho=[];reservaExpiraEm=0;renderizarVitrine();atualizar();atualizarAvisoReserva();document.getElementById('areaRevisao').style.display='none';
