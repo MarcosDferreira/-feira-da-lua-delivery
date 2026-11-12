@@ -706,7 +706,7 @@ function mostrarPedido(p,lista){
  const card=criarElemento('div',undefined,'pedido');
  card.appendChild(criarElemento('h3','Pedido #'+p.id));card.appendChild(criarElemento('span',String(p.status||'').toUpperCase(),'status'));
  card.appendChild(criarElemento('p','Cliente: '+(p.cliente_nome||'')));card.appendChild(criarElemento('p','Telefone: '+(p.cliente_telefone||'')));
- const entrega=p.tipo_entrega==='retirada'?'Retirada na Feira da Lua':'Entrega no endereço: '+(p.endereco||'Não informado');
+ const entrega=p.tipo_entrega==='retirada'?'Retirada (pedido antigo)':'Entrega no endereço: '+(p.endereco||'Não informado');
  card.appendChild(criarElemento('p',entrega));
  if(p.tipo_entrega!=='retirada'){card.appendChild(criarElemento('p','Bairro: '+(p.bairro||'Não informado')));card.appendChild(criarElemento('p','Frete: '+moeda(p.frete)));}
  const data=new Date(p.criado_em);card.appendChild(criarElemento('p','Recebido: '+data.toLocaleString('pt-BR'),'pequeno'));
@@ -734,7 +734,7 @@ function avisarClienteWhatsApp(p){
  }
  const nome=(p.cliente_nome||'cliente').trim().split(' ')[0];
  const entrega=p.tipo_entrega==='retirada'
-  ? 'Seu pedido ficará disponível para retirada na Feira da Lua.'
+  ? 'Este é um pedido antigo, registrado para retirada na Feira da Lua.'
   : 'Seu pedido foi confirmado e seguirá para preparação e entrega no endereço informado.';
  const mensagem='Olá, '+nome+'! Seu pedido #'+p.id+' na Feira da Lua foi confirmado. '+entrega+' Total do pedido: '+moeda(p.total)+'. Obrigado por comprar na Feira da Lua e valorizar nossos feirantes de Ribeirão Grande!';
  const url='https://wa.me/'+telefone+'?text='+encodeURIComponent(mensagem);
