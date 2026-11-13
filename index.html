@@ -189,8 +189,12 @@ button,a,input,select{touch-action:manipulation}
   <div id="avisoReserva" class="ajuda" style="display:none;font-weight:bold;color:#a8730b"></div>
 
   <div id="areaCheckout" class="checkout" style="display:none">
-   <h3>Como você quer receber seu pedido?</h3>
-   <div class="campo"><label for="tipoEntrega">Escolha como receber</label><select id="tipoEntrega"><option value="entrega">Receber em casa</option><option value="retirada">Retirar na Feira da Lua</option></select></div>
+   <h3>Recebimento do pedido</h3>
+   <div class="campo">
+    <label for="tipoEntregaExibicao">Forma de recebimento</label>
+    <input id="tipoEntregaExibicao" type="text" value="Entrega em casa" readonly>
+    <input id="tipoEntrega" type="hidden" value="entrega">
+   </div>
    <div id="camposEntrega">
     <div class="campo"><label for="clienteEndereco">Endereço de entrega</label><input id="clienteEndereco" readonly></div>
     <div class="campo"><label for="clienteBairroNome">Bairro</label><input id="clienteBairroNome" readonly></div>
