@@ -8,8 +8,8 @@
 <style>
 *{box-sizing:border-box}
 :root{--azul:#153b70;--azul2:#2464a5;--dourado:#f4c95d;--texto:#172b49;--suave:#64758c;--linha:#dce7f3;--fundo:#f1f5fa;--verde:#28764c}
-body{margin:0;font-family:Arial,sans-serif;background-color:#07152f;background-image:linear-gradient(rgba(5,16,39,.30),rgba(5,16,39,.42)),url('fundo-feira-da-lua.png');background-position:center top;background-size:cover;background-repeat:no-repeat;background-attachment:fixed;color:var(--texto)}
-header{text-align:center;padding:25px 15px 29px;background:linear-gradient(145deg,rgba(7,21,47,.94),rgba(18,57,103,.91) 65%,rgba(29,77,123,.90));border-bottom:4px solid var(--dourado);color:#fff}
+body{margin:0;font-family:Arial,sans-serif;background:#07152f;color:var(--texto)}
+header{text-align:center;padding:25px 15px 29px;background:linear-gradient(180deg,rgba(5,17,42,.18),rgba(5,17,42,.42)),url('cabecalho-feira-da-lua.png') center 42%/cover no-repeat;border-bottom:4px solid var(--dourado);color:#fff}
 .logo-recorte{width:205px;height:108px;overflow:hidden;margin:0 auto 12px;border:3px solid white;border-radius:18px;background:#fff;box-shadow:0 8px 22px #0004}
 .logo-feira{width:100%;height:100%;object-fit:cover}
 header h1{font:bold clamp(27px,6vw,38px) Georgia,serif;color:var(--dourado);margin:10px 0 6px}
@@ -96,7 +96,7 @@ body.alto-contraste .ajuda,body.alto-contraste .info-produto p{color:#222}
 :focus-visible{outline:3px solid #d18b00!important;outline-offset:3px!important}
 button,a,input,select{touch-action:manipulation}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
-@media(max-width:620px){body{background-attachment:scroll}main{padding:15px 11px 25px}.barraca{padding:13px;gap:0 10px}.foto-produto{height:130px}.produto{padding:12px 0}.info-produto strong{font-size:14px}.preco{font-size:18px}.carrinho,.conta-topo{padding:15px}}
+@media(max-width:620px){header{background-position:center center}main{padding:15px 11px 25px}.barraca{padding:13px;gap:0 10px}.foto-produto{height:130px}.produto{padding:12px 0}.info-produto strong{font-size:14px}.preco{font-size:18px}.carrinho,.conta-topo{padding:15px}}
 @media(max-width:370px){.barraca{grid-template-columns:1fr}.foto-produto{height:185px}}
 </style>
 </head>
