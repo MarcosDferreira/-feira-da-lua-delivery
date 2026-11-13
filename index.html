@@ -9,7 +9,7 @@
 *{box-sizing:border-box}
 :root{--azul:#153b70;--azul2:#2464a5;--dourado:#f4c95d;--texto:#172b49;--suave:#64758c;--linha:#dce7f3;--fundo:#f1f5fa;--verde:#28764c}
 body{margin:0;font-family:Arial,sans-serif;background:#07152f;color:var(--texto)}
-header{text-align:center;padding:25px 15px 29px;background:linear-gradient(180deg,rgba(5,17,42,.18),rgba(5,17,42,.42)),url('cabecalho-feira-da-lua.png') center 42%/cover no-repeat;border-bottom:4px solid var(--dourado);color:#fff}
+header{padding:0;background:#07152f;border-bottom:4px solid var(--dourado);line-height:0}\n.banner-cabecalho{display:block;width:100%;height:auto;margin:0}
 .logo-recorte{width:205px;height:108px;overflow:hidden;margin:0 auto 12px;border:3px solid white;border-radius:18px;background:#fff;box-shadow:0 8px 22px #0004}
 .logo-feira{width:100%;height:100%;object-fit:cover}
 header h1{font:bold clamp(27px,6vw,38px) Georgia,serif;color:var(--dourado);margin:10px 0 6px}
@@ -17,13 +17,6 @@ header p{margin:7px 0;line-height:1.45}
 header span{display:inline-block;margin-top:9px;padding:7px 13px;border:1px solid #f4c95d77;border-radius:30px;background:#ffffff12;color:#ffe7a2;font-size:13px;font-weight:bold}
 main{max-width:980px;margin:auto;padding:20px 15px 32px}
 h2,h3{color:var(--azul)}
-/* Melhor contraste dos títulos e links nas áreas sobre o fundo escuro */
-main>h2,main>h3{color:#fff4c7}
-main>.titulo-secao{color:#fff4c7}
-.conta-topo #acessoCliente>h3,.conta-topo #cadastroCliente>h3,.conta-topo #trocaSenha>h3,.conta-topo #edicaoCliente>h3{color:var(--azul)}
-.conta-topo .ajuda{color:#53657c}
-.conta-topo button[style*="background:transparent"]{color:#174f91!important}
-
 .titulo-secao{font:bold 25px Georgia,serif;margin:5px 0 13px}
 #filtro-barracas{width:100%;padding:14px;border:1px solid #cbd8e8;border-radius:12px;background:#fff;color:var(--texto);font-size:16px;font-weight:bold;margin-bottom:12px}
 .barraca{padding:17px;margin:15px 0 20px;background:#fff;border:1px solid #e1e9f2;border-radius:17px;box-shadow:0 5px 18px #18385b0c;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px}
@@ -61,7 +54,7 @@ main>.titulo-secao{color:#fff4c7}
 .conta-topo .aviso-perfil{line-height:1.4;margin:2px 0 10px}
 .conta-topo .acoes-conta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
 .conta-topo .acoes-conta button{min-width:0;min-height:54px;padding:9px 6px;font-size:13px;line-height:1.2}
-.titulo-secao{color:#fff4c7;text-shadow:0 2px 8px #0008;margin:2px 0 12px}
+.titulo-secao{color:#fff4c7;text-shadow:0 2px 8px #0008;margin:2px 0 12px}\n.conta-topo>.titulo-secao{color:#17375e;text-shadow:none}
 #filtro-barracas{padding:12px;margin-bottom:8px}
 .produto{padding:12px 0}
 .info-produto strong{font-size:16px}
@@ -114,7 +107,7 @@ body.alto-contraste .ajuda,body.alto-contraste .info-produto p{color:#222}
 :focus-visible{outline:3px solid #d18b00!important;outline-offset:3px!important}
 button,a,input,select{touch-action:manipulation}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
-@media(max-width:620px){header{background-position:center center}main{padding:13px 11px 24px}.barraca{padding:12px;gap:0 10px;margin:12px 0 17px}.foto-produto{height:130px}.produto{padding:11px 0}.info-produto strong{font-size:14px}.preco{font-size:18px}.carrinho,.conta-topo{padding:13px}.conta-topo{margin-bottom:17px}.conta-topo #acessoCliente{padding:10px}.conta-topo .acoes-conta button{font-size:12px;min-height:52px}.titulo-secao{font-size:23px}.acessibilidade strong{font-size:13px}}
+@media(max-width:620px){main{padding:13px 11px 24px}.barraca{padding:12px;gap:0 10px;margin:12px 0 17px}.foto-produto{height:130px}.produto{padding:11px 0}.info-produto strong{font-size:14px}.preco{font-size:18px}.carrinho,.conta-topo{padding:13px}.conta-topo{margin-bottom:17px}.conta-topo #acessoCliente{padding:10px}.conta-topo .acoes-conta button{font-size:12px;min-height:52px}.titulo-secao{font-size:23px}.acessibilidade strong{font-size:13px}}
 @media(max-width:390px){.conta-topo .acoes-conta{grid-template-columns:1fr}.conta-topo .acoes-conta button{min-height:43px}}
 @media(max-width:370px){.barraca{grid-template-columns:1fr}.foto-produto{height:185px}}
 </style>
@@ -122,10 +115,7 @@ button,a,input,select{touch-action:manipulation}
 <body>
 <a class="skip-link" href="#conteudoPrincipal">Pular para o conteúdo</a>
 <header>
- <div class="logo-recorte"><img src="logo-feira-da-lua.jpg" class="logo-feira" alt="Logo Feira da Lua"></div>
- <h1>Feira da Lua Delivery</h1>
- <p>Os sabores e a alegria da nossa feira pertinho de você!</p>
- <span>Prestigie quem faz a Feira da Lua acontecer!</span>
+ <img src="cabecalho-feira-da-lua.png" class="banner-cabecalho" alt="Feira da Lua Delivery, Ribeirão Grande, com tendas iluminadas e céu estrelado">
 </header>
 <nav class="acessibilidade" aria-label="Opções de acessibilidade">
  <strong>Facilite sua navegação</strong>
