@@ -8,8 +8,8 @@
 <style>
 *{box-sizing:border-box}
 :root{--azul:#153b70;--azul2:#2464a5;--dourado:#f4c95d;--texto:#172b49;--suave:#64758c;--linha:#dce7f3;--fundo:#f1f5fa;--verde:#28764c}
-body{margin:0;font-family:Arial,sans-serif;background:var(--fundo);color:var(--texto)}
-header{text-align:center;padding:25px 15px 29px;background:linear-gradient(145deg,#07152f,#123967 65%,#1d4d7b);border-bottom:4px solid var(--dourado);color:#fff}
+body{margin:0;font-family:Arial,sans-serif;background-color:#07152f;background-image:linear-gradient(rgba(5,16,39,.30),rgba(5,16,39,.42)),url('fundo-feira-da-lua.png');background-position:center top;background-size:cover;background-repeat:no-repeat;background-attachment:fixed;color:var(--texto)}
+header{text-align:center;padding:25px 15px 29px;background:linear-gradient(145deg,rgba(7,21,47,.94),rgba(18,57,103,.91) 65%,rgba(29,77,123,.90));border-bottom:4px solid var(--dourado);color:#fff}
 .logo-recorte{width:205px;height:108px;overflow:hidden;margin:0 auto 12px;border:3px solid white;border-radius:18px;background:#fff;box-shadow:0 8px 22px #0004}
 .logo-feira{width:100%;height:100%;object-fit:cover}
 header h1{font:bold clamp(27px,6vw,38px) Georgia,serif;color:var(--dourado);margin:10px 0 6px}
@@ -80,18 +80,41 @@ footer{text-align:center;padding:26px 15px;color:#fff;background:#07152f;border-
 .patrocinio p{color:var(--dourado);font-size:13px;font-weight:bold;margin:0}
 .logo-legadu{width:100%;max-width:210px;height:auto;object-fit:contain}
 .link-admin{margin-top:17px;font-size:12px}.link-admin a{color:#dceaff;text-decoration:none;opacity:.9}
-@media(max-width:620px){main{padding:15px 11px 25px}.barraca{padding:13px;gap:0 10px}.foto-produto{height:130px}.produto{padding:12px 0}.info-produto strong{font-size:14px}.preco{font-size:18px}.carrinho,.conta-topo{padding:15px}}
+
+/* Acessibilidade */
+.skip-link{position:absolute;left:10px;top:-60px;z-index:1000;background:#fff;color:#07152f;padding:12px 16px;border:2px solid var(--dourado);border-radius:8px;font-weight:bold}
+.skip-link:focus{top:10px}
+.acessibilidade{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;padding:12px 10px;background:#fff;border-bottom:1px solid var(--linha)}
+.acessibilidade strong{font-size:14px;color:var(--azul);margin-right:4px}
+.acessibilidade button{min-width:42px;min-height:42px;padding:9px 12px}
+body.fonte-grande{font-size:19px}
+body.fonte-grande .ajuda,body.fonte-grande .campo label,body.fonte-grande .info-produto p{font-size:16px}
+body.fonte-grande .info-produto strong{font-size:18px}
+body.alto-contraste{--texto:#000;--suave:#222;--linha:#555;--fundo:#fff;--azul:#001b44;--azul2:#003b80}
+body.alto-contraste .barraca,body.alto-contraste .carrinho,body.alto-contraste .conta-topo,body.alto-contraste #acessoCliente,body.alto-contraste #painelConta,body.alto-contraste .revisao-pedido{border:2px solid #111}
+body.alto-contraste .ajuda,body.alto-contraste .info-produto p{color:#222}
+:focus-visible{outline:3px solid #d18b00!important;outline-offset:3px!important}
+button,a,input,select{touch-action:manipulation}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+@media(max-width:620px){body{background-attachment:scroll}main{padding:15px 11px 25px}.barraca{padding:13px;gap:0 10px}.foto-produto{height:130px}.produto{padding:12px 0}.info-produto strong{font-size:14px}.preco{font-size:18px}.carrinho,.conta-topo{padding:15px}}
 @media(max-width:370px){.barraca{grid-template-columns:1fr}.foto-produto{height:185px}}
 </style>
 </head>
 <body>
+<a class="skip-link" href="#conteudoPrincipal">Pular para o conteúdo</a>
 <header>
  <div class="logo-recorte"><img src="logo-feira-da-lua.jpg" class="logo-feira" alt="Logo Feira da Lua"></div>
  <h1>Feira da Lua Delivery</h1>
  <p>Os sabores da nossa feira pertinho de você!</p>
  <span>Valorize os feirantes de Ribeirão Grande</span>
 </header>
-<main>
+<nav class="acessibilidade" aria-label="Opções de acessibilidade">
+ <strong>Acessibilidade</strong>
+ <button type="button" id="diminuirFonte" aria-label="Diminuir tamanho da fonte">A−</button>
+ <button type="button" id="aumentarFonte" aria-label="Aumentar tamanho da fonte">A+</button>
+ <button type="button" id="alternarContraste" aria-pressed="false">Alto contraste</button>
+</nav>
+<main id="conteudoPrincipal" tabindex="-1">
  <section class="conta-topo">
   <h2 class="titulo-secao">Minha conta</h2>
   <div id="acessoCliente">
@@ -107,8 +130,8 @@ footer{text-align:center;padding:26px 15px;color:#fff;background:#07152f;border-
    <div id="painelCadastro" style="display:none">
     <h3>Criar minha conta</h3>
     <div class="campo"><label for="cadastroNome">Nome completo</label><input id="cadastroNome" autocomplete="name"></div>
-    <div class="campo"><label for="cadastroTelefone">Celular para acessar a conta</label><input id="cadastroTelefone" type="tel" inputmode="tel" autocomplete="tel" placeholder="(15) 99999-9999"></div>
-    <div class="campo"><label for="cadastroWhatsApp">WhatsApp para receber informações dos pedidos *</label><input id="cadastroWhatsApp" type="tel" inputmode="tel" autocomplete="tel" placeholder="(15) 99999-9999" required><small class="ajuda">Informe um número com DDD que tenha WhatsApp.</small></div>
+    <div class="campo"><label for="cadastroTelefone">Celular para acessar a conta</label><input id="cadastroTelefone" type="tel" inputmode="tel" autocomplete="tel" placeholder="(15) 99999-9999" aria-describedby="ajudaTelefoneCadastro"><small class="ajuda" id="ajudaTelefoneCadastro">Este número será usado para entrar na sua conta.</small></div>
+    <div class="campo"><label for="cadastroWhatsApp">WhatsApp para receber informações dos pedidos *</label><input id="cadastroWhatsApp" type="tel" inputmode="tel" autocomplete="tel" placeholder="(15) 99999-9999" required aria-describedby="ajudaWhatsAppCadastro"><small class="ajuda" id="ajudaWhatsAppCadastro">Preenchemos com o celular informado acima. Se preferir, você pode editar.</small></div>
     <div class="campo"><label for="cadastroSenha">Crie uma senha</label><input id="cadastroSenha" type="password" autocomplete="new-password" minlength="8" placeholder="Mínimo de 8 caracteres"></div>
     <div class="campo"><label for="cadastroEndereco">Endereço completo</label><input id="cadastroEndereco" autocomplete="street-address"></div>
     <div class="campo"><label for="cadastroBairro">Bairro</label><select id="cadastroBairro"><option value="">Carregando bairros...</option></select></div>
@@ -151,8 +174,8 @@ footer{text-align:center;padding:26px 15px;color:#fff;background:#07152f;border-
   <div id="avisoReserva" class="ajuda" style="display:none;font-weight:bold;color:#a8730b"></div>
 
   <div id="areaCheckout" class="checkout" style="display:none">
-   <h3>Entrega do pedido</h3>
-   <p class="ajuda">Todos os pedidos são entregues no endereço cadastrado.</p>
+   <h3>Como deseja receber?</h3>
+   <div class="campo"><label for="tipoEntrega">Forma de recebimento</label><select id="tipoEntrega"><option value="entrega">Receber em casa</option><option value="retirada">Retirar na Feira da Lua</option></select></div>
    <div id="camposEntrega">
     <div class="campo"><label for="clienteEndereco">Endereço de entrega</label><input id="clienteEndereco" readonly></div>
     <div class="campo"><label for="clienteBairroNome">Bairro</label><input id="clienteBairroNome" readonly></div>
@@ -173,7 +196,7 @@ footer{text-align:center;padding:26px 15px;color:#fff;background:#07152f;border-
     <button type="button" id="confirmarPedidoFinal" class="finalizar">Confirmar pedido</button>
    </div>
   </div>
-  <div id="mensagem"></div>
+  <div id="mensagem" role="status" aria-live="polite" aria-atomic="true"></div>
   <button class="finalizar" id="botaoFinalizar" onclick="abrirRevisao()" disabled>Conferir meu pedido</button>
  </section>
 </main>
@@ -199,7 +222,7 @@ function moeda(v){return Number(v||0).toLocaleString('pt-BR',{style:'currency',c
 function valorProdutos(){return carrinho.reduce((s,p)=>s+Number(p.preco),0);}
 function normalizarTelefone(v){return String(v||'').replace(/\D/g,'');}
 function bairroDoCliente(){return clienteLogado?fretes.find(f=>String(f.id)===String(clienteLogado.bairro_id)):null;}
-function freteSelecionado(){if(!carrinho.length)return 0;const b=bairroDoCliente();return b?Number(b.valor)||0:0;}
+function freteSelecionado(){if(!carrinho.length||document.getElementById('tipoEntrega').value!=='entrega')return 0;const b=bairroDoCliente();return b?Number(b.valor)||0:0;}
 
 async function chamarAuth(dados,token=''){
  const headers={'Content-Type':'application/json','apikey':SUPABASE_KEY};
@@ -230,6 +253,28 @@ function sincronizarReserva(){
  });
  return reservaFila;
 }
+// Acessibilidade: controles simples, sem alterar dados do cliente.
+(function configurarAcessibilidade(){
+ const corpo=document.body;
+ document.getElementById('aumentarFonte').addEventListener('click',()=>corpo.classList.add('fonte-grande'));
+ document.getElementById('diminuirFonte').addEventListener('click',()=>corpo.classList.remove('fonte-grande'));
+ document.getElementById('alternarContraste').addEventListener('click',function(){
+  const ativo=corpo.classList.toggle('alto-contraste');
+  this.setAttribute('aria-pressed',String(ativo));
+  this.textContent=ativo?'Contraste normal':'Alto contraste';
+ });
+})();
+// Copia o celular para o WhatsApp automaticamente, mas respeita uma edição manual.
+(function configurarWhatsAppCadastro(){
+ const celular=document.getElementById('cadastroTelefone');
+ const whatsapp=document.getElementById('cadastroWhatsApp');
+ let whatsappEditado=false;
+ if(celular.value.trim()&&!whatsapp.value.trim()){whatsapp.value=celular.value;}
+ whatsapp.addEventListener('input',()=>{whatsappEditado=true;});
+ celular.addEventListener('input',()=>{
+  if(!whatsappEditado){whatsapp.value=celular.value;}
+ });
+})();
 function mensagemAcesso(t,erro=false){const e=document.getElementById('mensagemAcesso');if(e){e.textContent=t||'';e.style.color=erro?'#b8323a':'#28764c';}}
 function exibirPainel(id){['painelLogin','painelCadastro','painelConta','painelEdicao','painelTrocaSenha'].forEach(x=>document.getElementById(x).style.display=x===id?'block':'none');}
 function mostrarLogin(){exibirPainel('painelLogin');document.getElementById('tituloAcesso').textContent='Entre para fazer seu pedido';document.getElementById('ajudaAcesso').style.display='';mensagemAcesso('');}
@@ -243,7 +288,7 @@ function aplicarCliente(c){
  document.getElementById('clienteEndereco').value=c.endereco||'';
  const b=bairroDoCliente();document.getElementById('clienteBairroNome').value=b?b.bairro:'Bairro não informado';
  document.getElementById('boasVindas').textContent='Olá, '+(c.nome||'cliente')+'! Sua conta está conectada. WhatsApp: '+(c.whatsapp||'Ainda não informado')+'.';
- atualizar();
+ atualizarTipoEntrega();atualizar();
 }
 function limparCliente(){clienteLogado=null;document.getElementById('areaCheckout').style.display='none';document.getElementById('tituloAcesso').textContent='Entre para fazer seu pedido';document.getElementById('ajudaAcesso').style.display='';exibirPainel('painelLogin');document.getElementById('botaoFinalizar').disabled=true;['clienteEndereco','clienteBairroNome'].forEach(id=>document.getElementById(id).value='');}
 async function entrarCliente(){
@@ -418,9 +463,11 @@ function abrirRevisao(){
   linha.append(nome,valor);resumo.appendChild(linha);
  });
  const tipo=document.createElement('div');tipo.className='revisao-linha';
- tipo.textContent='Forma de recebimento: Entrega em casa';resumo.appendChild(tipo);
- const b=bairroDoCliente();
- [ 'Endereço: '+cliente.endereco,'Bairro: '+(b?b.bairro:'') ].forEach(t=>{const x=document.createElement('div');x.className='revisao-linha';x.textContent=t;resumo.appendChild(x);});
+ tipo.textContent='Recebimento: '+(cliente.tipo==='retirada'?'Retirada na Feira da Lua':'Entrega em casa');resumo.appendChild(tipo);
+ if(cliente.tipo==='entrega'){
+  const b=bairroDoCliente();
+  [ 'Endereço: '+cliente.endereco,'Bairro: '+(b?b.bairro:'') ].forEach(t=>{const x=document.createElement('div');x.className='revisao-linha';x.textContent=t;resumo.appendChild(x);});
+ }
  const s=valorProdutos(),f=freteSelecionado();
  [['Produtos',moeda(s)],['Frete',moeda(f)],['TOTAL',moeda(s+f)]].forEach((v,i)=>{
   const x=document.createElement('div');x.className='revisao-linha'+(i===2?' revisao-total':'');
@@ -456,7 +503,7 @@ function atualizar(){
    const t=document.createElement('span');t.textContent=p.q+'x '+p.nome+' · '+moeda(p.preco*p.q);
    const acoes=document.createElement('div');acoes.style.display='flex';acoes.style.gap='5px';
    const menos=document.createElement('button');menos.textContent='−';menos.setAttribute('aria-label','Diminuir quantidade');menos.onclick=()=>remover(id);
-   const mais=document.createElement('button');mais.textContent='+';mais.onclick=()=>adicionar(id);
+   const mais=document.createElement('button');mais.textContent='+';mais.setAttribute('aria-label','Aumentar quantidade de '+p.nome);mais.onclick=()=>adicionar(id);
    const produto=produtos.find(x=>String(x.id)===String(id));mais.disabled=!!produto&&p.q>=Number(produto.estoque);
    const excluir=document.createElement('button');excluir.textContent='Excluir';excluir.style.background='#b8323a';excluir.onclick=()=>excluirProdutoCarrinho(id);
    acoes.append(menos,mais,excluir);row.append(t,acoes);el.appendChild(row);
@@ -468,13 +515,19 @@ function atualizar(){
  botao.disabled=!clienteLogado||!carrinho.length||pedidoConcluido||enviandoPedido;
  if(!pedidoConcluido&&!enviandoPedido)botao.textContent='Conferir meu pedido';
 }
+function atualizarTipoEntrega(){
+ const entrega=document.getElementById('tipoEntrega').value==='entrega';
+ document.getElementById('camposEntrega').style.display=entrega?'block':'none';
+ fecharRevisao();atualizar();
+}
+document.getElementById('tipoEntrega').addEventListener('change',atualizarTipoEntrega);
 function validarDados(){
  if(!clienteLogado){alert('Entre na sua conta para continuar.');return null;}
  if(!clienteLogado.whatsapp){alert('Antes de fazer o pedido, atualize seu cadastro e informe um WhatsApp válido.');mostrarEdicao();return null;}
- const b=bairroDoCliente();
- if(!clienteLogado.endereco||clienteLogado.endereco.trim().length<5){alert('Atualize seu endereço em “Atualizar meu cadastro”.');return null;}
- if(!clienteLogado.bairro_id||!b){alert('Atualize seu bairro em “Atualizar meu cadastro”.');return null;}
- return {nome:clienteLogado.nome,telefone:clienteLogado.telefone,tipo:'entrega',endereco:clienteLogado.endereco,bairroId:Number(clienteLogado.bairro_id)};
+ const tipo=document.getElementById('tipoEntrega').value,b=bairroDoCliente();
+ if(tipo==='entrega'&&(!clienteLogado.endereco||clienteLogado.endereco.trim().length<5)){alert('Atualize seu endereço em “Atualizar meu cadastro”.');return null;}
+ if(tipo==='entrega'&&(!clienteLogado.bairro_id||!b)){alert('Atualize seu bairro em “Atualizar meu cadastro”.');return null;}
+ return {nome:clienteLogado.nome,telefone:clienteLogado.telefone,tipo,endereco:tipo==='entrega'?clienteLogado.endereco:'',bairroId:tipo==='entrega'?Number(clienteLogado.bairro_id):null};
 }
 async function finalizar(){
  if(enviandoPedido||pedidoConcluido)return;
@@ -492,7 +545,7 @@ async function finalizar(){
   const pedidoId=data.pedido_id;pedidoConcluido=true;
   const subtotal=Number(data.subtotal),frete=Number(data.frete),total=Number(data.total),b=bairroDoCliente();
   const linhas=Object.values(resumo).map(p=>p.quantidade+'x '+p.nome+' - '+moeda(p.preco*p.quantidade));
-  const texto=['Olá! Quero fazer um pedido pela Feira da Lua Delivery.','','Pedido número: '+pedidoId,'Nome: '+cliente.nome,'Celular da conta: '+cliente.telefone,'WhatsApp: '+(clienteLogado.whatsapp||''),'Recebimento: Entrega em casa','Endereço: '+cliente.endereco,'Bairro: '+(b?b.bairro:''),'Região: '+(b?b.nomeRegiao:''),'','Pedido:',...linhas,'','Subtotal: '+moeda(subtotal),'Frete: '+moeda(frete),'TOTAL: '+moeda(total),'','Aguardo a confirmação. Obrigado!'].join('\n');
+  const texto=['Olá! Quero fazer um pedido pela Feira da Lua Delivery.','','Pedido número: '+pedidoId,'Nome: '+cliente.nome,'Celular da conta: '+cliente.telefone,'WhatsApp: '+(clienteLogado.whatsapp||''),'Recebimento: '+(cliente.tipo==='retirada'?'Retirada na Feira da Lua':'Entrega em casa'),...(cliente.tipo==='entrega'?['Endereço: '+cliente.endereco,'Bairro: '+(b?b.bairro:''),'Região: '+(b?b.nomeRegiao:'')]:[]),'','Pedido:',...linhas,'','Subtotal: '+moeda(subtotal),'Frete: '+moeda(frete),'TOTAL: '+moeda(total),'','Aguardo a confirmação. Obrigado!'].join('\n');
   mensagem.textContent='Pedido nº '+pedidoId+' recebido com sucesso!';
   alert('Pedido nº '+pedidoId+' registrado com sucesso! Você será direcionado ao WhatsApp.');
   carrinho=[];reservaExpiraEm=0;renderizarVitrine();atualizar();atualizarAvisoReserva();document.getElementById('areaRevisao').style.display='none';
@@ -500,6 +553,7 @@ async function finalizar(){
  }catch(e){console.error(e);const erro=e.message||'Não foi possível registrar o pedido. Tente novamente.';mensagem.textContent=erro;alert(erro);}
  finally{enviandoPedido=false;const bf=document.getElementById('confirmarPedidoFinal');if(pedidoConcluido){bf.disabled=true;bf.textContent='Pedido enviado!';}else{bf.disabled=false;bf.textContent='Confirmar pedido';}}
 }
+atualizarTipoEntrega();
 document.getElementById('botaoFinalizar').disabled=true;
 carregarFretes();
 carregarProdutos();
