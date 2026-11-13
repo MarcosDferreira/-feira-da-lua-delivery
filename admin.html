@@ -221,7 +221,6 @@ const SUPABASE_URL='https://bnnfplpccsxaaztgbxkr.supabase.co';
 const SUPABASE_KEY='sb_publishable_dws08TQirwdC5MI3UITfog_AWVc8eL5';
 const banco=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{
  auth:{
-  flowType:'implicit',
   detectSessionInUrl:true,
   persistSession:true,
   autoRefreshToken:true
@@ -419,12 +418,32 @@ async function entrar(){
    return;
   }
 
-  console.log('USUÁRIO AUTENTICADO:',data.user.id);
+  if(!data.session?.access_token || !data.session?.refresh_token){
+   aviso.textContent='O login foi aceito, mas a sessão não foi recebida. Atualize a página e tente novamente.';
+   return;
+  }
+
+  // Garante que o cliente Supabase mantenha a sessão antes de consultar admins.
+  const {error:erroSessao}=await banco.auth.setSession({
+   access_token:data.session.access_token,
+   refresh_token:data.session.refresh_token
+  });
+  if(erroSessao) throw erroSessao;
+
+  const {data:sessaoAtual,error:erroGetSessao}=await banco.auth.getSession();
+  if(erroGetSessao) throw erroGetSessao;
+  if(!sessaoAtual.session?.access_token || sessaoAtual.session.user.id!==data.user.id){
+   aviso.textContent='Não foi possível confirmar sua sessão administrativa. Entre novamente.';
+   return;
+  }
+
+  console.log('USUÁRIO AUTENTICADO:',sessaoAtual.session.user.id);
+  console.log('SESSÃO CONFIRMADA:',!!sessaoAtual.session.access_token);
 
   const {data:admin,error:erroAdmin}=await banco
    .from('admins')
    .select('user_id')
-   .eq('user_id',data.user.id)
+   .eq('user_id',sessaoAtual.session.user.id)
    .maybeSingle();
 
   console.log('RESULTADO ADMIN:',admin);
