@@ -9,7 +9,8 @@
 *{box-sizing:border-box}
 :root{--azul:#153b70;--azul2:#2464a5;--dourado:#f4c95d;--texto:#172b49;--suave:#64758c;--linha:#dce7f3;--fundo:#f1f5fa;--verde:#28764c}
 body{margin:0;font-family:Arial,sans-serif;background:#07152f;color:var(--texto)}
-header{text-align:center;padding:25px 15px 29px;background:linear-gradient(180deg,rgba(5,17,42,.18),rgba(5,17,42,.42)),url('cabecalho-feira-da-lua.png') center 42%/cover no-repeat;border-bottom:4px solid var(--dourado);color:#fff}
+header{padding:0;background:#07152f;border-bottom:4px solid var(--dourado);line-height:0}
+.banner-cabecalho{display:block;width:100%;height:auto;margin:0}
 .logo-recorte{width:205px;height:108px;overflow:hidden;margin:0 auto 12px;border:3px solid white;border-radius:18px;background:#fff;box-shadow:0 8px 22px #0004}
 .logo-feira{width:100%;height:100%;object-fit:cover}
 header h1{font:bold clamp(27px,6vw,38px) Georgia,serif;color:var(--dourado);margin:10px 0 6px}
@@ -103,10 +104,7 @@ button,a,input,select{touch-action:manipulation}
 <body>
 <a class="skip-link" href="#conteudoPrincipal">Pular para o conteúdo</a>
 <header>
- <div class="logo-recorte"><img src="logo-feira-da-lua.jpg" class="logo-feira" alt="Logo Feira da Lua"></div>
- <h1>Feira da Lua Delivery</h1>
- <p>Os sabores da nossa feira pertinho de você!</p>
- <span>Valorize os feirantes de Ribeirão Grande</span>
+ <img src="cabecalho-feira-da-lua.png" class="banner-cabecalho" alt="Feira da Lua Delivery, Ribeirão Grande, com tendas iluminadas e céu estrelado">
 </header>
 <nav class="acessibilidade" aria-label="Opções de acessibilidade">
  <strong>Acessibilidade</strong>
