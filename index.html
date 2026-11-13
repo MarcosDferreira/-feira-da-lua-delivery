@@ -9,8 +9,7 @@
 *{box-sizing:border-box}
 :root{--azul:#153b70;--azul2:#2464a5;--dourado:#f4c95d;--texto:#172b49;--suave:#64758c;--linha:#dce7f3;--fundo:#f1f5fa;--verde:#28764c}
 body{margin:0;font-family:Arial,sans-serif;background:#07152f;color:var(--texto)}
-header{padding:0;background:#07152f;border-bottom:4px solid var(--dourado);line-height:0}
-.banner-cabecalho{display:block;width:100%;height:auto;margin:0}
+header{text-align:center;padding:25px 15px 29px;background:linear-gradient(180deg,rgba(5,17,42,.18),rgba(5,17,42,.42)),url('cabecalho-feira-da-lua.png') center 42%/cover no-repeat;border-bottom:4px solid var(--dourado);color:#fff}
 .logo-recorte{width:205px;height:108px;overflow:hidden;margin:0 auto 12px;border:3px solid white;border-radius:18px;background:#fff;box-shadow:0 8px 22px #0004}
 .logo-feira{width:100%;height:100%;object-fit:cover}
 header h1{font:bold clamp(27px,6vw,38px) Georgia,serif;color:var(--dourado);margin:10px 0 6px}
@@ -48,8 +47,19 @@ h2,h3{color:var(--azul)}
 .item-carrinho button{padding:7px 9px;background:#b8323a;font-size:12px;flex-shrink:0}
 .checkout{margin-top:19px;padding-top:17px;border-top:1px solid var(--linha)}
 .checkout h3{font-size:18px;margin:0 0 12px}
-.conta-topo{background:#fff;border:1px solid #e1e9f2;border-top:4px solid var(--dourado);border-radius:17px;padding:16px;margin:0 0 22px;box-shadow:0 5px 18px #18385b0c}
-.conta-topo #acessoCliente{margin:0;padding:15px;background:#f5f8fc;border:1px solid var(--linha);border-radius:13px}
+.conta-topo{background:#fff;border:1px solid #e1e9f2;border-top:4px solid var(--dourado);border-radius:17px;padding:14px;margin:0 0 18px;box-shadow:0 5px 18px #18385b0c}
+.conta-topo #acessoCliente{margin:0;padding:12px;background:#f5f8fc;border:1px solid var(--linha);border-radius:13px}
+.conta-topo #tituloAcesso{margin:0 0 10px;font-size:19px;color:var(--azul)}
+.conta-topo #painelConta{padding:10px;border-radius:12px}
+.conta-topo .aviso-perfil{line-height:1.4;margin:2px 0 10px}
+.conta-topo .acoes-conta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.conta-topo .acoes-conta button{min-width:0;min-height:54px;padding:9px 6px;font-size:13px;line-height:1.2}
+.titulo-secao{color:#fff4c7;text-shadow:0 2px 8px #0008;margin:2px 0 12px}
+#filtro-barracas{padding:12px;margin-bottom:8px}
+.produto{padding:12px 0}
+.info-produto strong{font-size:16px}
+.preco{color:#9a6900}
+.acao-produto button{min-height:42px}
 .ajuda{font-size:12px;color:var(--suave);line-height:1.5;margin:7px 0}
 .campo{margin:12px 0}
 .campo label{display:block;font-size:13px;font-weight:bold;color:#334b68;margin-bottom:6px}
@@ -85,9 +95,9 @@ footer{text-align:center;padding:26px 15px;color:#fff;background:#07152f;border-
 /* Acessibilidade */
 .skip-link{position:absolute;left:10px;top:-60px;z-index:1000;background:#fff;color:#07152f;padding:12px 16px;border:2px solid var(--dourado);border-radius:8px;font-weight:bold}
 .skip-link:focus{top:10px}
-.acessibilidade{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;padding:12px 10px;background:#fff;border-bottom:1px solid var(--linha)}
+.acessibilidade{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:7px;padding:9px 10px;background:#fff;border-bottom:1px solid var(--linha)}
 .acessibilidade strong{font-size:14px;color:var(--azul);margin-right:4px}
-.acessibilidade button{min-width:42px;min-height:42px;padding:9px 12px}
+.acessibilidade button{min-width:40px;min-height:40px;padding:8px 11px}
 body.fonte-grande{font-size:19px}
 body.fonte-grande .ajuda,body.fonte-grande .campo label,body.fonte-grande .info-produto p{font-size:16px}
 body.fonte-grande .info-produto strong{font-size:18px}
@@ -97,51 +107,55 @@ body.alto-contraste .ajuda,body.alto-contraste .info-produto p{color:#222}
 :focus-visible{outline:3px solid #d18b00!important;outline-offset:3px!important}
 button,a,input,select{touch-action:manipulation}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
-@media(max-width:620px){header{background-position:center center}main{padding:15px 11px 25px}.barraca{padding:13px;gap:0 10px}.foto-produto{height:130px}.produto{padding:12px 0}.info-produto strong{font-size:14px}.preco{font-size:18px}.carrinho,.conta-topo{padding:15px}}
+@media(max-width:620px){header{background-position:center center}main{padding:13px 11px 24px}.barraca{padding:12px;gap:0 10px;margin:12px 0 17px}.foto-produto{height:130px}.produto{padding:11px 0}.info-produto strong{font-size:14px}.preco{font-size:18px}.carrinho,.conta-topo{padding:13px}.conta-topo{margin-bottom:17px}.conta-topo #acessoCliente{padding:10px}.conta-topo .acoes-conta button{font-size:12px;min-height:52px}.titulo-secao{font-size:23px}.acessibilidade strong{font-size:13px}}
+@media(max-width:390px){.conta-topo .acoes-conta{grid-template-columns:1fr}.conta-topo .acoes-conta button{min-height:43px}}
 @media(max-width:370px){.barraca{grid-template-columns:1fr}.foto-produto{height:185px}}
 </style>
 </head>
 <body>
 <a class="skip-link" href="#conteudoPrincipal">Pular para o conteúdo</a>
 <header>
- <img src="cabecalho-feira-da-lua.png" class="banner-cabecalho" alt="Feira da Lua Delivery, Ribeirão Grande, com tendas iluminadas e céu estrelado">
+ <div class="logo-recorte"><img src="logo-feira-da-lua.jpg" class="logo-feira" alt="Logo Feira da Lua"></div>
+ <h1>Feira da Lua Delivery</h1>
+ <p>Os sabores e a alegria da nossa feira pertinho de você!</p>
+ <span>Prestigie quem faz a Feira da Lua acontecer!</span>
 </header>
 <nav class="acessibilidade" aria-label="Opções de acessibilidade">
- <strong>Acessibilidade</strong>
+ <strong>Facilite sua navegação</strong>
  <button type="button" id="diminuirFonte" aria-label="Diminuir tamanho da fonte">A−</button>
  <button type="button" id="aumentarFonte" aria-label="Aumentar tamanho da fonte">A+</button>
  <button type="button" id="alternarContraste" aria-pressed="false">Alto contraste</button>
 </nav>
 <main id="conteudoPrincipal" tabindex="-1">
  <section class="conta-topo">
-  <h2 class="titulo-secao">Minha conta</h2>
+  <h2 class="titulo-secao">Seu acesso</h2>
   <div id="acessoCliente">
-   <h3 id="tituloAcesso">Entre para fazer seu pedido</h3>
-   <p class="ajuda" id="ajudaAcesso">Use seu celular e sua senha. Se ainda não tem conta, crie seu cadastro.</p>
+   <h3 id="tituloAcesso">Entre ou faça seu cadastro para pedir</h3>
+   <p class="ajuda" id="ajudaAcesso">Acesse com seu celular e senha. É rapidinho!</p>
    <div id="painelLogin">
     <div class="campo"><label for="loginTelefone">Celular com DDD</label><input id="loginTelefone" type="tel" inputmode="tel" autocomplete="tel" placeholder="(15) 99999-9999"></div>
     <div class="campo"><label for="loginSenha">Senha</label><div style="display:flex;align-items:center;gap:8px"><input id="loginSenha" type="password" autocomplete="current-password" placeholder="Sua senha" style="flex:1;min-width:0"><button type="button" onclick="const c=document.getElementById('loginSenha');c.type=c.type==='password'?'text':'password';this.textContent=c.type==='password'?'Mostrar':'Ocultar';" style="white-space:nowrap">Mostrar</button></div></div>
-    <button type="button" onclick="solicitarAjudaSenha()" style="background:transparent;color:#2464a5;text-decoration:underline;padding:7px 0">Esqueci minha senha</button>
+    <button type="button" onclick="solicitarAjudaSenha()" style="background:transparent;color:#2464a5;text-decoration:underline;padding:7px 0">Preciso de ajuda com minha senha</button>
     <button type="button" class="finalizar" onclick="entrarCliente()">Entrar</button>
     <p class="ajuda">Ainda não tem conta? <button type="button" onclick="mostrarCadastro()">Criar cadastro</button></p>
    </div>
    <div id="painelCadastro" style="display:none">
-    <h3>Criar minha conta</h3>
+    <h3>Vamos criar sua conta?</h3>
     <div class="campo"><label for="cadastroNome">Nome completo</label><input id="cadastroNome" autocomplete="name"></div>
-    <div class="campo"><label for="cadastroTelefone">Celular para acessar a conta</label><input id="cadastroTelefone" type="tel" inputmode="tel" autocomplete="tel" placeholder="(15) 99999-9999" aria-describedby="ajudaTelefoneCadastro"><small class="ajuda" id="ajudaTelefoneCadastro">Este número será usado para entrar na sua conta.</small></div>
-    <div class="campo"><label for="cadastroWhatsApp">WhatsApp para receber informações dos pedidos *</label><input id="cadastroWhatsApp" type="tel" inputmode="tel" autocomplete="tel" placeholder="(15) 99999-9999" required aria-describedby="ajudaWhatsAppCadastro"><small class="ajuda" id="ajudaWhatsAppCadastro">Preenchemos com o celular informado acima. Se preferir, você pode editar.</small></div>
-    <div class="campo"><label for="cadastroSenha">Crie uma senha</label><input id="cadastroSenha" type="password" autocomplete="new-password" minlength="8" placeholder="Mínimo de 8 caracteres"></div>
+    <div class="campo"><label for="cadastroTelefone">Celular para entrar no aplicativo</label><input id="cadastroTelefone" type="tel" inputmode="tel" autocomplete="tel" placeholder="(15) 99999-9999" aria-describedby="ajudaTelefoneCadastro"><small class="ajuda" id="ajudaTelefoneCadastro">Este número será usado para entrar na sua conta.</small></div>
+    <div class="campo"><label for="cadastroWhatsApp">WhatsApp para receber novidades sobre seu pedido *</label><input id="cadastroWhatsApp" type="tel" inputmode="tel" autocomplete="tel" placeholder="(15) 99999-9999" required aria-describedby="ajudaWhatsAppCadastro"><small class="ajuda" id="ajudaWhatsAppCadastro">Usaremos este número para falar com você sobre seu pedido. Se quiser, pode informar outro.</small></div>
+    <div class="campo"><label for="cadastroSenha">Escolha uma senha</label><input id="cadastroSenha" type="password" autocomplete="new-password" minlength="8" placeholder="Pelo menos 8 caracteres"></div>
     <div class="campo"><label for="cadastroEndereco">Endereço completo</label><input id="cadastroEndereco" autocomplete="street-address"></div>
     <div class="campo"><label for="cadastroBairro">Bairro</label><select id="cadastroBairro"><option value="">Carregando bairros...</option></select></div>
-    <button type="button" class="finalizar" onclick="cadastrarCliente()">Criar minha conta</button>
+    <button type="button" class="finalizar" onclick="cadastrarCliente()">Finalizar cadastro</button>
     <p class="ajuda"><button type="button" onclick="mostrarLogin()">Voltar para entrar</button></p>
    </div>
    <div id="painelConta" style="display:none">
     <p class="aviso-perfil" id="boasVindas"></p>
-    <div class="acoes-conta"><button type="button" onclick="mostrarEdicao()">Atualizar meu cadastro</button><button type="button" onclick="mostrarTrocaSenha()">Alterar minha senha</button><button type="button" onclick="sairCliente()">Sair da conta</button></div>
+    <div class="acoes-conta"><button type="button" onclick="mostrarEdicao()">Editar meus dados</button><button type="button" onclick="mostrarTrocaSenha()">Trocar senha</button><button type="button" onclick="sairCliente()">Sair</button></div>
    </div>
    <div id="painelTrocaSenha" style="display:none">
-    <h3>Alterar minha senha</h3>
+    <h3>Trocar senha</h3>
     <p class="ajuda">Digite sua senha atual e escolha uma nova senha com pelo menos 8 caracteres.</p>
     <div class="campo"><label for="senhaAtual">Senha atual</label><input id="senhaAtual" type="password" autocomplete="current-password"></div>
     <div class="campo"><label for="senhaNova">Nova senha</label><input id="senhaNova" type="password" autocomplete="new-password" minlength="8"></div>
@@ -150,7 +164,7 @@ button,a,input,select{touch-action:manipulation}
     <button type="button" onclick="cancelarTrocaSenha()">Cancelar</button>
    </div>
    <div id="painelEdicao" style="display:none">
-    <h3>Atualizar meu cadastro</h3>
+    <h3>Editar meus dados</h3>
     <div class="campo"><label for="edicaoNome">Nome completo</label><input id="edicaoNome" autocomplete="name"></div>
     <div class="campo"><label for="edicaoWhatsApp">WhatsApp para contato *</label><input id="edicaoWhatsApp" type="tel" inputmode="tel" autocomplete="tel" placeholder="(15) 99999-9999" required></div>
     <div class="campo"><label for="edicaoEndereco">Endereço completo</label><input id="edicaoEndereco" autocomplete="street-address"></div>
@@ -162,22 +176,22 @@ button,a,input,select{touch-action:manipulation}
   </div>
  </section>
 
- <h2 class="titulo-secao">Escolha uma barraca</h2>
- <select id="filtro-barracas"><option value="todas">Todas as barracas</option></select>
+ <h2 class="titulo-secao">Encontre sua barraca favorita</h2>
+ <select id="filtro-barracas"><option value="todas">Ver todas as barracas</option></select>
  <div id="vitrine">Carregando produtos...</div>
 
  <section class="carrinho">
-  <div class="carrinho-topo"><h2>Meu carrinho</h2><span class="contador"><span id="quantidade">0</span> itens</span></div>
-  <div id="itens"><div class="vazio">Seu carrinho está vazio. Escolha seus produtos acima.</div></div>
+  <div class="carrinho-topo"><h2>Seu carrinho</h2><span class="contador"><span id="quantidade">0</span> itens</span></div>
+  <div id="itens"><div class="vazio">Seu carrinho está esperando por você. Escolha seus produtos para começar!</div></div>
   <div id="avisoReserva" class="ajuda" style="display:none;font-weight:bold;color:#a8730b"></div>
 
   <div id="areaCheckout" class="checkout" style="display:none">
-   <h3>Como deseja receber?</h3>
-   <div class="campo"><label for="tipoEntrega">Forma de recebimento</label><select id="tipoEntrega"><option value="entrega">Receber em casa</option><option value="retirada">Retirar na Feira da Lua</option></select></div>
+   <h3>Como você quer receber seu pedido?</h3>
+   <div class="campo"><label for="tipoEntrega">Escolha como receber</label><select id="tipoEntrega"><option value="entrega">Receber em casa</option><option value="retirada">Retirar na Feira da Lua</option></select></div>
    <div id="camposEntrega">
     <div class="campo"><label for="clienteEndereco">Endereço de entrega</label><input id="clienteEndereco" readonly></div>
     <div class="campo"><label for="clienteBairroNome">Bairro</label><input id="clienteBairroNome" readonly></div>
-    <div class="ajuda">Para mudar seu endereço ou bairro, use “Atualizar meu cadastro”.</div>
+    <div class="ajuda">Para mudar seu endereço ou bairro, use “Editar meus dados”.</div>
    </div>
    <div class="resumo-valores">
     <div class="linha-valor"><span>Produtos</span><strong id="subtotal">R$ 0,00</strong></div>
@@ -187,7 +201,7 @@ button,a,input,select{touch-action:manipulation}
   </div>
 
   <div id="areaRevisao" class="revisao-pedido" style="display:none">
-   <h3>Confira seu pedido</h3>
+   <h3>Está tudo certo com seu pedido?</h3>
    <div id="resumoRevisao"></div>
    <div class="acoes-revisao">
     <button type="button" id="voltarEditar" class="botao-voltar">Voltar e alterar</button>
@@ -195,7 +209,7 @@ button,a,input,select{touch-action:manipulation}
    </div>
   </div>
   <div id="mensagem" role="status" aria-live="polite" aria-atomic="true"></div>
-  <button class="finalizar" id="botaoFinalizar" onclick="abrirRevisao()" disabled>Conferir meu pedido</button>
+  <button class="finalizar" id="botaoFinalizar" onclick="abrirRevisao()" disabled>Revisar meu pedido</button>
  </section>
 </main>
 <footer>
@@ -239,7 +253,7 @@ async function chamarReserva(acao,dados,token=tokenCliente){
  return r;
 }
 function itensAgrupados(){const mapa={};carrinho.forEach(p=>{const id=String(p.id);if(!mapa[id])mapa[id]={produto_id:Number(p.id),quantidade:0};mapa[id].quantidade++;});return Object.values(mapa);}
-function atualizarAvisoReserva(){const el=document.getElementById('avisoReserva');if(!el)return;if(!carrinho.length||!reservaExpiraEm){el.style.display='none';return;}const falta=Math.max(0,Math.ceil((reservaExpiraEm-Date.now())/1000));if(falta<=0){el.textContent='Sua reserva pode ter expirado. Atualize o carrinho para verificar a disponibilidade.';el.style.display='block';return;}el.textContent='Produtos reservados por mais '+Math.floor(falta/60)+':'+String(falta%60).padStart(2,'0')+'.';el.style.display='block';}
+function atualizarAvisoReserva(){const el=document.getElementById('avisoReserva');if(!el)return;if(!carrinho.length||!reservaExpiraEm){el.style.display='none';return;}const falta=Math.max(0,Math.ceil((reservaExpiraEm-Date.now())/1000));if(falta<=0){el.textContent='Sua reserva pode ter expirado. Atualize o carrinho para verificar a disponibilidade.';el.style.display='block';return;}el.textContent='Seus produtos ficam reservados por mais '+Math.floor(falta/60)+':'+String(falta%60).padStart(2,'0')+'.';el.style.display='block';}
 function iniciarRelogioReserva(){if(relogioReserva)clearInterval(relogioReserva);relogioReserva=setInterval(atualizarAvisoReserva,1000);}
 function sincronizarReserva(){
  const itens=itensAgrupados();
@@ -275,12 +289,12 @@ function sincronizarReserva(){
 })();
 function mensagemAcesso(t,erro=false){const e=document.getElementById('mensagemAcesso');if(e){e.textContent=t||'';e.style.color=erro?'#b8323a':'#28764c';}}
 function exibirPainel(id){['painelLogin','painelCadastro','painelConta','painelEdicao','painelTrocaSenha'].forEach(x=>document.getElementById(x).style.display=x===id?'block':'none');}
-function mostrarLogin(){exibirPainel('painelLogin');document.getElementById('tituloAcesso').textContent='Entre para fazer seu pedido';document.getElementById('ajudaAcesso').style.display='';mensagemAcesso('');}
-function mostrarCadastro(){exibirPainel('painelCadastro');document.getElementById('tituloAcesso').textContent='Criar minha conta';document.getElementById('ajudaAcesso').style.display='none';mensagemAcesso('');}
-function solicitarAjudaSenha(){const telefone=document.getElementById('loginTelefone').value.trim();let texto='Olá! Esqueci minha senha da Feira da Lua Delivery e preciso de ajuda para recuperar meu acesso.';if(telefone)texto+=' Meu celular cadastrado é: '+telefone+'.';window.open('https://wa.me/5515997549326?text='+encodeURIComponent(texto),'_blank');}
+function mostrarLogin(){exibirPainel('painelLogin');document.getElementById('tituloAcesso').style.display='';document.getElementById('tituloAcesso').textContent='Entre ou faça seu cadastro para pedir';document.getElementById('ajudaAcesso').style.display='';mensagemAcesso('');}
+function mostrarCadastro(){exibirPainel('painelCadastro');document.getElementById('tituloAcesso').style.display='';document.getElementById('tituloAcesso').textContent='Criar minha conta';document.getElementById('ajudaAcesso').style.display='none';mensagemAcesso('');}
+function solicitarAjudaSenha(){const telefone=document.getElementById('loginTelefone').value.trim();let texto='Olá! Preciso de ajuda com minha senha da Feira da Lua Delivery e preciso de ajuda para recuperar meu acesso.';if(telefone)texto+=' Meu celular cadastrado é: '+telefone+'.';window.open('https://wa.me/5515997549326?text='+encodeURIComponent(texto),'_blank');}
 function aplicarCliente(c){
  clienteLogado=c;exibirPainel('painelConta');
- document.getElementById('tituloAcesso').textContent='Minha conta';
+ document.getElementById('tituloAcesso').style.display='none';
  document.getElementById('ajudaAcesso').style.display='none';
  document.getElementById('areaCheckout').style.display='block';
  document.getElementById('clienteEndereco').value=c.endereco||'';
@@ -288,7 +302,7 @@ function aplicarCliente(c){
  document.getElementById('boasVindas').textContent='Olá, '+(c.nome||'cliente')+'! Sua conta está conectada. WhatsApp: '+(c.whatsapp||'Ainda não informado')+'.';
  atualizarTipoEntrega();atualizar();
 }
-function limparCliente(){clienteLogado=null;document.getElementById('areaCheckout').style.display='none';document.getElementById('tituloAcesso').textContent='Entre para fazer seu pedido';document.getElementById('ajudaAcesso').style.display='';exibirPainel('painelLogin');document.getElementById('botaoFinalizar').disabled=true;['clienteEndereco','clienteBairroNome'].forEach(id=>document.getElementById(id).value='');}
+function limparCliente(){clienteLogado=null;document.getElementById('areaCheckout').style.display='none';document.getElementById('tituloAcesso').style.display='';document.getElementById('tituloAcesso').textContent='Entre ou faça seu cadastro para pedir';document.getElementById('ajudaAcesso').style.display='';exibirPainel('painelLogin');document.getElementById('botaoFinalizar').disabled=true;['clienteEndereco','clienteBairroNome'].forEach(id=>document.getElementById(id).value='');}
 async function entrarCliente(){
  const telefone=normalizarTelefone(document.getElementById('loginTelefone').value),senha=document.getElementById('loginSenha').value;
  if(telefone.length<10||telefone.length>13){mensagemAcesso('Informe um celular válido com DDD.',true);return;}
@@ -420,13 +434,13 @@ function renderizarVitrine(){
     const numero=document.createElement('span');numero.className='qtd-numero';numero.textContent=qtd;
     const mais=document.createElement('button');mais.type='button';mais.textContent='+';mais.setAttribute('aria-label','Aumentar quantidade de '+p.nome);mais.disabled=qtd>=disponivel;mais.onclick=()=>adicionar(p.id);
     controle.append(menos,numero,mais);acao.appendChild(controle);
-    const aviso=document.createElement('div');aviso.className='adicionado';aviso.textContent='✓ Adicionado ao carrinho';acao.appendChild(aviso);
+    const aviso=document.createElement('div');aviso.className='adicionado';aviso.textContent='✓ Está no seu carrinho!';acao.appendChild(aviso);
    }
    item.append(conteudo,acao);sec.appendChild(item);
   });
   vitrine.appendChild(sec);
  });
- if(!vitrine.children.length)vitrine.textContent='Nenhum produto disponível.';
+ if(!vitrine.children.length)vitrine.textContent='Ainda não há produtos disponíveis nesta barraca.';
 }
 async function carregarProdutos(){
  const vitrine=document.getElementById('vitrine'),filtro=document.getElementById('filtro-barracas');
@@ -436,7 +450,7 @@ async function carregarProdutos(){
   const {data:lista,error:e2}=await banco.from('produtos').select('id,feirante_id,nome,preco,descricao,imagem_url,estoque,estoque_minimo').eq('ativo',true);
   if(e2)throw e2;
   produtos=lista||[];barracas=listaBarracas||[];
-  filtro.innerHTML='<option value="todas">Todas as barracas</option>';
+  filtro.innerHTML='<option value="todas">Ver todas as barracas</option>';
   barracas.forEach(b=>{const o=document.createElement('option');o.value=String(b.id);o.textContent=b.nome;filtro.appendChild(o);});
   renderizarVitrine();
  }catch(e){console.error(e);vitrine.textContent='Erro ao carregar produtos: '+(e.message||'verifique a conexão e as permissões do Supabase.');}
@@ -493,7 +507,7 @@ async function excluirProdutoCarrinho(id){const anteriores=carrinho.slice();carr
 function atualizar(){
  document.getElementById('quantidade').textContent=carrinho.length;
  const el=document.getElementById('itens');el.innerHTML='';
- if(!carrinho.length){el.innerHTML='<div class="vazio">Seu carrinho está vazio. Escolha seus produtos acima.</div>';}
+ if(!carrinho.length){el.innerHTML='<div class="vazio">Seu carrinho está esperando por você. Escolha seus produtos para começar!</div>';}
  else{
   const r={};carrinho.forEach(p=>{if(!r[p.id])r[p.id]={nome:p.nome,preco:p.preco,q:0};r[p.id].q++;});
   Object.entries(r).forEach(([id,p])=>{
@@ -511,7 +525,7 @@ function atualizar(){
  document.getElementById('subtotal').textContent=moeda(s);document.getElementById('frete').textContent=moeda(f);document.getElementById('total').textContent=moeda(s+f);
  const botao=document.getElementById('botaoFinalizar');
  botao.disabled=!clienteLogado||!carrinho.length||pedidoConcluido||enviandoPedido;
- if(!pedidoConcluido&&!enviandoPedido)botao.textContent='Conferir meu pedido';
+ if(!pedidoConcluido&&!enviandoPedido)botao.textContent='Revisar meu pedido';
 }
 function atualizarTipoEntrega(){
  const entrega=document.getElementById('tipoEntrega').value==='entrega';
@@ -523,8 +537,8 @@ function validarDados(){
  if(!clienteLogado){alert('Entre na sua conta para continuar.');return null;}
  if(!clienteLogado.whatsapp){alert('Antes de fazer o pedido, atualize seu cadastro e informe um WhatsApp válido.');mostrarEdicao();return null;}
  const tipo=document.getElementById('tipoEntrega').value,b=bairroDoCliente();
- if(tipo==='entrega'&&(!clienteLogado.endereco||clienteLogado.endereco.trim().length<5)){alert('Atualize seu endereço em “Atualizar meu cadastro”.');return null;}
- if(tipo==='entrega'&&(!clienteLogado.bairro_id||!b)){alert('Atualize seu bairro em “Atualizar meu cadastro”.');return null;}
+ if(tipo==='entrega'&&(!clienteLogado.endereco||clienteLogado.endereco.trim().length<5)){alert('Atualize seu endereço em “Editar meus dados”.');return null;}
+ if(tipo==='entrega'&&(!clienteLogado.bairro_id||!b)){alert('Atualize seu bairro em “Editar meus dados”.');return null;}
  return {nome:clienteLogado.nome,telefone:clienteLogado.telefone,tipo,endereco:tipo==='entrega'?clienteLogado.endereco:'',bairroId:tipo==='entrega'?Number(clienteLogado.bairro_id):null};
 }
 async function finalizar(){
@@ -544,12 +558,12 @@ async function finalizar(){
   const subtotal=Number(data.subtotal),frete=Number(data.frete),total=Number(data.total),b=bairroDoCliente();
   const linhas=Object.values(resumo).map(p=>p.quantidade+'x '+p.nome+' - '+moeda(p.preco*p.quantidade));
   const texto=['Olá! Quero fazer um pedido pela Feira da Lua Delivery.','','Pedido número: '+pedidoId,'Nome: '+cliente.nome,'Celular da conta: '+cliente.telefone,'WhatsApp: '+(clienteLogado.whatsapp||''),'Recebimento: '+(cliente.tipo==='retirada'?'Retirada na Feira da Lua':'Entrega em casa'),...(cliente.tipo==='entrega'?['Endereço: '+cliente.endereco,'Bairro: '+(b?b.bairro:''),'Região: '+(b?b.nomeRegiao:'')]:[]),'','Pedido:',...linhas,'','Subtotal: '+moeda(subtotal),'Frete: '+moeda(frete),'TOTAL: '+moeda(total),'','Aguardo a confirmação. Obrigado!'].join('\n');
-  mensagem.textContent='Pedido nº '+pedidoId+' recebido com sucesso!';
-  alert('Pedido nº '+pedidoId+' registrado com sucesso! Você será direcionado ao WhatsApp.');
+  mensagem.textContent='Seu pedido nº '+pedidoId+' foi recebido com sucesso!';
+  alert('Pedido nº '+pedidoId+' registrado com sucesso! Vamos abrir o WhatsApp para você enviar os detalhes do pedido.');
   carrinho=[];reservaExpiraEm=0;renderizarVitrine();atualizar();atualizarAvisoReserva();document.getElementById('areaRevisao').style.display='none';
   window.location.href='https://wa.me/5515997549326?text='+encodeURIComponent(texto);
  }catch(e){console.error(e);const erro=e.message||'Não foi possível registrar o pedido. Tente novamente.';mensagem.textContent=erro;alert(erro);}
- finally{enviandoPedido=false;const bf=document.getElementById('confirmarPedidoFinal');if(pedidoConcluido){bf.disabled=true;bf.textContent='Pedido enviado!';}else{bf.disabled=false;bf.textContent='Confirmar pedido';}}
+ finally{enviandoPedido=false;const bf=document.getElementById('confirmarPedidoFinal');if(pedidoConcluido){bf.disabled=true;bf.textContent='Pedido confirmado!';}else{bf.disabled=false;bf.textContent='Confirmar pedido';}}
 }
 atualizarTipoEntrega();
 document.getElementById('botaoFinalizar').disabled=true;
