@@ -91,9 +91,27 @@ footer{text-align:center;padding:20px}
 <button class="verde" onclick="abrirArea('pedidos')">PEDIDOS</button>
 <button class="azul" onclick="abrirArea('loja')">GERENCIAR LOJA</button>
 <button class="amarelo" onclick="abrirArea('fretes')">FRETE POR REGIÃO</button>
+<button class="azul" onclick="abrirArea('senhas')">SENHA DE CLIENTE</button>
 </div>
 </div>
 </div>
+
+<section id="areaSenhas" class="area-admin">
+<div class="card">
+<h2>Redefinir senha de cliente</h2>
+<p class="pequeno">Use esta opção quando um cliente esquecer a senha. Informe o celular cadastrado e crie uma senha temporária com pelo menos 8 caracteres. Depois, envie a nova senha diretamente ao cliente pelo WhatsApp.</p>
+<button class="voltar" onclick="voltarInicio()">Voltar ao início</button>
+<label><strong>Celular cadastrado do cliente</strong></label>
+<input id="telefoneResetCliente" type="tel" inputmode="numeric" placeholder="DDD + celular">
+<label><strong>Nova senha temporária</strong></label>
+<input id="novaSenhaCliente" type="password" autocomplete="new-password" placeholder="Mínimo de 8 caracteres">
+<label><strong>Confirme a nova senha</strong></label>
+<input id="confirmarSenhaCliente" type="password" autocomplete="new-password" placeholder="Digite novamente a nova senha">
+<button class="verde" id="botaoRedefinirCliente" onclick="redefinirSenhaCliente()">Redefinir senha do cliente</button>
+<p id="mensagemResetCliente" role="status" aria-live="polite"></p>
+<p class="pequeno">Por segurança, a senha antiga não pode ser consultada. Esta opção cria uma nova senha e encerra as sessões antigas do cliente.</p>
+</div>
+</section>
 
 <section id="areaPedidos" class="area-admin">
 <div class="card">
@@ -221,6 +239,7 @@ function abrirArea(area){
  if(area==='pedidos'){document.getElementById('areaPedidos').classList.add('ativa');carregarPedidos();}
  if(area==='loja'){document.getElementById('areaLoja').classList.add('ativa');carregarDados();}
  if(area==='fretes'){document.getElementById('areaFretes').classList.add('ativa');carregarFretes();}
+  if(area==='senhas'){document.getElementById('areaSenhas').classList.add('ativa');}
  window.scrollTo({top:0,behavior:'smooth'});
 }
 function voltarInicio(){
@@ -313,6 +332,69 @@ async function salvarNovaSenha(){
   botao.textContent='Salvar nova senha';
  }
 }
+/* REDEFINIR SENHA DE CLIENTE PELO PAINEL ADMINISTRATIVO */
+async function redefinirSenhaCliente(){
+ const telefone=document.getElementById('telefoneResetCliente').value.trim();
+ const novaSenha=document.getElementById('novaSenhaCliente').value;
+ const confirmar=document.getElementById('confirmarSenhaCliente').value;
+ const mensagem=document.getElementById('mensagemResetCliente');
+ const botao=document.getElementById('botaoRedefinirCliente');
+
+ const numeros=telefone.replace(/\\D/g,'');
+ if(numeros.length<10||numeros.length>13){
+  mensagem.textContent='Informe o celular cadastrado com DDD.';
+  return;
+ }
+ if(novaSenha.length<8){
+  mensagem.textContent='A nova senha precisa ter pelo menos 8 caracteres.';
+  return;
+ }
+ if(novaSenha.length>128){
+  mensagem.textContent='A nova senha é muito longa.';
+  return;
+ }
+ if(novaSenha!==confirmar){
+  mensagem.textContent='As senhas não são iguais.';
+  return;
+ }
+ if(!confirm('Confirma a redefinição da senha deste cliente? As sessões antigas serão encerradas.'))return;
+
+ botao.disabled=true;
+ botao.textContent='Redefinindo...';
+ mensagem.textContent='';
+ try{
+  const {data,error}=await banco.auth.getSession();
+  if(error)throw error;
+  const token=data.session?.access_token;
+  if(!token)throw new Error('Sua sessão administrativa expirou. Entre novamente no painel.');
+
+  const resposta=await fetch(SUPABASE_URL+'/functions/v1/cliente-auth',{
+   method:'POST',
+   headers:{
+    'Content-Type':'application/json',
+    'apikey':SUPABASE_KEY,
+    'Authorization':'Bearer '+token
+   },
+   body:JSON.stringify({
+    acao:'admin_reset_password',
+    telefone,
+    nova_senha:novaSenha
+   })
+  });
+  const resultado=await resposta.json().catch(()=>({}));
+  if(!resposta.ok)throw new Error(resultado.erro||resultado.mensagem||'Não foi possível redefinir a senha.');
+
+  document.getElementById('novaSenhaCliente').value='';
+  document.getElementById('confirmarSenhaCliente').value='';
+  mensagem.textContent=(resultado.mensagem||'Senha redefinida com sucesso.')+' Informe a nova senha ao cliente por um canal privado.';
+ }catch(e){
+  mensagem.textContent='Erro: '+(e.message||'Não foi possível redefinir a senha.');
+ }finally{
+  botao.disabled=false;
+  botao.textContent='Redefinir senha do cliente';
+ }
+}
+
 /* LOGIN */
 async function entrar(){
  const email=document.getElementById('email').value.trim();
