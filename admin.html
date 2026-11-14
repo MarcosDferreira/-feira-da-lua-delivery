@@ -406,12 +406,32 @@ function mostrarPedido(p,lista){
  card.appendChild(criarElemento('h3','Total: '+moeda(p.total)));
  if(p.status==='novo'){const confirmar=criarElemento('button','Confirmar pedido','verde');confirmar.onclick=()=>confirmarPedido(p.id);card.appendChild(confirmar)}
  if(['confirmado','em_preparo','saiu_entrega'].includes(p.status)){
+  const avisar=criarElemento('button','Avisar cliente pelo WhatsApp','verde');
+  avisar.onclick=()=>avisarClienteWhatsApp(p);
+  card.appendChild(avisar);
   const etapas={confirmado:{proximo:'em_preparo',texto:'Iniciar preparo'},em_preparo:{proximo:'saiu_entrega',texto:'Saiu para entrega'},saiu_entrega:{proximo:'concluido',texto:'Concluir pedido'}};
   const etapa=etapas[p.status],avancar=criarElemento('button',etapa.texto,'azul');avancar.onclick=()=>atualizarStatus(p.id,etapa.proximo);card.appendChild(avancar);
  }
  if(['novo','confirmado','em_preparo','saiu_entrega'].includes(p.status)){const cancelar=criarElemento('button','Cancelar pedido','excluir');cancelar.onclick=()=>cancelarPedido(p.id);card.appendChild(cancelar)}
  lista.appendChild(card);
 }
+function avisarClienteWhatsApp(p){
+ let telefone=String(p.cliente_telefone||'').replace(/\D/g,'');
+ if(telefone.startsWith('0'))telefone=telefone.replace(/^0+/, '');
+ if(telefone.length===10||telefone.length===11)telefone='55'+telefone;
+ if(!telefone||telefone.length<12||telefone.length>13){
+  alert('O telefone deste cliente está incompleto ou inválido. Confira o cadastro antes de enviar a mensagem.');
+  return;
+ }
+ const nome=(p.cliente_nome||'cliente').trim().split(' ')[0];
+ const entrega=p.tipo_entrega==='retirada'
+  ? 'Seu pedido ficará disponível para retirada na Feira da Lua.'
+  : 'Seu pedido foi confirmado e seguirá para preparação e entrega no endereço informado.';
+ const texto='Olá, '+nome+'! Seu pedido #'+p.id+' na Feira da Lua foi confirmado. '+entrega+' Total do pedido: '+moeda(p.total)+'. Obrigado por comprar na Feira da Lua e valorizar nossos feirantes de Ribeirão Grande!';
+ const url='https://wa.me/'+telefone+'?text='+encodeURIComponent(texto);
+ window.open(url,'_blank','noopener,noreferrer');
+}
+
 async function confirmarPedido(id){
  if(!confirm('Confirmar este pedido e dar baixa no estoque?'))return;
  const {error}=await banco.rpc('confirmar_pedido',{p_pedido_id:id});
