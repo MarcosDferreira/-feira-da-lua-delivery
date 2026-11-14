@@ -18,7 +18,7 @@ button:disabled{opacity:.6}
 .produto,.pedido,.frete{border:1px solid #ddd;padding:12px;border-radius:9px;margin:12px 0}
 .foto{width:100px;height:100px;object-fit:cover;border-radius:8px}
 .oculto{display:none!important}
-#mensagem,#mensagemFrete{font-weight:bold;color:#176b3a}
+#mensagem,#mensagemFrete,#mensagemLogin,#mensagemRecuperacao,#mensagemNovaSenha{font-weight:bold;color:#176b3a;line-height:1.5}
 .status{display:inline-block;padding:6px 9px;border-radius:6px;background:#e8edf7;color:#10265a;font-weight:bold;font-size:13px}
 .detalhe{background:#f2f5fa;padding:10px;border-radius:7px;margin:8px 0}
 .pequeno{font-size:13px;color:#555}
@@ -36,9 +36,29 @@ footer{text-align:center;padding:20px}
 <main>
 <section class="card" id="login">
 <h2>Entrar na administração</h2>
-<input id="email" type="email" placeholder="E-mail">
-<input id="senha" type="password" placeholder="Senha">
+<input id="email" type="email" placeholder="E-mail" autocomplete="username">
+<input id="senha" type="password" placeholder="Senha" autocomplete="current-password">
 <button onclick="entrar()">Entrar</button>
+<button class="azul" onclick="esqueciSenha()">Esqueci minha senha</button>
+<p id="mensagemLogin" role="status" aria-live="polite"></p>
+</section>
+
+<section class="card oculto" id="areaRecuperacao">
+<h2>Recuperar senha</h2>
+<p>Informe o e-mail cadastrado para receber o link de recuperação.</p>
+<input id="emailRecuperacao" type="email" placeholder="E-mail do administrador" autocomplete="email">
+<button class="verde" id="botaoEnviarRecuperacao" onclick="enviarRecuperacao()">Enviar link de recuperação</button>
+<button class="cancelar" onclick="voltarLogin()">Voltar ao login</button>
+<p id="mensagemRecuperacao" role="status" aria-live="polite"></p>
+</section>
+
+<section class="card oculto" id="areaNovaSenha">
+<h2>Cadastrar nova senha</h2>
+<p>Escolha uma senha nova para acessar a administração.</p>
+<input id="novaSenha" type="password" placeholder="Nova senha (mínimo 6 caracteres)" autocomplete="new-password">
+<input id="confirmarNovaSenha" type="password" placeholder="Confirme a nova senha" autocomplete="new-password">
+<button class="verde" id="botaoSalvarNovaSenha" onclick="salvarNovaSenha()">Salvar nova senha</button>
+<p id="mensagemNovaSenha" role="status" aria-live="polite"></p>
 </section>
 
 <section id="painel" class="oculto">
@@ -158,7 +178,9 @@ footer{text-align:center;padding:20px}
 <script>
 const SUPABASE_URL='https://bnnfplpccsxaaztgbxkr.supabase.co';
 const SUPABASE_KEY='sb_publishable_dws08TQirwdC5MI3UITfog_AWVc8eL5';
-const banco=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const banco=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{
+ auth:{flowType:'implicit',detectSessionInUrl:true,persistSession:true,autoRefreshToken:true}
+});
 const BUCKET='Produto';
 let feirantes=[],produtos=[],editando=null,fotoSelecionada=null,feiranteEditando=null;
 let fretes=[],freteEditando=null;
@@ -176,6 +198,58 @@ function voltarInicio(){
  document.getElementById('inicioAdmin').style.display='block';
  window.scrollTo({top:0,behavior:'smooth'});
 }
+/* RECUPERAÇÃO DE SENHA: RETORNO DO LINK DO SUPABASE */
+
+function abrirTelaNovaSenha(){
+ document.getElementById('mensagemNovaSenha').textContent='';
+ document.getElementById('novaSenha').value='';
+ document.getElementById('confirmarNovaSenha').value='';
+ mostrarSomente('areaNovaSenha');
+}
+
+banco.auth.onAuthStateChange((evento, session)=>{
+ if(evento==='PASSWORD_RECOVERY' && session?.access_token){
+  abrirTelaNovaSenha();
+ }
+});
+
+/* Verifica o retorno do link de recuperação */
+(async function verificarRetornoRecuperacao(){
+ const hash=window.location.hash || '';
+ const parametros=new URLSearchParams(hash.replace(/^#/,''));
+
+ const tipo=parametros.get('type');
+ const erro=parametros.get('error_description') || parametros.get('error');
+
+ if(erro){
+  mostrarSomente('login');
+  document.getElementById('mensagemLogin').textContent=
+   'O link de recuperação apresentou um erro ou expirou. Solicite um novo e-mail.';
+  return;
+ }
+
+ if(tipo!=='recovery') return;
+
+ const {data,error}=await banco.auth.getSession();
+
+ if(error){
+  mostrarSomente('login');
+  document.getElementById('mensagemLogin').textContent=
+   'Erro ao validar o link: '+error.message;
+  return;
+ }
+
+ if(data.session?.access_token){
+  abrirTelaNovaSenha();
+ }else{
+  mostrarSomente('login');
+  document.getElementById('mensagemLogin').textContent=
+   'Não foi possível validar o link. Solicite um novo e-mail de recuperação.';
+ }
+})();
+
+
+
 document.getElementById('fotoProduto').addEventListener('change',function(){
  const arquivo=this.files[0],preview=document.getElementById('preview');fotoSelecionada=arquivo||null;
  if(!arquivo){preview.src='';preview.classList.add('oculto');return}
@@ -188,6 +262,91 @@ function mensagem(texto){document.getElementById('mensagem').textContent=texto}
 function moeda(valor){return Number(valor||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}
 function criarElemento(tag,texto,classe){
  const el=document.createElement(tag);if(texto!==undefined)el.textContent=texto;if(classe)el.className=classe;return el;
+}
+
+/* RECUPERAÇÃO DE SENHA */
+function mostrarSomente(id){
+ ['login','areaRecuperacao','areaNovaSenha','painel'].forEach(nome=>{
+  const el=document.getElementById(nome);
+  if(el)el.classList.toggle('oculto',nome!==id);
+ });
+}
+function voltarLogin(){
+ mostrarSomente('login');
+ document.getElementById('mensagemLogin').textContent='';
+ document.getElementById('mensagemRecuperacao').textContent='';
+}
+function esqueciSenha(){
+ document.getElementById('emailRecuperacao').value=document.getElementById('email').value.trim();
+ document.getElementById('mensagemRecuperacao').textContent='';
+ mostrarSomente('areaRecuperacao');
+}
+async function enviarRecuperacao(){
+ const email=document.getElementById('emailRecuperacao').value.trim();
+ const mensagem=document.getElementById('mensagemRecuperacao');
+ const botao=document.getElementById('botaoEnviarRecuperacao');
+ if(!email){mensagem.textContent='Informe o e-mail cadastrado.';return;}
+ botao.disabled=true;botao.textContent='Enviando...';mensagem.textContent='';
+ try{
+  const redirectTo=window.location.origin+window.location.pathname;
+  const {error}=await banco.auth.resetPasswordForEmail(email,{redirectTo});
+  if(error)throw error;
+  mensagem.textContent='Solicitação enviada. Confira a caixa de entrada e a pasta de spam do e-mail informado.';
+ }catch(e){mensagem.textContent='Não foi possível enviar: '+(e.message||'erro desconhecido');}
+ finally{botao.disabled=false;botao.textContent='Enviar link de recuperação';}
+}
+async function salvarNovaSenha(){
+ const senha=document.getElementById('novaSenha').value;
+ const confirmacao=document.getElementById('confirmarNovaSenha').value;
+ const mensagem=document.getElementById('mensagemNovaSenha');
+ const botao=document.getElementById('botaoSalvarNovaSenha');
+
+ if(senha.length<6){
+  mensagem.textContent='A senha precisa ter pelo menos 6 caracteres.';
+  return;
+ }
+
+ if(senha!==confirmacao){
+  mensagem.textContent='As senhas não são iguais.';
+  return;
+ }
+
+ botao.disabled=true;
+ botao.textContent='Salvando...';
+ mensagem.textContent='';
+
+ try{
+  const {data,error:erroSessao}=await banco.auth.getSession();
+
+  if(erroSessao) throw erroSessao;
+
+  if(!data.session){
+   throw new Error('Sua sessão de recuperação não foi encontrada. Solicite um novo link de recuperação.');
+  }
+
+  const {error}=await banco.auth.updateUser({
+   password:senha
+  });
+
+  if(error) throw error;
+
+  await banco.auth.signOut();
+
+  document.getElementById('novaSenha').value='';
+  document.getElementById('confirmarNovaSenha').value='';
+  document.getElementById('senha').value='';
+
+  mostrarSomente('login');
+
+  document.getElementById('mensagemLogin').textContent=
+   'Senha alterada com sucesso! Entre com sua nova senha.';
+
+ }catch(e){
+  mensagem.textContent='Não foi possível alterar a senha: '+(e.message||'erro desconhecido');
+ }finally{
+  botao.disabled=false;
+  botao.textContent='Salvar nova senha';
+ }
 }
 
 async function entrar(){
@@ -406,32 +565,12 @@ function mostrarPedido(p,lista){
  card.appendChild(criarElemento('h3','Total: '+moeda(p.total)));
  if(p.status==='novo'){const confirmar=criarElemento('button','Confirmar pedido','verde');confirmar.onclick=()=>confirmarPedido(p.id);card.appendChild(confirmar)}
  if(['confirmado','em_preparo','saiu_entrega'].includes(p.status)){
-  const avisar=criarElemento('button','Avisar cliente pelo WhatsApp','verde');
-  avisar.onclick=()=>avisarClienteWhatsApp(p);
-  card.appendChild(avisar);
   const etapas={confirmado:{proximo:'em_preparo',texto:'Iniciar preparo'},em_preparo:{proximo:'saiu_entrega',texto:'Saiu para entrega'},saiu_entrega:{proximo:'concluido',texto:'Concluir pedido'}};
   const etapa=etapas[p.status],avancar=criarElemento('button',etapa.texto,'azul');avancar.onclick=()=>atualizarStatus(p.id,etapa.proximo);card.appendChild(avancar);
  }
  if(['novo','confirmado','em_preparo','saiu_entrega'].includes(p.status)){const cancelar=criarElemento('button','Cancelar pedido','excluir');cancelar.onclick=()=>cancelarPedido(p.id);card.appendChild(cancelar)}
  lista.appendChild(card);
 }
-function avisarClienteWhatsApp(p){
- let telefone=String(p.cliente_telefone||'').replace(/\D/g,'');
- if(telefone.startsWith('0'))telefone=telefone.replace(/^0+/, '');
- if(telefone.length===10||telefone.length===11)telefone='55'+telefone;
- if(!telefone||telefone.length<12||telefone.length>13){
-  alert('O telefone deste cliente está incompleto ou inválido. Confira o cadastro antes de enviar a mensagem.');
-  return;
- }
- const nome=(p.cliente_nome||'cliente').trim().split(' ')[0];
- const entrega=p.tipo_entrega==='retirada'
-  ? 'Seu pedido ficará disponível para retirada na Feira da Lua.'
-  : 'Seu pedido foi confirmado e seguirá para preparação e entrega no endereço informado.';
- const texto='Olá, '+nome+'! Seu pedido #'+p.id+' na Feira da Lua foi confirmado. '+entrega+' Total do pedido: '+moeda(p.total)+'. Obrigado por comprar na Feira da Lua e valorizar nossos feirantes de Ribeirão Grande!';
- const url='https://wa.me/'+telefone+'?text='+encodeURIComponent(texto);
- window.open(url,'_blank','noopener,noreferrer');
-}
-
 async function confirmarPedido(id){
  if(!confirm('Confirmar este pedido e dar baixa no estoque?'))return;
  const {error}=await banco.rpc('confirmar_pedido',{p_pedido_id:id});
